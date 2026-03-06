@@ -36,8 +36,7 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build with Gradle Wrapper
-      # run: ./gradlew build
-      run: ./gradlew test --stacktrace
+      run: ./gradlew build
 
     - name: 빌드된 파일 이름 변경하기
       run: |
