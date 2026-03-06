@@ -40,7 +40,10 @@ jobs:
       run: ./gradlew test --stacktrace
 
     - name: 빌드된 파일 이름 변경하기
-      run: mv ./build/libs/*SNAPSHOT.jar ./cicdtest.jar
+      run: |
+        # plain.jar는 제외하고 진짜 실행 파일만 찾아서 cicdtest.jar로 변경
+        JAR_FILE=$(ls build/libs/*.jar | grep -v plain | head -n 1)
+        mv $JAR_FILE ./cicdtest.jar
 
     - name: SCP로 EC2에 빌드된 파일 전송하기
       uses: appleboy/scp-action@master
