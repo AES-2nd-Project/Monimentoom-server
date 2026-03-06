@@ -3,8 +3,6 @@ name: Deploy Spring Boot to EC2
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   # 잡을 하나로 합쳐서 cicdtest.jar 파일 유지시키기

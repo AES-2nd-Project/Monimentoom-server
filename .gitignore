@@ -50,3 +50,7 @@ target/
 .gradle/
 
 *.env
+
+### Applicaion Secret 제외
+*secret*.yaml
+*secret*.yml
