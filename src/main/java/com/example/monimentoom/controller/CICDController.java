@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CICDController {
     @GetMapping("/test")
     public String cicdTest() {
-        return "cicd 'version 1.0.0'";
+        return "cicd 'version 1.0.1'";
     }
 
 }
