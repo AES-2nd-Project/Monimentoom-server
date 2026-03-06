@@ -36,7 +36,7 @@ jobs:
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
     
     - name: gradlew 파일에 실행 권한 부여
-      run: chmod +x graldew
+      run: chmod +x gradlew
     
     # 1-5. 빌드
     - name: Build with Gradle Wrapper
