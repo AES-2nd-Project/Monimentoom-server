@@ -1,0 +1,28 @@
+package com.example.monimentoom.domain.User;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "users", indexes = @Index(name="idx_nickname", columnList = "nickname"))
+@Getter
+@Setter
+@NoArgsConstructor
+public class User {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String nickname;
+    @Column(nullable = false, unique = true)
+    private String email;
+    @Column(nullable = false)
+    private String password;
+
+    @Builder
+    public User(String nickname, String email, String password) {
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+    }
+}
