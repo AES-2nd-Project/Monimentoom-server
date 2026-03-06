@@ -5,6 +5,7 @@ spring:
     include: secret
 
   jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
 #     ddl-auto: validate # Flyway를 쓰므로 validate나 none으로 설정
