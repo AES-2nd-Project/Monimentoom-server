@@ -1,8 +1,8 @@
-package com.example.monimentoom.domain.Position;
+package com.example.monimentoom.domain.position;
 
 
-import com.example.monimentoom.domain.Goods.Goods;
-import com.example.monimentoom.domain.Room.Room;
+import com.example.monimentoom.domain.goods.Goods;
+import com.example.monimentoom.domain.room.Room;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "positions", indexes = {
+        @Index(name = "idx_positions_rooms_id", columnList = "rooms_id"),
+        @Index(name = "idx_positions_goods_id", columnList = "goods_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,18 +38,18 @@ public class Position {
     @Column(nullable = false)
     private int y;
     @Column(nullable = false)
-    private int width_unit;
+    private int widthUnit;
     @Column(nullable = false)
-    private int height_unit;
+    private int heightUnit;
 
     @Builder
-    public Position(Goods goods, Room room, WallSide wall, int x, int y, int width_unit, int height_unit) {
+    public Position(Goods goods, Room room, WallSide wall, int x, int y, int widthUnit, int heightUnit) {
         this.goods = goods;
         this.room = room;
         this.wall = wall;
         this.x = x;
         this.y = y;
-        this.width_unit = width_unit;
-        this.height_unit = height_unit;
+        this.widthUnit = widthUnit;
+        this.heightUnit = heightUnit;
     }
 }

@@ -1,6 +1,6 @@
-package com.example.monimentoom.domain.Goods;
+package com.example.monimentoom.domain.goods;
 
-import com.example.monimentoom.domain.User.User;
+import com.example.monimentoom.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,15 +23,15 @@ public class Goods {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private String image_url;
+    private String imageUrl;
 
     private String description;
 
     @Builder
-    public Goods(User user, String name, String image_url, String description) {
+    public Goods(User user, String name, String imageUrl, String description) {
         this.user = user;
         this.name = name;
-        this.image_url = image_url;
+        this.imageUrl = imageUrl;
         this.description = description;
     }
 }

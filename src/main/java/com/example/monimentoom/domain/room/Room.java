@@ -1,6 +1,6 @@
-package com.example.monimentoom.domain.Room;
+package com.example.monimentoom.domain.room;
 
-import com.example.monimentoom.domain.User.User;
+import com.example.monimentoom.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,15 +16,16 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false, unique = true)
-    private String room_name;
+    private String roomName;
 
     @Builder
-    public Room(String room_name) {
-        this.room_name = room_name;
+    public Room(User user, String roomName) {
+        this.user = user;
+        this.roomName = roomName;
     }
 }
