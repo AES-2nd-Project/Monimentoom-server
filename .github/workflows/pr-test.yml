@@ -15,10 +15,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: application.yml 파일 설정
+      - name: application.yaml 파일 설정
         run : |
           mkdir -p src/main/resources
-          echo "${{secrets.APPLICATION_YML}}" > ./src/main/resources/application.yml
+          echo "${{secrets.APPLICATION_YML}}" > ./src/main/resources/application.yaml
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
