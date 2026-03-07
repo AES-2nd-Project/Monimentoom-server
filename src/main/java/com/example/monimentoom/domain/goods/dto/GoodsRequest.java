@@ -9,5 +9,5 @@ public class GoodsRequest {
     private String name;
     private String description;
     private String imageUrl;
-    private Number price;
+    private Integer price;
 }
