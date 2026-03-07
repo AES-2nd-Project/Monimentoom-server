@@ -3,6 +3,7 @@ name: Deploy Spring Boot to EC2
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   # 잡을 하나로 합쳐서 cicdtest.jar 파일 유지시키기
@@ -60,6 +61,12 @@ jobs:
         username: ${{secrets.SSH_USER}}
         key: ${{secrets.SSH_PRIVATE_KEY}}
         script_stop: true
+        # cicdtest.jar를 직접실행하기에서 docker compose 실행하도록 바꿈
         script: |
-          sudo fuser -k 8080/tcp || true
-          nohup java -jar /home/ubuntu/cicdtest.jar > /home/ubuntu/output.log 2>&1 &
+          # EC2에 접속해서
+          cd /home/ubuntu
+          # 1. 기존 컨테이너 중지 및 삭제 (이미 실행 중일 수 있으니)
+          docker-compose down
+          # 2. 새로운 jar 파일을 인식하여 백그라운드에서 컨테이너 실행
+          # (이미지 빌드가 아닌 컨테이너 생성 및 실행만 수행)
+          docker-compose up -d
