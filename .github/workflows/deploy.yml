@@ -35,25 +35,24 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
-
+    # 1. jar 파일 만들기(Dockerfile에서 사용)
     - name: Build with Gradle Wrapper
       run: ./gradlew build
-
-    - name: 빌드된 파일 이름 변경하기
-      run: |
-        # plain.jar는 제외하고 진짜 실행 파일만 찾아서 cicdtest.jar로 변경
-        JAR_FILE=$(ls build/libs/*.jar | grep -v plain | head -n 1)
-        mv $JAR_FILE ./cicdtest.jar
-
-    - name: SCP로 EC2에 빌드된 파일 전송하기
-      uses: appleboy/scp-action@master
+    # 2. 도커허브 로그인
+    - name: 도커허브 로그인
+      uses: docker/login-action@v3
       with:
-        host: ${{secrets.SERVER_IP}}
-        username: ${{secrets.SSH_USER}}
-        key: ${{secrets.SSH_PRIVATE_KEY}}
-        source: cicdtest.jar
-        target: /home/ubuntu
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    # 3. Docker 이미지 빌드 및 푸시 (파일전송 방식에서 변경)
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/monimentoom-spring:latest
 
+    # 4. EC2에 접속해서 명령어만 내림
     - name: SSH로 EC2에 접속 및 배포 실행
       uses: appleboy/ssh-action@master
       with:
@@ -63,10 +62,10 @@ jobs:
         script_stop: true
         # cicdtest.jar를 직접실행하기에서 docker compose 실행하도록 바꿈
         script: |
-          # EC2에 접속해서
           cd /home/ubuntu
-          # 1. 기존 컨테이너 중지 및 삭제 (이미 실행 중일 수 있으니)
-          docker-compose down
-          # 2. 새로운 jar 파일을 인식하여 백그라운드에서 컨테이너 실행
-          # (이미지 빌드가 아닌 컨테이너 생성 및 실행만 수행)
+          # 최신 이미지 내려받기
+          docker-compose pull
+          # 컨테이너 재시작 (새 이미지 적용)
           docker-compose up -d
+          # 미사용 이미지 정리 (용량 확보)
+          docker image prune -f
