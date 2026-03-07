@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -26,12 +28,13 @@ public class Goods {
     private String imageUrl;
 
     private String description;
-
+    private Number price;
     @Builder
-    public Goods(User user, String name, String imageUrl, String description) {
+    public Goods(User user, String name, String imageUrl, String description, Number price) {
         this.user = user;
         this.name = name;
         this.imageUrl = imageUrl;
         this.description = description;
+        this.price = price;
     }
 }
