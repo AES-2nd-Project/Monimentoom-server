@@ -15,9 +15,9 @@ public class GoodsController {
 
     private final GoodsService goodsService;
 
-    @GetMapping
-    public ResponseEntity<Goods> getGoods(){
-        return goodsService.
-    }
+//    @GetMapping
+//    public ResponseEntity<Goods> getGoods(){
+//        return goodsService.
+//    }
 
 }

@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Goods {
     @Id
@@ -24,14 +23,22 @@ public class Goods {
 
     @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
+    @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
     private String description;
-    private Number price;
+    private Integer price;
+
     @Builder
-    public Goods(User user, String name, String imageUrl, String description, Number price) {
+    public Goods(User user, String name, String imageUrl, String description, Integer price) {
         this.user = user;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.price = price;
+    }
+
+    public void update(String name, String imageUrl, String description, Integer price) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.description = description;

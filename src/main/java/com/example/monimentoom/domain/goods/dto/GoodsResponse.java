@@ -1,31 +1,51 @@
 package com.example.monimentoom.domain.goods.dto;
 
 import com.example.monimentoom.domain.goods.Goods;
+import com.example.monimentoom.domain.position.Position;
+import com.example.monimentoom.domain.position.dto.PositionResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class GoodsResponse {
-    private Long goodsId;
+    private Long id;
     private Long userId;
     private String name;
     private String description;
     private String imageUrl;
-    private Number price;
+    private Integer price;
+
+    /** 중복 배치 대응 */
+    private List<PositionResponse> positions;
 
     public static GoodsResponse from(Goods goods){
         return GoodsResponse.builder()
-                .goodsId(goods.getId())
+                .id(goods.getId())
                 .userId(goods.getUser().getId())
                 .name(goods.getName())
                 .description(goods.getDescription())
                 .imageUrl(goods.getImageUrl())
                  .price(goods.getPrice())
+                .build();
+    }
+
+    // position 포함 상세 조회용
+    public static GoodsResponse of(Goods goods, List<PositionResponse> positions) {
+        return GoodsResponse.builder()
+                .id(goods.getId())
+                .userId(goods.getUser().getId())
+                .name(goods.getName())
+                .description(goods.getDescription())
+                .imageUrl(goods.getImageUrl())
+                .price(goods.getPrice())
+                .positions(positions)
                 .build();
     }
 }
