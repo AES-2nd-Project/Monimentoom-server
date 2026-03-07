@@ -46,7 +46,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     # 3. Docker 이미지 빌드 및 푸시 (파일전송 방식에서 변경)
     - name: Build and push Docker image
-      uses: docker/build-push-action@5
+      uses: docker/build-push-action@v5
       with:
         context: .
         push: true
