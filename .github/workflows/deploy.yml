@@ -65,5 +65,8 @@ jobs:
         script: |
           # EC2에 접속해서
           cd /home/ubuntu
-          # 이미 실행 중인 컨테이너가 있다면 끄고, 새로 받은 jar를 반영해서 다시 띄워라
-          docker-compose up -d --build
+          # 1. 기존 컨테이너 중지 및 삭제 (이미 실행 중일 수 있으니)
+          docker-compose down
+          # 2. 새로운 jar 파일을 인식하여 백그라운드에서 컨테이너 실행
+          # (이미지 빌드가 아닌 컨테이너 생성 및 실행만 수행)
+          docker-compose up -d
