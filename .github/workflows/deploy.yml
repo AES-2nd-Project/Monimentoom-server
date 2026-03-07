@@ -61,6 +61,9 @@ jobs:
         username: ${{secrets.SSH_USER}}
         key: ${{secrets.SSH_PRIVATE_KEY}}
         script_stop: true
+        # cicdtest.jar를 직접실행하기에서 docker compose 실행하도록 바꿈
         script: |
-          sudo fuser -k 8080/tcp || true
-          nohup java -jar /home/ubuntu/cicdtest.jar > /home/ubuntu/output.log 2>&1 &
+          # EC2에 접속해서
+          cd /home/ubuntu
+          # 이미 실행 중인 컨테이너가 있다면 끄고, 새로 받은 jar를 반영해서 다시 띄워라
+          docker-compose up -d --build
