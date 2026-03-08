@@ -53,13 +53,19 @@ public class RoomService {
         return RoomResponse.from(room);
     }
 
-    public void resetRoom(long room_id) {
-        positionRepository.deleteByRoomId(room_id);
+    public void resetRoom(long roomId) {
+        positionRepository.deleteByRoomId(roomId);
     }
 
-    // TODO: room 1개일땐 삭제못하게 해야할지? -> 0개일때 랜덤방문도 어떻게 할지 생각 필요
-    public void deleteRoom(long room_id) {
-        roomRepository.deleteById(room_id);
+    public void deleteRoom(long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+        Long userId = room.getUser().getId();
+        Long roomCount = roomRepository.countByUserId(userId);
+        if (roomCount <= 1) {
+            throw new IllegalArgumentException("방은 최소 1개 있어야 합니다.");
+        }
+        roomRepository.deleteById(roomId);
     }
 
 }

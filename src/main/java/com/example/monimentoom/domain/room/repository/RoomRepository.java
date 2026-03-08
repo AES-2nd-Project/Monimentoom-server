@@ -11,4 +11,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             select r from Room r join fetch r.user where r.user.nickname = :nickname
             """)
     List<Room> findByUserNickname(String nickname);
+
+    Long countByUserId(Long userId);
 }
