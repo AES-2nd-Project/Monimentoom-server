@@ -10,6 +10,7 @@ import com.example.monimentoom.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -30,10 +31,17 @@ public class RoomService {
 
     public RoomResponse getRandomRoom() {
         long count = roomRepository.count();
+        if (count == 0) {
+            throw new IllegalArgumentException("방이 존재하지 않습니다.");
+        }
         int randomIndex = random.nextInt((int) count);
         // randomIndex 개의 page 중에서 한개만 가져온다
         // LIMIT 1 OFFSET randomIndex(randomIndex 개만큼 건너뛰고 한개 가져와라)와 같은 의미
         PageRequest page = PageRequest.of(randomIndex, 1);
+        List<Room> rooms = roomRepository.findAll(page).getContent();
+        if (rooms.isEmpty()) {
+            throw new IllegalArgumentException("방 목록이 비었습니다. 다시 시도해주세요.");
+        }
         return RoomResponse.from(
                 roomRepository.findAll(page)
                         .getContent()
@@ -49,14 +57,16 @@ public class RoomService {
                 .user(user)
                 .roomName(request.getRoomName())
                 .build();
-        roomRepository.save(room);
-        return RoomResponse.from(room);
+        Room saved = roomRepository.save(room);
+        return RoomResponse.from(saved);
     }
 
+    @Transactional
     public void resetRoom(long roomId) {
         positionRepository.deleteByRoomId(roomId);
     }
 
+    @Transactional
     public void deleteRoom(long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));

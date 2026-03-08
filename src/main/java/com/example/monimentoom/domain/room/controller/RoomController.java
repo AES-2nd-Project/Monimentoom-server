@@ -2,8 +2,8 @@ package com.example.monimentoom.domain.room.controller;
 
 import com.example.monimentoom.domain.room.dto.RoomRequest;
 import com.example.monimentoom.domain.room.dto.RoomResponse;
-import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.service.RoomService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class RoomController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<RoomResponse> createRoom(@RequestBody RoomRequest request) {
+    public ResponseEntity<RoomResponse> createRoom(@Valid @RequestBody RoomRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(request));
     }
 
