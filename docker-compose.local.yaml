@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  local-mysql: # DB만
+    image: mysql:8.0
+    container_name: monimentoom-mysql-local
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password # 간단하게 테스트용 비밀번호
+      MYSQL_DATABASE: monimentoom_local
+      TZ: Asia/Seoul
+    ports:
+      - "3307:3306" # 자꾸 로컬 mysql이 3306 점유함;
+    volumes:
+      - mysql-data-local:/var/lib/mysql
+
+volumes:
+  mysql-data-local: # 볼륨 EC2랑 안 겹치게 분리
