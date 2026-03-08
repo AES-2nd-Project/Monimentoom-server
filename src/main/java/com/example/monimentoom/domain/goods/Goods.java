@@ -44,10 +44,4 @@ public class Goods {
         this.positions = (positions != null) ? positions : Collections.emptyList();
     }
 
-    public void update(String name, String imageUrl, String description, Integer price) {
-        this.name = name;
-        this.imageUrl = imageUrl;
-        this.description = description;
-        this.price = price;
-    }
 }

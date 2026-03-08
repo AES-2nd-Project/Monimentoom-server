@@ -52,4 +52,8 @@ public class Position {
         this.widthUnit = widthUnit;
         this.heightUnit = heightUnit;
     }
+
+    public void update(Room room, Integer x, Integer y, WallSide wallSide, Integer widthUnit, Integer heightUnit) {
+
+    }
 }
