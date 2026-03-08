@@ -3,6 +3,7 @@ package com.example.monimentoom.domain.goods.controller;
 import com.example.monimentoom.domain.goods.dto.GoodsRequest;
 import com.example.monimentoom.domain.goods.dto.GoodsResponse;
 import com.example.monimentoom.domain.goods.service.GoodsService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class GoodsController {
     @PostMapping("/{userId}")
     public ResponseEntity<GoodsResponse> addGoods(
             @PathVariable Long userId,
-            @RequestBody GoodsRequest request
+            @Valid @RequestBody GoodsRequest request
             ){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(goodsService.createGoods(userId, request));

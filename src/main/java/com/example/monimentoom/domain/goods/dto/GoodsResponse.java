@@ -25,15 +25,9 @@ public class GoodsResponse {
     /** 중복 배치 대응 */
     private List<PositionResponse> positions;
 
-    public static GoodsResponse from(Goods goods){
-        return GoodsResponse.builder()
-                .id(goods.getId())
-                .userId(goods.getUser().getId())
-                .name(goods.getName())
-                .description(goods.getDescription())
-                .imageUrl(goods.getImageUrl())
-                 .price(goods.getPrice())
-                .build();
+    /** 현재 배치되지 않음 = postion : null이지만 빈 배열이 더 편할까? */
+    public static GoodsResponse from(Goods goods) {
+        return of(goods,null);
     }
 
     // position 포함 상세 조회용

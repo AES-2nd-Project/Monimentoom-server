@@ -1,5 +1,6 @@
 package com.example.monimentoom.domain.goods;
 
+import com.example.monimentoom.domain.position.Position;
 import com.example.monimentoom.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,13 +32,18 @@ public class Goods {
     private String description;
     private Integer price;
 
+
+    @OneToMany(mappedBy = "goods", fetch = FetchType.LAZY)
+    private List<Position> positions = new ArrayList<>();
+
     @Builder
-    public Goods(User user, String name, String imageUrl, String description, Integer price) {
+    public Goods(User user, String name, String imageUrl, String description, Integer price, List<Position> positions) {
         this.user = user;
         this.name = name;
         this.imageUrl = imageUrl;
         this.description = description;
         this.price = price;
+        this.positions = positions;
     }
 
     public void update(String name, String imageUrl, String description, Integer price) {
