@@ -1,7 +1,6 @@
 package com.example.monimentoom.domain.position.dto;
 
 import com.example.monimentoom.domain.position.type.WallSide;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

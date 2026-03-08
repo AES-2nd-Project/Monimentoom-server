@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PositionService {
     private final PositionRepository positionRepository;
-    private final UserRepository userRepository;
     private final GoodsRepository goodsRepository;
     private final RoomRepository roomRepository;
 
@@ -60,9 +59,6 @@ public class PositionService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 위치 정보입니다."));
         Room room = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
-
-        Goods goods = goodsRepository.findById(request.getGoodsId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 굿즈입니다."));
 
         position.update(room, request.getX(), request.getY(), request.getWallSide(), request.getWidthUnit(), request.getHeightUnit());
 
