@@ -1,4 +1,4 @@
-package com.example.monimentoom.domain.room;
+package com.example.monimentoom.domain.room.model;
 
 import com.example.monimentoom.domain.user.User;
 import jakarta.persistence.*;
@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "rooms")
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
