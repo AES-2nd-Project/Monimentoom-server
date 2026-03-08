@@ -1,4 +1,8 @@
 package com.example.monimentoom.domain.user.test;
 
-public interface UserRepository {
+
+import com.example.monimentoom.domain.user.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TestUserRepository extends JpaRepository<User, Long> {
 }
