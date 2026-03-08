@@ -7,9 +7,9 @@ import com.example.monimentoom.domain.goods.repository.GoodsRepository;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.user.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final UserRepository userRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GoodsResponse createGoods(
             Long userId, GoodsRequest request
     ){

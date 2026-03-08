@@ -15,27 +15,25 @@ import org.springframework.web.bind.annotation.*;
 public class PositionController {
     private final PositionService positionService;
 
-    @PostMapping("/{id}")
+    @PostMapping
     public ResponseEntity<PositionResponse> addPosition(
-            @PathVariable Long userId,
             @Valid @RequestBody PositionRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(positionService.createPosition(userId, request));
+                .body(positionService.createPosition(request));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<PositionResponse> updatePosition(
-            @PathVariable Long userId,
             @PathVariable Long id,
             @Valid @RequestBody PositionRequest request
     ){
-        return ResponseEntity.ok(positionService.updatePosition(userId, id, request));
+        return ResponseEntity.ok(positionService.updatePosition(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePosition(@PathVariable Long id, @PathVariable Long userId){
-        positionService.deletePosition(userId, id);
+    public ResponseEntity<Void> deletePosition(@PathVariable Long id){
+        positionService.deletePosition(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

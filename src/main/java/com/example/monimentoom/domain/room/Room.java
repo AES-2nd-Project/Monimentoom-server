@@ -21,11 +21,11 @@ public class Room {
     private User user;
 
     @Column(nullable = false, unique = true)
-    private String roomName;
+    private String name;
 
     @Builder
     public Room(User user, String roomName) {
         this.user = user;
-        this.roomName = roomName;
+        this.name = roomName;
     }
 }
