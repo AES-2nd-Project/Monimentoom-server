@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,6 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final PositionRepository positionRepository;
-    private final Random random = new Random();
 
     public List<RoomResponse> getRoomListByNickname(String nickname) {
         return roomRepository.findByUserNickname(nickname).stream()
@@ -33,7 +33,7 @@ public class RoomService {
         long count = roomRepository.count();
         if (count == 0) throw new IllegalArgumentException("방이 존재하지 않습니다.");
         // ID 기반 랜덤 샘플링
-        Long randomId = (long) (Math.random() * count) + 1;
+        Long randomId = ThreadLocalRandom.current().nextLong(1, count + 1);
         // 해당 ID보다 크거나 같은 첫 번째 데이터를 가져옴
         Room room = roomRepository.findFirstByIdGreaterThanEqual(randomId)
                 .orElseGet(() ->
