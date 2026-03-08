@@ -57,7 +57,7 @@ public class PositionService {
      * 굿즈 위치, 크기 변경 - 처음 놓는 거랑, 변경 시키는 거랑 분리하는게 정말 더 좋은가?
      */
     @Transactional
-    public PositionResponse patchPosition(Long userId, Long positionId, PositionRequest request) {
+    public PositionResponse updatePosition(Long userId, Long positionId, PositionRequest request) {
 //        User user = userRepository.findById(userId)
 //                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
