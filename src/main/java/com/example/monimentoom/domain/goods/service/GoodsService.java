@@ -1,11 +1,10 @@
 package com.example.monimentoom.domain.goods.service;
 
-import com.example.monimentoom.domain.goods.Goods;
+import com.example.monimentoom.domain.goods.model.Goods;
 import com.example.monimentoom.domain.goods.dto.GoodsRequest;
 import com.example.monimentoom.domain.goods.dto.GoodsResponse;
 import com.example.monimentoom.domain.goods.repository.GoodsRepository;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
-import com.example.monimentoom.domain.position.repository.PositionRepository;
 import com.example.monimentoom.domain.user.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;

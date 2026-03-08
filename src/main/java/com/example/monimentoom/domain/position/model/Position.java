@@ -1,7 +1,8 @@
-package com.example.monimentoom.domain.position;
+package com.example.monimentoom.domain.position.model;
 
 
-import com.example.monimentoom.domain.goods.Goods;
+import com.example.monimentoom.domain.goods.model.Goods;
+import com.example.monimentoom.domain.position.type.WallSide;
 import com.example.monimentoom.domain.room.Room;
 import jakarta.persistence.*;
 import lombok.Builder;

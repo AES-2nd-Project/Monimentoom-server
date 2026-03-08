@@ -1,9 +1,8 @@
 package com.example.monimentoom.domain.position.service;
 
-import com.example.monimentoom.domain.goods.Goods;
-import com.example.monimentoom.domain.goods.dto.GoodsResponse;
+import com.example.monimentoom.domain.goods.model.Goods;
 import com.example.monimentoom.domain.goods.repository.GoodsRepository;
-import com.example.monimentoom.domain.position.Position;
+import com.example.monimentoom.domain.position.model.Position;
 import com.example.monimentoom.domain.position.dto.PositionRequest;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.position.repository.PositionRepository;

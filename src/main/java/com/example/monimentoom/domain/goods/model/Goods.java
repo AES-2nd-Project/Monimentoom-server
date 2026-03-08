@@ -1,6 +1,6 @@
-package com.example.monimentoom.domain.goods;
+package com.example.monimentoom.domain.goods.model;
 
-import com.example.monimentoom.domain.position.Position;
+import com.example.monimentoom.domain.position.model.Position;
 import com.example.monimentoom.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -42,6 +42,10 @@ public class Goods {
         this.description = description;
         this.price = price;
         this.positions = (positions != null) ? positions : Collections.emptyList();
+    }
+
+    public boolean isPlaced() {
+        return this.positions != null && !this.positions.isEmpty();
     }
 
 }

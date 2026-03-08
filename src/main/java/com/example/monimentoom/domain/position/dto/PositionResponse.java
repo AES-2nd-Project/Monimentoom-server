@@ -1,7 +1,7 @@
 package com.example.monimentoom.domain.position.dto;
 
-import com.example.monimentoom.domain.position.Position;
-import com.example.monimentoom.domain.position.WallSide;
+import com.example.monimentoom.domain.position.model.Position;
+import com.example.monimentoom.domain.position.type.WallSide;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

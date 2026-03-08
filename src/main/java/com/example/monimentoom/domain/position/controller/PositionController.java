@@ -30,8 +30,7 @@ public class PositionController {
             @PathVariable Long id,
             @Valid @RequestBody PositionRequest request
     ){
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(positionService.updatePosition(userId, id, request));
+        return ResponseEntity.ok(positionService.updatePosition(userId, id, request));
     }
 
     @DeleteMapping("/{id}")
