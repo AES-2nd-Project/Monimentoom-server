@@ -54,5 +54,6 @@ target/
 ### Applicaion Secret 제외
 *secret*.yaml
 *secret*.yml
-*local*.yml
-*local*.yaml
+
+### local appliciaon.yaml 제외
+application-local.yaml
