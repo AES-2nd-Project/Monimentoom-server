@@ -31,23 +31,17 @@ public class RoomService {
 
     public RoomResponse getRandomRoom() {
         long count = roomRepository.count();
-        if (count == 0) {
-            throw new IllegalArgumentException("방이 존재하지 않습니다.");
-        }
-        int randomIndex = random.nextInt((int) count);
-        // randomIndex 개의 page 중에서 한개만 가져온다
-        // LIMIT 1 OFFSET randomIndex(randomIndex 개만큼 건너뛰고 한개 가져와라)와 같은 의미
-        PageRequest page = PageRequest.of(randomIndex, 1);
-        List<Room> rooms = roomRepository.findAll(page).getContent();
-        if (rooms.isEmpty()) {
-            throw new IllegalArgumentException("방 목록이 비었습니다. 다시 시도해주세요.");
-        }
-        return RoomResponse.from(
-                roomRepository.findAll(page)
-                        .getContent()
-                        // 첫 번째 요소 꺼내기
-                        .get(0)
-        );
+        if (count == 0) throw new IllegalArgumentException("방이 존재하지 않습니다.");
+        // ID 기반 랜덤 샘플링
+        Long randomId = (long) (Math.random() * count) + 1;
+        // 해당 ID보다 크거나 같은 첫 번째 데이터를 가져옴
+        Room room = roomRepository.findFirstByIdGreaterThanEqual(randomId)
+                .orElseGet(() ->
+                        // 만약 마지막 ID 보다 큰 값이 나왔다면 다시 첫 번째 데이터를 반환
+                        roomRepository.findFirstByOrderByIdAsc()
+                                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."))
+                );
+        return RoomResponse.from(room);
     }
 
     public RoomResponse createRoom(RoomRequest request) {
