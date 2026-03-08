@@ -1,6 +1,7 @@
-package com.example.monimentoom.domain.room;
+package com.example.monimentoom.domain.room.model;
 
 import com.example.monimentoom.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,21 +12,23 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "rooms")
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false, unique = true)
-    private String roomName;
+    private String name;
 
     @Builder
-    public Room(User user, String roomName) {
+    public Room(User user, String name) {
         this.user = user;
-        this.roomName = roomName;
+        this.name = name;
     }
 }

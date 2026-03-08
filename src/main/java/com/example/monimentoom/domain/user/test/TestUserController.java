@@ -1,10 +1,10 @@
 package com.example.monimentoom.domain.user.test;
 
-import com.example.monimentoom.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import com.example.monimentoom.domain.user.User;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
