@@ -1,5 +1,6 @@
 package com.example.monimentoom.domain.room.dto;
 
+import com.example.monimentoom.domain.room.model.Room;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,4 +10,14 @@ public class RoomResponse {
     Long id;
     Long userId;
     String roomName;
+
+    public static RoomResponse from(Room room) {
+        if (room == null) return null;
+        return RoomResponse.builder()
+                .id(room.getId())
+                .userId(room.getUser().getId())
+                .roomName(room.getRoomName())
+                .build();
+
+    }
 }

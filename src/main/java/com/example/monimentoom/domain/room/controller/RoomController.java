@@ -17,7 +17,7 @@ import java.util.List;
 public class RoomController {
     private final RoomService roomService;
 
-    @GetMapping("/{nickname}")
+    @GetMapping("/list/{nickname}")
     public ResponseEntity<List<Room>> getRoomsByNickname(@PathVariable String nickname) {
         return ResponseEntity.ok(roomService.getRoomListByNickname(nickname));
     }

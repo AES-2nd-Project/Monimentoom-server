@@ -46,11 +46,7 @@ public class RoomService {
                 .roomName(request.getRoomName())
                 .build();
         roomRepository.save(room);
-        return RoomResponse.builder()
-                .id(room.getId())
-                .userId(room.getUser().getId())
-                .roomName(room.getRoomName())
-                .build();
+        return RoomResponse.from(room);
     }
 
     public void resetRoom(long room_id) {
