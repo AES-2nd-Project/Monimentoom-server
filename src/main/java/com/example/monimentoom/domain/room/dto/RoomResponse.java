@@ -16,7 +16,7 @@ public class RoomResponse {
         return RoomResponse.builder()
                 .id(room.getId())
                 .userId(room.getUser().getId())
-                .roomName(room.getRoomName())
+                .roomName(room.getName())
                 .build();
 
     }
