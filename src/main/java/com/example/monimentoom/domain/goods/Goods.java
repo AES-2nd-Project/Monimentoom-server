@@ -6,10 +6,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -32,8 +31,7 @@ public class Goods {
     private String description;
     private Integer price;
 
-
-    @OneToMany(mappedBy = "goods", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "goods", cascade = CascadeType.ALL, orphanRemoval = true , fetch = FetchType.LAZY)
     private List<Position> positions = new ArrayList<>();
 
     @Builder
@@ -43,7 +41,7 @@ public class Goods {
         this.imageUrl = imageUrl;
         this.description = description;
         this.price = price;
-        this.positions = positions;
+        this.positions = (positions != null) ? positions : Collections.emptyList();
     }
 
     public void update(String name, String imageUrl, String description, Integer price) {

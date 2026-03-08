@@ -18,7 +18,7 @@ public class GoodsController {
 
     private final GoodsService goodsService;
 
-    /** 전체 사용자의 goods 목록 조회 */
+    /** 특정 사용자의 goods 전체 목록 조회 */
     // TODO : JWT 헤더 추출 로직 정립 전까지 임시로 path variable 사용
     @GetMapping("/{userId}")
     public ResponseEntity<List<GoodsResponse>> getGoods(

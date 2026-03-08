@@ -27,6 +27,7 @@ public class PositionResponse {
         return PositionResponse.builder()
                 .id(position.getId())
                 .roomId(position.getRoom().getId())
+                .goodsId(position.getGoods().getId())
                 .wallSide(position.getWall())
                 .x(position.getX())
                 .y(position.getY())

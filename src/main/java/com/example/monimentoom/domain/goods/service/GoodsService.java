@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GoodsService {
     private final GoodsRepository goodsRepository;
-    private final PositionRepository positionRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -28,9 +27,6 @@ public class GoodsService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        // 테스트용
-        //  User user = userRepository.findById(1L).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-
         Goods goods = Goods.builder()
                 .user(user)
                 .name(request.getName())
@@ -38,8 +34,7 @@ public class GoodsService {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .build();
-        // 처음 추가 시에는 postion을 null로 두어 미배치 상태로 설정.
-        return GoodsResponse.of(goodsRepository.save(goods), null);
+        return GoodsResponse.from(goodsRepository.save(goods));
     }
 
     public List<GoodsResponse> getGoods(Long userId) {
