@@ -22,20 +22,24 @@ public class RoomService {
     private final PositionRepository positionRepository;
     private final Random random = new Random();
 
-    public List<Room> getRoomListByNickname(String nickname) {
-        return roomRepository.findByUserNickname(nickname);
+    public List<RoomResponse> getRoomListByNickname(String nickname) {
+        return roomRepository.findByUserNickname(nickname).stream()
+                .map(RoomResponse::from)
+                .toList();
     }
 
-    public Room getRandomRoom() {
+    public RoomResponse getRandomRoom() {
         long count = roomRepository.count();
         int randomIndex = random.nextInt((int) count);
         // randomIndex 개의 page 중에서 한개만 가져온다
         // LIMIT 1 OFFSET randomIndex(randomIndex 개만큼 건너뛰고 한개 가져와라)와 같은 의미
         PageRequest page = PageRequest.of(randomIndex, 1);
-        return roomRepository.findAll(page)
-                .getContent()
-                // 첫 번째 요소 꺼내기
-                .get(0);
+        return RoomResponse.from(
+                roomRepository.findAll(page)
+                        .getContent()
+                        // 첫 번째 요소 꺼내기
+                        .get(0)
+        );
     }
 
     public RoomResponse createRoom(RoomRequest request) {
@@ -57,8 +61,5 @@ public class RoomService {
     public void deleteRoom(long room_id) {
         roomRepository.deleteById(room_id);
     }
-    // 후순위
-//   comment room에 맞는 댓글 가져오기 이건 comment에 넣는게 맞을듯
-    // rooms/setPrimary -> primary column 있어야할듯
 
 }

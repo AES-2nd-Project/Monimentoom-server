@@ -18,12 +18,12 @@ public class RoomController {
     private final RoomService roomService;
 
     @GetMapping("/list/{nickname}")
-    public ResponseEntity<List<Room>> getRoomsByNickname(@PathVariable String nickname) {
+    public ResponseEntity<List<RoomResponse>> getRoomsByNickname(@PathVariable String nickname) {
         return ResponseEntity.ok(roomService.getRoomListByNickname(nickname));
     }
 
     @GetMapping("/random-visit")
-    public ResponseEntity<Room> getRandomRoom() {
+    public ResponseEntity<RoomResponse> getRandomRoom() {
         return ResponseEntity.ok(roomService.getRandomRoom());
     }
 

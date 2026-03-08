@@ -7,5 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
+    @Query("""
+            select r from Room r join fetch r.user where r.user.nickname = :nickname
+            """)
     List<Room> findByUserNickname(String nickname);
 }
