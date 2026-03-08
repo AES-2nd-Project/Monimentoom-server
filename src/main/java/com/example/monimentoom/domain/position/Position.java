@@ -54,6 +54,11 @@ public class Position {
     }
 
     public void update(Room room, Integer x, Integer y, WallSide wallSide, Integer widthUnit, Integer heightUnit) {
-
+        this.room = room;
+        this.wall = wallSide;
+        this.x = x;
+        this.y = y;
+        this.widthUnit = widthUnit;
+        this.heightUnit = heightUnit;
     }
 }

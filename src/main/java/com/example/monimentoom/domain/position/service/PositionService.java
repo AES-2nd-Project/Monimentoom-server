@@ -28,11 +28,16 @@ public class PositionService {
      */
     @Transactional
     public PositionResponse createPosition(Long userId, PositionRequest request) {
-        // TODO : 추후 해당 사용자가 맞는 지 검토 로직,
+        // TODO : 추후 해당 사용자가 맞는 지 임시 검토 로직,
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
         Room room = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+
+        if (!room.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("이 방을 수정할 권한이 없습니다.");
+        }
+
         Goods goods = goodsRepository.findById(request.getGoodsId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 굿즈입니다."));
         Position position = Position.builder()
@@ -53,8 +58,8 @@ public class PositionService {
      */
     @Transactional
     public PositionResponse patchPosition(Long userId, Long positionId, PositionRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         Position position = positionRepository.findById(positionId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 위치 정보입니다."));
@@ -65,6 +70,9 @@ public class PositionService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 굿즈입니다."));
 
         position.update(room, request.getX(), request.getY(), request.getWallSide(), request.getWidthUnit(), request.getHeightUnit());
+
+        // update이므로 Transactional로 save 대체 하였음.
+        return PositionResponse.from(position);
     }
 
     /**
@@ -72,8 +80,8 @@ public class PositionService {
      */
     @Transactional
     public void deletePosition(Long userId, Long positionId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         Position position = positionRepository.findById(positionId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 위치 정보입니다."));
