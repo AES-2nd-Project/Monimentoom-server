@@ -52,7 +52,7 @@ public class RoomService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         Room room = Room.builder()
                 .user(user)
-                .roomName(request.getRoomName())
+                .name(request.getName())
                 .build();
         Room saved = roomRepository.save(room);
         return RoomResponse.from(saved);

@@ -27,8 +27,8 @@ public class Room {
     private String name;
 
     @Builder
-    public Room(User user, String roomName) {
+    public Room(User user, String name) {
         this.user = user;
-        this.name = roomName;
+        this.name = name;
     }
 }
