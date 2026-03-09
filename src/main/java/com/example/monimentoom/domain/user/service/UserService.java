@@ -1,6 +1,7 @@
 package com.example.monimentoom.domain.user.service;
 
 import com.example.monimentoom.domain.user.dto.UserLoginRequest;
+import com.example.monimentoom.domain.user.dto.UserResponse;
 import com.example.monimentoom.domain.user.dto.UserSignupRequest;
 import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
@@ -14,25 +15,31 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void createUser(UserSignupRequest request) {
+    public UserResponse createUser(UserSignupRequest request) {
         if(userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
-
+        if(userRepository.existsByEmail(request.getNickname())) {
+            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+        }
         User user = User.builder()
                 .email(request.getEmail())
                 .nickname(request.getNickname())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
         userRepository.save(user);
+
+        return UserResponse.from( user.getId(), user.getEmail(), user.getNickname());
     }
 
-    public void loginUser(UserLoginRequest request){
+    public UserResponse loginUser(UserLoginRequest request){
         User user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다");
         }
+
+        return UserResponse.from( user.getId(), user.getEmail(), user.getNickname());
         // jwt 토큰 생성, 반환?
     }
 

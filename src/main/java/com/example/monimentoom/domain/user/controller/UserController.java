@@ -13,26 +13,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signup(@Valid @RequestBody UserSignupRequest request){
-        userService.createUser(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.createUser(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@Valid @RequestBody UserLoginRequest request) {
-        userService.loginUser(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.loginUser(request));
     }
 
+    // todo : 추후 jwt 토큰으로부터 userId 추출하여 처리
     @PostMapping("/logout")
-    public ResponseEntity<UserResponse> logout(Long userId){
+    public ResponseEntity<Void> logout(Long userId){
         userService.logoutUser(userId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
