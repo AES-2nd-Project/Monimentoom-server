@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(CustomException.class)
+    @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         ErrorCode errorCode = e.getErrorCode();
         ErrorResponse response = new ErrorResponse(
                 errorCode.getStatus(),
+                errorCode.getCode(),
                 errorCode.getMessage()
         );
         return ResponseEntity
@@ -21,11 +22,5 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    // 에러 응답 DTO
-    @Getter
-    @AllArgsConstructor
-    public static class ErrorResponse {
-        private HttpStatus status;
-        private String message;
-    }
+
 }
