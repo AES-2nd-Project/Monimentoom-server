@@ -1,8 +1,9 @@
 package com.example.monimentoom.domain.room.service;
 
 import com.example.monimentoom.domain.position.repository.PositionRepository;
-import com.example.monimentoom.domain.room.dto.RoomRequest;
+import com.example.monimentoom.domain.room.dto.RoomCreateRequest;
 import com.example.monimentoom.domain.room.dto.RoomResponse;
+import com.example.monimentoom.domain.room.dto.RoomUpdateRequest;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.model.User;
@@ -28,7 +29,6 @@ public class RoomService {
     }
 
     public RoomResponse getRandomRoom() {
-
         Long maxId = roomRepository.getMaxId();
         if (maxId == null) throw new IllegalArgumentException("방을 찾을 수 없습니다.");
 
@@ -45,7 +45,9 @@ public class RoomService {
         return RoomResponse.from(room);
     }
 
-    public RoomResponse createRoom(RoomRequest request) {
+    @Transactional
+    public RoomResponse createRoom(RoomCreateRequest request) {
+        // TODO: request의 userId 대신 현재 로그인한 유저아이디로 가져오도록
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         Room room = Room.builder()
@@ -57,12 +59,23 @@ public class RoomService {
     }
 
     @Transactional
-    public void resetRoom(long roomId) {
+    public RoomResponse updateRoom(Long id, RoomUpdateRequest request) {
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+        // TODO: 로그인 사용자와 방 소유자 일치 여부 검증
+        room.setName(request.getName());
+        return RoomResponse.from(room);
+    }
+
+    @Transactional
+    public void resetRoom(Long roomId) {
+        // TODO: 로그인 사용자와 방 소유자 일치 여부 검증(findById -> findByIdAndUserId로 변경 검토)
         positionRepository.deleteByRoomId(roomId);
     }
 
     @Transactional
-    public void deleteRoom(long roomId) {
+    public void deleteRoom(Long roomId) {
+        // TODO: 로그인 사용자와 방 소유자 일치 여부 검증
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
         Long userId = room.getUser().getId();
