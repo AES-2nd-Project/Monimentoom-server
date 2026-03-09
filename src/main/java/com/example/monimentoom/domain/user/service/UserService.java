@@ -15,6 +15,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void createUser(UserSignupRequest request) {
+        if(userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
 
         User user = User.builder()
                 .email(request.getEmail())
@@ -24,14 +27,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean loginUser(UserLoginRequest request){
+    public void loginUser(UserLoginRequest request){
         User user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다");
         }
         // jwt 토큰 생성, 반환?
-        return true;
     }
 
     public void logoutUser(Long userId){
