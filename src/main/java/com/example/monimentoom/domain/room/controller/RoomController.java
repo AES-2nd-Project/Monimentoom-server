@@ -33,9 +33,9 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getRandomRoom());
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<RoomResponse> updateRoom(@PathVariable Long id, @Valid @RequestBody RoomUpdateRequest request) {
-        return ResponseEntity.ok(roomService.updateRoom(id, request));
+    @PatchMapping("/{roomId}")
+    public ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId, @Valid @RequestBody RoomUpdateRequest request) {
+        return ResponseEntity.ok(roomService.updateRoom(roomId, request));
     }
 
 
