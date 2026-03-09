@@ -1,4 +1,4 @@
-package com.example.monimentoom.domain.user;
+package com.example.monimentoom.domain.user.model;
 
 import jakarta.persistence.*;
 import lombok.*;
