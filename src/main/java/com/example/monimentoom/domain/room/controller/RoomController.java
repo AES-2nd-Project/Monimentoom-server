@@ -18,7 +18,7 @@ import java.util.List;
 public class RoomController {
     private final RoomService roomService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<RoomResponse> createRoom(@Valid @RequestBody RoomCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(request));
     }
