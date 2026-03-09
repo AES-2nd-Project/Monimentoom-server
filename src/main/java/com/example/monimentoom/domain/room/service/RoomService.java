@@ -25,6 +25,7 @@ public class RoomService {
     private final PositionRepository positionRepository;
 
     public List<RoomResponse> getRoomListByNickname(String nickname) {
+        if (!userRepository.existsByNickname(nickname)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return roomRepository.findByUserNickname(nickname).stream()
                 .map(RoomResponse::from)
                 .toList();
