@@ -1,7 +1,8 @@
-package com.example.monimentoom.domain.position;
+package com.example.monimentoom.domain.position.model;
 
 
-import com.example.monimentoom.domain.goods.Goods;
+import com.example.monimentoom.domain.goods.model.Goods;
+import com.example.monimentoom.domain.position.type.WallSide;
 import com.example.monimentoom.domain.room.model.Room;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -47,6 +48,15 @@ public class Position {
         this.goods = goods;
         this.room = room;
         this.wall = wall;
+        this.x = x;
+        this.y = y;
+        this.widthUnit = widthUnit;
+        this.heightUnit = heightUnit;
+    }
+
+    public void update(Room room, Integer x, Integer y, WallSide wallSide, Integer widthUnit, Integer heightUnit) {
+        this.room = room;
+        this.wall = wallSide;
         this.x = x;
         this.y = y;
         this.widthUnit = widthUnit;

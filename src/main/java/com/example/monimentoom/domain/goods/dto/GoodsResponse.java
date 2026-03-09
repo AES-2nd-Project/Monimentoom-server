@@ -1,6 +1,6 @@
 package com.example.monimentoom.domain.goods.dto;
 
-import com.example.monimentoom.domain.goods.Goods;
+import com.example.monimentoom.domain.goods.model.Goods;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
