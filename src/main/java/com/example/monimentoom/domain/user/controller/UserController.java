@@ -1,13 +1,38 @@
 package com.example.monimentoom.domain.user.controller;
 
+import com.example.monimentoom.domain.user.dto.UserLoginRequest;
+import com.example.monimentoom.domain.user.dto.UserSignupRequest;
+import com.example.monimentoom.domain.user.dto.UserResponse;
 import com.example.monimentoom.domain.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/position")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    @PostMapping("/signup")
+    public ResponseEntity<UserResponse> signup(@Valid @RequestBody UserSignupRequest request){
+        userService.createUser(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponse> login(@Valid @RequestBody UserLoginRequest request) {
+        userService.loginUser(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<UserResponse> logout(Long userId){
+        userService.logoutUser(userId);
+        return ResponseEntity.ok().build();
+    }
 }
