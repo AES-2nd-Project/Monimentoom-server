@@ -1,19 +1,18 @@
 package com.example.monimentoom.domain.room.service;
 
 import com.example.monimentoom.domain.position.repository.PositionRepository;
-import com.example.monimentoom.domain.room.dto.RoomRequest;
+import com.example.monimentoom.domain.room.dto.RoomCreateRequest;
 import com.example.monimentoom.domain.room.dto.RoomResponse;
+import com.example.monimentoom.domain.room.dto.RoomUpdateRequest;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -47,7 +46,8 @@ public class RoomService {
         return RoomResponse.from(room);
     }
 
-    public RoomResponse createRoom(RoomRequest request) {
+    @Transactional
+    public RoomResponse createRoom(RoomCreateRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         Room room = Room.builder()
@@ -56,6 +56,14 @@ public class RoomService {
                 .build();
         Room saved = roomRepository.save(room);
         return RoomResponse.from(saved);
+    }
+
+    @Transactional
+    public RoomResponse updateRoom(Long id, RoomUpdateRequest request) {
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+        room.setName(request.getName());
+        return RoomResponse.from(room);
     }
 
     @Transactional

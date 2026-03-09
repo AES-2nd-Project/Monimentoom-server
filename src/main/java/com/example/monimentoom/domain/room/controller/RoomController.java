@@ -1,7 +1,8 @@
 package com.example.monimentoom.domain.room.controller;
 
-import com.example.monimentoom.domain.room.dto.RoomRequest;
+import com.example.monimentoom.domain.room.dto.RoomCreateRequest;
 import com.example.monimentoom.domain.room.dto.RoomResponse;
+import com.example.monimentoom.domain.room.dto.RoomUpdateRequest;
 import com.example.monimentoom.domain.room.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,11 @@ import java.util.List;
 public class RoomController {
     private final RoomService roomService;
 
+    @PostMapping
+    public ResponseEntity<RoomResponse> createRoom(@Valid @RequestBody RoomCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(request));
+    }
+
     @GetMapping("/list/{nickname}")
     public ResponseEntity<List<RoomResponse>> getRoomsByNickname(@PathVariable String nickname) {
         return ResponseEntity.ok(roomService.getRoomListByNickname(nickname));
@@ -27,10 +33,11 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getRandomRoom());
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<RoomResponse> createRoom(@Valid @RequestBody RoomRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(request));
+    @PatchMapping("/{id}")
+    public ResponseEntity<RoomResponse> updateRoom(@PathVariable Long id, @Valid @RequestBody RoomUpdateRequest request) {
+        return ResponseEntity.ok(roomService.updateRoom(id, request));
     }
+
 
     @DeleteMapping("/reset/{roomId}")
     public ResponseEntity<Void> resetRoom(@PathVariable Long roomId) {
