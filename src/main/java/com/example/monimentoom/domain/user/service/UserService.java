@@ -5,6 +5,7 @@ import com.example.monimentoom.domain.user.dto.UserResponse;
 import com.example.monimentoom.domain.user.dto.UserSignupRequest;
 import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
+import com.example.monimentoom.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
