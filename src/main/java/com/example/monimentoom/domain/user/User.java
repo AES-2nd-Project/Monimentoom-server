@@ -1,5 +1,6 @@
 package com.example.monimentoom.domain.user;
 
+import com.example.monimentoom.domain.room.model.Room;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "main_room_id")
+    private Room mainRoom;
+
     @Builder
     public User(String nickname, String email, String password) {
+
         this.nickname = nickname;
         this.email = email;
         this.password = password;
