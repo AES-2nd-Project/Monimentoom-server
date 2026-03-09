@@ -57,3 +57,4 @@ target/
 
 ### local appliciaon.yaml 제외
 application-local.yaml
+src/main/resources/schema.sql

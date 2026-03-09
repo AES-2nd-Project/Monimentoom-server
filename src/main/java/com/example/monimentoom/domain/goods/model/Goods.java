@@ -1,7 +1,7 @@
 package com.example.monimentoom.domain.goods.model;
 
 import com.example.monimentoom.domain.position.model.Position;
-import com.example.monimentoom.domain.user.User;
+import com.example.monimentoom.domain.user.model.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
