@@ -1,4 +1,4 @@
-package com.example.monimentoom.domain.user;
+package com.example.monimentoom.domain.user.model;
 
 import com.example.monimentoom.domain.room.model.Room;
 import jakarta.persistence.*;
@@ -26,7 +26,6 @@ public class User {
 
     @Builder
     public User(String nickname, String email, String password) {
-
         this.nickname = nickname;
         this.email = email;
         this.password = password;

@@ -5,7 +5,7 @@ import com.example.monimentoom.domain.goods.dto.GoodsRequest;
 import com.example.monimentoom.domain.goods.dto.GoodsResponse;
 import com.example.monimentoom.domain.goods.repository.GoodsRepository;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
-import com.example.monimentoom.domain.user.User;
+import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
