@@ -1,4 +1,4 @@
-package com.example.monimentoom.domain.user;
+package com.example.monimentoom.domain.user.model;
 
 import com.example.monimentoom.domain.room.model.Room;
 import com.fasterxml.jackson.annotation.JsonIgnore;

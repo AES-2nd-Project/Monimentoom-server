@@ -1,6 +1,6 @@
 package com.example.monimentoom.domain.room.model;
 
-import com.example.monimentoom.domain.user.User;
+import com.example.monimentoom.domain.user.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
