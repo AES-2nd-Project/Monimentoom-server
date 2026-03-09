@@ -1,5 +1,6 @@
 package com.example.monimentoom.domain.user.service;
 
+import com.example.monimentoom.domain.room.dto.RoomResponse;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.dto.UserLoginRequest;
@@ -68,12 +69,13 @@ public class UserService {
     }
 
     @Transactional
-    public void updateMainRoom(Long roomId) {
+    public RoomResponse updateMainRoom(Long roomId) {
         // TODO: 현재 유저와 roomId 유저 일치 검증 필요
         Room newMainRoom = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
         User user = newMainRoom.getUser();
 
         user.setMainRoom(newMainRoom);
+        return RoomResponse.from(newMainRoom);
     }
 }
