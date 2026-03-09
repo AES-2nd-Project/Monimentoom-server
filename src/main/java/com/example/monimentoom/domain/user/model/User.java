@@ -1,16 +1,20 @@
 package com.example.monimentoom.domain.user.model;
 
 import com.example.monimentoom.domain.room.model.Room;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "users", indexes = @Index(name="idx_nickname", columnList = "nickname"))
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -20,14 +24,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_room_id")
-    private Room mainRoom;
+    private Room mainRoom = null;
 
-    @Builder
-    public User(String nickname, String email, String password) {
-        this.nickname = nickname;
-        this.email = email;
-        this.password = password;
-    }
 }

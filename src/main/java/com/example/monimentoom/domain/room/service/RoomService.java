@@ -49,7 +49,7 @@ public class RoomService {
     public RoomResponse createRoom(RoomCreateRequest request) {
         // TODO: request의 userId 대신 현재 로그인한 유저아이디로 가져오도록
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
         Room room = Room.builder()
                 .user(user)
                 .name(request.getName())
@@ -59,8 +59,8 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponse updateRoom(Long id, RoomUpdateRequest request) {
-        Room room = roomRepository.findById(id)
+    public RoomResponse updateRoom(Long roomId, RoomUpdateRequest request) {
+        Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
         // TODO: 로그인 사용자와 방 소유자 일치 여부 검증
         room.setName(request.getName());
@@ -77,7 +77,7 @@ public class RoomService {
     public void deleteRoom(Long roomId) {
         // TODO: 로그인 사용자와 방 소유자 일치 여부 검증
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
         Long userId = room.getUser().getId();
         Long roomCount = roomRepository.countByUserId(userId);
         if (roomCount <= 1) {
