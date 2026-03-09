@@ -8,6 +8,8 @@ import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
+import com.example.monimentoom.exception.CustomException;
+import com.example.monimentoom.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +32,7 @@ public class RoomService {
 
     public RoomResponse getRandomRoom() {
         Long maxId = roomRepository.getMaxId();
-        if (maxId == null) throw new IllegalArgumentException("방을 찾을 수 없습니다.");
+        if (maxId == null) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
 
         Long minId = roomRepository.getMinId();
         long targetId = ThreadLocalRandom.current().nextLong(minId, maxId + 1);
@@ -40,7 +42,7 @@ public class RoomService {
         Room room = roomRepository.findFirstByIdGreaterThanEqual(targetId)
                 .orElseGet(() ->
                         roomRepository.findFirstRoom()
-                                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."))
+                                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND))
                 );
         return RoomResponse.from(room);
     }
@@ -49,7 +51,7 @@ public class RoomService {
     public RoomResponse createRoom(RoomCreateRequest request) {
         // TODO: request의 userId 대신 현재 로그인한 유저아이디로 가져오도록
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Room room = Room.builder()
                 .user(user)
                 .name(request.getName())
@@ -61,7 +63,7 @@ public class RoomService {
     @Transactional
     public RoomResponse updateRoom(Long roomId, RoomUpdateRequest request) {
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         // TODO: 로그인 사용자와 방 소유자 일치 여부 검증
         room.setName(request.getName());
         return RoomResponse.from(room);
@@ -77,11 +79,11 @@ public class RoomService {
     public void deleteRoom(Long roomId) {
         // TODO: 로그인 사용자와 방 소유자 일치 여부 검증
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         Long userId = room.getUser().getId();
         Long roomCount = roomRepository.countByUserId(userId);
         if (roomCount <= 1) {
-            throw new IllegalArgumentException("방은 최소 1개 있어야 합니다.");
+            throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_ROOM);
         }
         roomRepository.deleteById(roomId);
     }
