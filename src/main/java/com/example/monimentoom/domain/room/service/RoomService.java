@@ -46,6 +46,7 @@ public class RoomService {
         return RoomResponse.from(room);
     }
 
+    @Transactional
     public RoomResponse createRoom(RoomCreateRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
@@ -62,11 +63,7 @@ public class RoomService {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
         room.setName(request.getName());
-        return RoomResponse.builder()
-                .id(room.getId())
-                .userId(room.getUser().getId())
-                .name(room.getName())
-                .build();
+        return RoomResponse.from(room);
     }
 
     @Transactional
