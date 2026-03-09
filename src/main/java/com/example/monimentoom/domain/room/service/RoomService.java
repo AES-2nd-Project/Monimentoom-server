@@ -29,7 +29,6 @@ public class RoomService {
     }
 
     public RoomResponse getRandomRoom() {
-
         Long maxId = roomRepository.getMaxId();
         if (maxId == null) throw new IllegalArgumentException("방을 찾을 수 없습니다.");
 
@@ -67,12 +66,12 @@ public class RoomService {
     }
 
     @Transactional
-    public void resetRoom(long roomId) {
+    public void resetRoom(Long roomId) {
         positionRepository.deleteByRoomId(roomId);
     }
 
     @Transactional
-    public void deleteRoom(long roomId) {
+    public void deleteRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
         Long userId = room.getUser().getId();
