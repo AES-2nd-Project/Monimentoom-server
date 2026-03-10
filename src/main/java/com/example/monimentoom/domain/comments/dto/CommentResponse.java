@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentResponse {
+    private Long id;
     private String nickname;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
@@ -21,6 +22,7 @@ public class CommentResponse {
 
     public static CommentResponse from(Comment comment) {
         return CommentResponse.builder()
+                .id(comment.getId())
                 .nickname(comment.getUser().getNickname())
                 .createdAt(comment.getCreatedAt())
                 .content(comment.getContent())
