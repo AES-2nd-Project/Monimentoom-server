@@ -19,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoomController {
     private final RoomService roomService;
-    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<RoomResponse> createRoom(@AuthenticationPrincipal Long userId, @Valid @RequestBody RoomCreateRequest request) {

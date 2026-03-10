@@ -100,7 +100,7 @@ public class RoomService {
         Room room = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
                 .getMainRoom();
-//        내 방인지 일치하게 컬럼 넣어줘야함 response에...
+        // TODO: RoomResponse에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
         return RoomResponse.from(room);
     }
 
