@@ -33,6 +33,7 @@ public class PositionService {
 
         Goods goods = goodsRepository.findById(request.getGoodsId())
                 .orElseThrow(() -> new CustomException(ErrorCode.GOODS_NOT_FOUND));
+        goods.validateOwnership(userId);
         Position position = Position.builder()
                 .room(room)
                 .goods(goods)
