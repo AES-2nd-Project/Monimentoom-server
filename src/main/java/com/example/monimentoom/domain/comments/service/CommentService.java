@@ -36,7 +36,6 @@ public class CommentService {
                 .room(room)
                 .content(request.getContent())
                 .build();
-        comment.validateOwnership(userId);
         return CommentResponse.from(commentRepository.save(comment));
     }
 
