@@ -1,6 +1,6 @@
 package com.example.monimentoom.domain.user.controller;
 
-import com.example.monimentoom.domain.room.dto.RoomResponse;
+import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
 import com.example.monimentoom.domain.user.dto.UserLoginRequest;
 import com.example.monimentoom.domain.user.dto.UserResponse;
 import com.example.monimentoom.domain.user.dto.UserSignupRequest;
@@ -43,7 +43,7 @@ public class UserController {
 
 
     @PatchMapping("/main-room/{roomId}")
-    public ResponseEntity<RoomResponse> updateMainRoom(
+    public ResponseEntity<RoomBasicResponse> updateMainRoom(
             @AuthenticationPrincipal Long userId,
             @PathVariable Long roomId) {
         return ResponseEntity.ok(userService.updateMainRoom(userId, roomId));

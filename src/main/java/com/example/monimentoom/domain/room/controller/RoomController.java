@@ -1,10 +1,10 @@
 package com.example.monimentoom.domain.room.controller;
 
 import com.example.monimentoom.domain.room.dto.RoomCreateRequest;
-import com.example.monimentoom.domain.room.dto.RoomResponse;
+import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
+import com.example.monimentoom.domain.room.dto.RoomPositionResponse;
 import com.example.monimentoom.domain.room.dto.RoomUpdateRequest;
 import com.example.monimentoom.domain.room.service.RoomService;
-import com.example.monimentoom.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,27 +21,27 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
-    public ResponseEntity<RoomResponse> createRoom(@AuthenticationPrincipal Long userId, @Valid @RequestBody RoomCreateRequest request) {
+    public ResponseEntity<RoomBasicResponse> createRoom(@AuthenticationPrincipal Long userId, @Valid @RequestBody RoomCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(userId, request));
     }
 
     @GetMapping("/list/{nickname}")
-    public ResponseEntity<List<RoomResponse>> getRoomsByNickname(@PathVariable String nickname) {
+    public ResponseEntity<List<RoomBasicResponse>> getRoomsByNickname(@PathVariable String nickname) {
         return ResponseEntity.ok(roomService.getRoomListByNickname(nickname));
     }
 
     @GetMapping("/random-visit")
-    public ResponseEntity<RoomResponse> getRandomRoom() {
+    public ResponseEntity<RoomPositionResponse> getRandomRoom() {
         return ResponseEntity.ok(roomService.getRandomRoom());
     }
 
     @GetMapping("/{nickname}/main-room")
-    public ResponseEntity<RoomResponse> visitByNickname(@AuthenticationPrincipal Long userId, @PathVariable String nickname) {
+    public ResponseEntity<RoomPositionResponse> visitByNickname(@AuthenticationPrincipal Long userId, @PathVariable String nickname) {
         return ResponseEntity.ok(roomService.getMainRoomByNickname(userId, nickname));
     }
 
     @PatchMapping("/{roomId}")
-    public ResponseEntity<RoomResponse> updateRoom(@AuthenticationPrincipal Long userId, @PathVariable Long roomId, @Valid @RequestBody RoomUpdateRequest request) {
+    public ResponseEntity<RoomBasicResponse> updateRoom(@AuthenticationPrincipal Long userId, @PathVariable Long roomId, @Valid @RequestBody RoomUpdateRequest request) {
         return ResponseEntity.ok(roomService.updateRoom(userId, roomId, request));
     }
 

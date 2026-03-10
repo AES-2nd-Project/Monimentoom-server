@@ -1,8 +1,10 @@
 package com.example.monimentoom.domain.room.service;
 
+import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.position.repository.PositionRepository;
+import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
 import com.example.monimentoom.domain.room.dto.RoomCreateRequest;
-import com.example.monimentoom.domain.room.dto.RoomResponse;
+import com.example.monimentoom.domain.room.dto.RoomPositionResponse;
 import com.example.monimentoom.domain.room.dto.RoomUpdateRequest;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
@@ -25,15 +27,16 @@ public class RoomService {
     private final PositionRepository positionRepository;
 
     // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 닉네임으로 방 목록 조회 가능하도록 사용자 검증 없음.
-    public List<RoomResponse> getRoomListByNickname(String nickname) {
+    public List<RoomBasicResponse> getRoomListByNickname(String nickname) {
         if (!userRepository.existsByNickname(nickname)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return roomRepository.findByUserNickname(nickname).stream()
-                .map(RoomResponse::from)
+                // 리스트는 상세한 배치정보 제외한 기본정보 제공
+                .map(RoomBasicResponse::from)
                 .toList();
     }
 
     // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 방 조회 가능하도록 사용자 검증 없음.
-    public RoomResponse getRandomRoom() {
+    public RoomPositionResponse getRandomRoom() {
         Long maxId = userRepository.getMaxId();
         if (maxId == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
@@ -48,11 +51,14 @@ public class RoomService {
                         userRepository.findFirstUser()
                                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
                 ).getMainRoom();
-        return RoomResponse.from(room);
+        List<PositionResponse> positions = positionRepository.findByRoomId(room.getId()).stream()
+                .map(PositionResponse::from)
+                .toList();
+        return RoomPositionResponse.from(room, positions);
     }
 
     @Transactional
-    public RoomResponse createRoom(Long userId, RoomCreateRequest request) {
+    public RoomBasicResponse createRoom(Long userId, RoomCreateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -61,16 +67,16 @@ public class RoomService {
                 .name(request.getName())
                 .build();
         Room saved = roomRepository.save(room);
-        return RoomResponse.from(saved);
+        return RoomBasicResponse.from(saved);
     }
 
     @Transactional
-    public RoomResponse updateRoom(Long userId, Long roomId, RoomUpdateRequest request) {
+    public RoomBasicResponse updateRoom(Long userId, Long roomId, RoomUpdateRequest request) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
         room.setName(request.getName());
-        return RoomResponse.from(room);
+        return RoomBasicResponse.from(room);
     }
 
     @Transactional
@@ -95,13 +101,17 @@ public class RoomService {
 
     // 닉네임 방문
     @Transactional(readOnly = true)
-    public RoomResponse getMainRoomByNickname(Long userId, String nickname) {
+    public RoomPositionResponse getMainRoomByNickname(Long userId, String nickname) {
         if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         Room room = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
                 .getMainRoom();
-        // TODO: RoomResponse에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
-        return RoomResponse.from(room);
+        List<PositionResponse> positions = positionRepository.findByRoomId(room.getId()).stream()
+                .map(PositionResponse::from)
+                .toList();
+
+        // TODO: RoomPositionResponse or RoomBasicResponse에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
+        return RoomPositionResponse.from(room, positions);
     }
 
 }
