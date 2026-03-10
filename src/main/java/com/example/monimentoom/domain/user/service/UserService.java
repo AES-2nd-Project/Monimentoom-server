@@ -8,7 +8,6 @@ import com.example.monimentoom.domain.user.dto.UserResponse;
 import com.example.monimentoom.domain.user.dto.UserSignupRequest;
 import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
-import com.example.monimentoom.global.util.JwtUtil;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -49,21 +48,20 @@ public class UserService {
         return UserResponse.from(user);
     }
 
+    // jwt 토큰 생성, 반환은 컨트롤러에서 처리
     public UserResponse loginUser(UserLoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_LOGIN_INPUT_VALUE));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_LOGIN_INPUT_VALUE);
         }
-
         return UserResponse.from(user);
-        // jwt 토큰 생성, 반환은 컨트롤러에서 처리
     }
 
+    // TODO : jwt 토큰 만료 처리
     public void logoutUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        // TODO : jwt 토큰 만료 처리
     }
 
     @Transactional
