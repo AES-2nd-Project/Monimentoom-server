@@ -50,8 +50,10 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(
-            @AuthenticationPrincipal Long userId) {
-        userService.deleteUser(userId);
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long id
+    ) {
+        userService.deleteUser(userId, id);
         return ResponseEntity.noContent().build();
     }
 
