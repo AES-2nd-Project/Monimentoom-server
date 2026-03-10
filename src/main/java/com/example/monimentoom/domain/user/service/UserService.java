@@ -1,6 +1,6 @@
 package com.example.monimentoom.domain.user.service;
 
-import com.example.monimentoom.domain.room.dto.RoomResponse;
+import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.dto.UserLoginRequest;
@@ -73,13 +73,13 @@ public class UserService {
     }
 
     @Transactional
-    public RoomResponse updateMainRoom(Long userId, Long roomId) {
+    public RoomBasicResponse updateMainRoom(Long userId, Long roomId) {
         Room newMainRoom = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         newMainRoom.validateOwnership(userId);
         User user = newMainRoom.getUser();
         user.setMainRoom(newMainRoom);
-        return RoomResponse.from(newMainRoom);
+        return RoomBasicResponse.from(newMainRoom);
     }
 
 }
