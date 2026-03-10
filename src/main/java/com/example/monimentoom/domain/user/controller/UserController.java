@@ -2,8 +2,8 @@ package com.example.monimentoom.domain.user.controller;
 
 import com.example.monimentoom.domain.room.dto.RoomResponse;
 import com.example.monimentoom.domain.user.dto.UserLoginRequest;
-import com.example.monimentoom.domain.user.dto.UserSignupRequest;
 import com.example.monimentoom.domain.user.dto.UserResponse;
+import com.example.monimentoom.domain.user.dto.UserSignupRequest;
 import com.example.monimentoom.domain.user.service.UserService;
 import com.example.monimentoom.global.util.JwtUtil;
 import jakarta.validation.Valid;

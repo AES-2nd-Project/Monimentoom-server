@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RoomResponse {
-    Long id;
-    Long userId;
-    String name;
+    private Long id;
+    private Long userId;
+    private String name;
 
     public static RoomResponse from(Room room) {
         if (room == null) return null;
@@ -18,6 +18,5 @@ public class RoomResponse {
                 .userId(room.getUser().getId())
                 .name(room.getName())
                 .build();
-
     }
 }
