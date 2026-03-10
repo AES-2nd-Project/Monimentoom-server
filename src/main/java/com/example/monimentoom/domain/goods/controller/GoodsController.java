@@ -37,7 +37,7 @@ public class GoodsController {
                 .body(goodsService.createGoods(userId, request));
     }
 
-    /** 굿즈 상세 정보 수정 (이름, 가격,  */
+    /** 굿즈 상세 정보 수정 (이름, 가격, 이미지 URL, 설명 등) */
     @PatchMapping("/{goodsId}")
     public ResponseEntity<GoodsResponse> updateGoods(
             @AuthenticationPrincipal Long userId,
