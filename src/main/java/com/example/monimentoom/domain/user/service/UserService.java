@@ -81,4 +81,5 @@ public class UserService {
         user.setMainRoom(newMainRoom);
         return RoomResponse.from(newMainRoom);
     }
+
 }

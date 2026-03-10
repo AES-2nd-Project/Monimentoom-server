@@ -4,6 +4,7 @@ import com.example.monimentoom.domain.room.dto.RoomCreateRequest;
 import com.example.monimentoom.domain.room.dto.RoomResponse;
 import com.example.monimentoom.domain.room.dto.RoomUpdateRequest;
 import com.example.monimentoom.domain.room.service.RoomService;
+import com.example.monimentoom.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,11 @@ public class RoomController {
     @GetMapping("/random-visit")
     public ResponseEntity<RoomResponse> getRandomRoom() {
         return ResponseEntity.ok(roomService.getRandomRoom());
+    }
+
+    @GetMapping("/{nickname}/main-room")
+    public ResponseEntity<RoomResponse> visitByNickname(@AuthenticationPrincipal Long userId, @PathVariable String nickname) {
+        return ResponseEntity.ok(roomService.getMainRoomByNickname(userId, nickname));
     }
 
     @PatchMapping("/{roomId}")

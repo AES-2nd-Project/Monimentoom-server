@@ -93,4 +93,15 @@ public class RoomService {
         roomRepository.deleteById(roomId);
     }
 
+    // 닉네임 방문
+    @Transactional(readOnly = true)
+    public RoomResponse getMainRoomByNickname(Long userId, String nickname) {
+        if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        Room room = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
+                .getMainRoom();
+        // TODO: RoomResponse에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
+        return RoomResponse.from(room);
+    }
+
 }
