@@ -26,9 +26,8 @@ public class CommentService {
 
     // 댓글 생성
     @Transactional
-    public CommentResponse createComment(CommentCreateRequest request) {
-        // TODO: CommentCreateRequest의 유저를 현재 유저로 바꿔야 함
-        User user = userRepository.findById(request.getUserId())
+    public CommentResponse createComment(Long userId, CommentCreateRequest request) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Room room = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
@@ -37,6 +36,7 @@ public class CommentService {
                 .room(room)
                 .content(request.getContent())
                 .build();
+        comment.validateOwnership(userId);
         return CommentResponse.from(commentRepository.save(comment));
     }
 
@@ -52,20 +52,20 @@ public class CommentService {
 
     // 댓글 수정
     @Transactional
-    public CommentResponse updateComment(Long id, CommentUpdateRequest request) {
-        // TODO: 댓글 작성자의 userId와 수정하려는 댓글의 id가 일치하는지 검증 추가
+    public CommentResponse updateComment(Long userId, Long id, CommentUpdateRequest request) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
-
+        comment.validateOwnership(userId);
         comment.setContent(request.getContent());
         return CommentResponse.from(comment);
     }
 
     // 댓글 삭제
     @Transactional
-    public void deleteComment(Long id) {
-        // TODO: 댓글 작성자 검증 추가
-        if (!commentRepository.existsById(id)) throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
+    public void deleteComment(Long userId, Long id) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+        comment.validateOwnership(userId);
         commentRepository.deleteById(id);
     }
 
