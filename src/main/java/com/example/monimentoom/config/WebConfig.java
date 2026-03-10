@@ -14,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://monimentoom-frontend.vercel.app")
                 .allowedMethods("*")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true)
+                .exposedHeaders("Authorization");
     }
 }

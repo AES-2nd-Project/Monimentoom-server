@@ -48,21 +48,20 @@ public class UserService {
         return UserResponse.from(user);
     }
 
+    // jwt 토큰 생성, 반환은 컨트롤러에서 처리
     public UserResponse loginUser(UserLoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_LOGIN_INPUT_VALUE));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_LOGIN_INPUT_VALUE);
         }
-
         return UserResponse.from(user);
-        // jwt 토큰 생성, 반환?
     }
 
+    // TODO : jwt 토큰 만료 처리
     public void logoutUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        // TODO : jwt 토큰 만료 처리
     }
 
     @Transactional
