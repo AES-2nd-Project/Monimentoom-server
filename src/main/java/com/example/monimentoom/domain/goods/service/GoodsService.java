@@ -21,13 +21,12 @@ public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final UserRepository userRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public GoodsResponse createGoods(
             Long userId, GoodsRequest request
     ){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
         Goods goods = Goods.builder()
                 .user(user)
                 .name(request.getName())
@@ -38,6 +37,7 @@ public class GoodsService {
         return GoodsResponse.from(goodsRepository.save(goods));
     }
 
+    @Transactional(readOnly = true)
     public List<GoodsResponse> getGoods(Long userId) {
         List<Goods> goodsList = goodsRepository.findAllByUserIdWithPositions(userId);
         return goodsList.stream()
@@ -48,4 +48,23 @@ public class GoodsService {
                 .toList();
     }
 
+    @Transactional
+    public GoodsResponse updateGoods(Long userId, Long goodsId, GoodsRequest request){
+        Goods goods = goodsRepository.findById(goodsId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GOODS_NOT_FOUND));
+
+        goods.validateOwnership(userId);
+
+        goods.update(request.getName(), request.getImageUrl(), request.getDescription(), request.getPrice());
+
+        return GoodsResponse.from(goods);
+    }
+
+    @Transactional
+    public void deleteGoods(Long userId, Long goodsId){
+        Goods goods = goodsRepository.findById(goodsId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GOODS_NOT_FOUND));
+        goods.validateOwnership(userId);
+        goodsRepository.delete(goods);
+    }
 }
