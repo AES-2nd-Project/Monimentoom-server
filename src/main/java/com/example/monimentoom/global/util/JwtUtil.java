@@ -56,7 +56,7 @@ public class JwtUtil {
         }
     }
 
-    /** 토큰 검증과 userId 추출 통합, 실패 시 null 반환 */
+    /** 토큰 검증과 userId 추출 통합. 실패 시 CustomException */
     public Long getUserIdFromToken(String token) {
         try {
             // 파싱시도 -> 에러 없이 넘어간 경우 검증 성공 상태.

@@ -38,19 +38,19 @@ public class GoodsController {
     }
 
     /** 굿즈 상세 정보 수정 (이름, 가격,  */
-    @PatchMapping
+    @PatchMapping("/{goodsId}")
     public ResponseEntity<GoodsResponse> updateGoods(
             @AuthenticationPrincipal Long userId,
-            @RequestParam Long goodsId,
+            @PathVariable Long goodsId,
             @Valid @RequestBody GoodsRequest request
     ){
         return ResponseEntity.ok(goodsService.updateGoods(userId, goodsId, request));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{goodsId}")
     public ResponseEntity<Void> deleteGoods(
             @AuthenticationPrincipal Long userId,
-            @RequestParam Long goodsId
+            @PathVariable Long goodsId
     ){
         goodsService.deleteGoods(userId, goodsId);
         return ResponseEntity.noContent().build();

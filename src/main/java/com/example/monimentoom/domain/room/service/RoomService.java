@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -25,7 +24,7 @@ public class RoomService {
     private final UserRepository userRepository;
     private final PositionRepository positionRepository;
 
-    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 닉네임으로 방 목록 조회 가능하도록
+    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 닉네임으로 방 목록 조회 가능하도록 사용자 검증 없음.
     public List<RoomResponse> getRoomListByNickname(String nickname) {
         if (!userRepository.existsByNickname(nickname)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return roomRepository.findByUserNickname(nickname).stream()
@@ -33,7 +32,7 @@ public class RoomService {
                 .toList();
     }
 
-    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 닉네임으로 방 목록 조회 가능하도록
+    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 방 조회 가능하도록 사용자 검증 없음.
     public RoomResponse getRandomRoom() {
         Long maxId = roomRepository.getMaxId();
         if (maxId == null) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
