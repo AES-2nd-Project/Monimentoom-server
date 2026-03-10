@@ -1,6 +1,8 @@
 package com.example.monimentoom.domain.user.model;
 
 import com.example.monimentoom.domain.room.model.Room;
+import com.example.monimentoom.exception.CustomException;
+import com.example.monimentoom.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,4 +50,9 @@ public class User {
     @JoinColumn(name = "main_room_id")
     private Room mainRoom = null;
 
+    public void validateOwnership(Long userId) {
+        if (!this.id.equals(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.monimentoom.domain.room.model;
 
 import com.example.monimentoom.domain.user.model.User;
+import com.example.monimentoom.exception.CustomException;
+import com.example.monimentoom.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -34,6 +36,12 @@ public class Room {
     @Column(nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
+
+    public void validateOwnership(Long userId) {
+        if (!this.user.getId().equals(userId)) {
+            throw new CustomException(ErrorCode.ROOM_ACCESS_DENIED);
+        }
+    }
 
     @PrePersist
     protected void onCreate() {

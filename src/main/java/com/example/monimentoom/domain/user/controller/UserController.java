@@ -9,6 +9,7 @@ import com.example.monimentoom.global.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,16 +34,27 @@ public class UserController {
                 .body(userResponse);
     }
 
-    // todo : 추후 jwt 토큰으로부터 userId 추출하여 처리
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(Long userId) {
+    public ResponseEntity<Void> logout(
+            @AuthenticationPrincipal Long userId) {
         userService.logoutUser(userId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/main/{roomId}")
-    public ResponseEntity<RoomResponse> updateMainRoom(@PathVariable Long roomId) {
-        return ResponseEntity.ok(userService.updateMainRoom(roomId));
+    public ResponseEntity<RoomResponse> updateMainRoom(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long roomId) {
+        return ResponseEntity.ok(userService.updateMainRoom(userId, roomId));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long id
+    ) {
+        userService.deleteUser(userId, id);
+        return ResponseEntity.noContent().build();
     }
 
 }

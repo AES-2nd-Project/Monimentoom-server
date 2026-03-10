@@ -24,6 +24,7 @@ public class RoomService {
     private final UserRepository userRepository;
     private final PositionRepository positionRepository;
 
+    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 닉네임으로 방 목록 조회 가능하도록 사용자 검증 없음.
     public List<RoomResponse> getRoomListByNickname(String nickname) {
         if (!userRepository.existsByNickname(nickname)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return roomRepository.findByUserNickname(nickname).stream()
@@ -31,6 +32,7 @@ public class RoomService {
                 .toList();
     }
 
+    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 방 조회 가능하도록 사용자 검증 없음.
     public RoomResponse getRandomRoom() {
         Long maxId = userRepository.getMaxId();
         if (maxId == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -50,10 +52,10 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponse createRoom(RoomCreateRequest request) {
-        // TODO: request의 userId 대신 현재 로그인한 유저아이디로 가져오도록
-        User user = userRepository.findById(request.getUserId())
+    public RoomResponse createRoom(Long userId, RoomCreateRequest request) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         Room room = Room.builder()
                 .user(user)
                 .name(request.getName())
@@ -63,26 +65,27 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponse updateRoom(Long roomId, RoomUpdateRequest request) {
+    public RoomResponse updateRoom(Long userId, Long roomId, RoomUpdateRequest request) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
-        // TODO: 로그인 사용자와 방 소유자 일치 여부 검증
+        room.validateOwnership(userId);
         room.setName(request.getName());
         return RoomResponse.from(room);
     }
 
     @Transactional
-    public void resetRoom(Long roomId) {
-        // TODO: 로그인 사용자와 방 소유자 일치 여부 검증(findById -> findByIdAndUserId로 변경 검토)
+    public void resetRoom(Long userId, Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+        room.validateOwnership(userId);
         positionRepository.deleteByRoomId(roomId);
     }
 
     @Transactional
-    public void deleteRoom(Long roomId) {
-        // TODO: 로그인 사용자와 방 소유자 일치 여부 검증
+    public void deleteRoom(Long userId, Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
-        Long userId = room.getUser().getId();
+        room.validateOwnership(userId);
         Long roomCount = roomRepository.countByUserId(userId);
         if (roomCount <= 1) {
             throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_ROOM);

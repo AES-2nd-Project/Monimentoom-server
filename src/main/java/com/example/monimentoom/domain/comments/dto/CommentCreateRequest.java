@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CommentCreateRequest {
-    @NotNull(message = "유저 아이디는 필수입니다.")
-    private Long userId;
     @NotNull(message = "방 아이디는 필수입니다.")
     private Long roomId;
     @NotBlank(message = "댓글 내용은 필수입니다.")

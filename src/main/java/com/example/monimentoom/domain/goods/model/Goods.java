@@ -2,6 +2,8 @@ package com.example.monimentoom.domain.goods.model;
 
 import com.example.monimentoom.domain.position.model.Position;
 import com.example.monimentoom.domain.user.model.User;
+import com.example.monimentoom.exception.CustomException;
+import com.example.monimentoom.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,6 +64,19 @@ public class Goods {
         this.description = description;
         this.price = price;
         this.positions = (positions != null) ? positions : Collections.emptyList();
+    }
+
+    public void update(String name, String imageUrl, String description, Integer price) {
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.price = price;
+    }
+
+    public void validateOwnership(Long userId) {
+        if (!this.user.getId().equals(userId)) {
+            throw new CustomException(ErrorCode.GOODS_ACCESS_DENIED);
+        }
     }
 
     public boolean isPlaced() {
