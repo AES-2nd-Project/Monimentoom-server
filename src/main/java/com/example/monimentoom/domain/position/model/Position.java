@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "positions", indexes = {
         @Index(name = "idx_positions_room_id", columnList = "room_id"),
@@ -42,6 +44,24 @@ public class Position {
     private int widthUnit;
     @Column(nullable = false)
     private int heightUnit;
+
+    @Column(nullable = false, updatable = false,
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt;
+    @Column(nullable = false,
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
     @Builder
     public Position(Goods goods, Room room, WallSide wall, int x, int y, int widthUnit, int heightUnit) {
