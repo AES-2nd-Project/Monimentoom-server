@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
-    public ResponseEntity<RoomResponse> createRoom(@Valid @RequestBody RoomCreateRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(request));
+    public ResponseEntity<RoomResponse> createRoom(@AuthenticationPrincipal Long userId, @Valid @RequestBody RoomCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(userId, request));
     }
 
     @GetMapping("/list/{nickname}")
@@ -34,20 +35,20 @@ public class RoomController {
     }
 
     @PatchMapping("/{roomId}")
-    public ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId, @Valid @RequestBody RoomUpdateRequest request) {
-        return ResponseEntity.ok(roomService.updateRoom(roomId, request));
+    public ResponseEntity<RoomResponse> updateRoom(@AuthenticationPrincipal Long userId, @PathVariable Long roomId, @Valid @RequestBody RoomUpdateRequest request) {
+        return ResponseEntity.ok(roomService.updateRoom(userId, roomId, request));
     }
 
 
     @DeleteMapping("/reset/{roomId}")
-    public ResponseEntity<Void> resetRoom(@PathVariable Long roomId) {
-        roomService.resetRoom(roomId);
+    public ResponseEntity<Void> resetRoom(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
+        roomService.resetRoom(userId, roomId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable Long roomId) {
-        roomService.deleteRoom(roomId);
+    public ResponseEntity<Void> deleteRoom(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
+        roomService.deleteRoom(userId, roomId);
         return ResponseEntity.noContent().build();
     }
 }
