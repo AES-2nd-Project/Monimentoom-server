@@ -33,7 +33,7 @@ public class RoomService {
 
     public RoomResponse getRandomRoom() {
         Long maxId = userRepository.getMaxId();
-        if (maxId == null) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
+        if (maxId == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         Long minId = userRepository.getMinId();
         long targetId = ThreadLocalRandom.current().nextLong(minId, maxId + 1);
