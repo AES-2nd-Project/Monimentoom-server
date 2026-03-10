@@ -24,9 +24,6 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(userId, request));
     }
 
-    @GetMapping("/{nickname}")
-    public ResponseEntity
-
     @GetMapping("/list/{nickname}")
     public ResponseEntity<List<RoomResponse>> getRoomsByNickname(@PathVariable String nickname) {
         return ResponseEntity.ok(roomService.getRoomListByNickname(nickname));

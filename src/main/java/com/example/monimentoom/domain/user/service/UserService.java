@@ -81,4 +81,15 @@ public class UserService {
         user.setMainRoom(newMainRoom);
         return RoomResponse.from(newMainRoom);
     }
+
+    // 닉네임 방문
+    @Transactional(readOnly = true)
+    public RoomResponse visitByNickname(Long userId, String nickname) {
+        Room room = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
+                .getMainRoom();
+//        내 방인지 일치하게 컬럼 넣어줘야함 response에...
+        return RoomResponse.from(room);
+    }
+
 }

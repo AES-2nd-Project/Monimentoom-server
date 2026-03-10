@@ -27,4 +27,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT MIN (u.id) FROM User u")
     Long getMinId();
 
+    Optional<User> findByNickname(String nickname);
 }
