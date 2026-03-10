@@ -34,7 +34,6 @@ public class UserController {
                 .body(userResponse);
     }
 
-    // todo : 추후 jwt 토큰으로부터 userId 추출하여 처리
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @AuthenticationPrincipal Long userId) {
