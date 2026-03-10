@@ -13,7 +13,7 @@ public class RoomPositionResponse {
     private Long id;
     private Long userId;
     private String name;
-    private List<PositionResponse> positioins;
+    private List<PositionResponse> positions;
 
     public static RoomPositionResponse from(Room room, List<PositionResponse> positions) {
         if (room == null) return null;
@@ -21,7 +21,7 @@ public class RoomPositionResponse {
                 .id(room.getId())
                 .userId(room.getUser().getId())
                 .name(room.getName())
-                .positioins(positions)
+                .positions(positions)
                 .build();
     }
 }

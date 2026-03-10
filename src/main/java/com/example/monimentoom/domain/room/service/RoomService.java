@@ -110,7 +110,7 @@ public class RoomService {
                 .map(PositionResponse::from)
                 .toList();
 
-        // TODO: RoomResponse에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
+        // TODO: RoomPositionResponse or RoomBasicResponse에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
         return RoomPositionResponse.from(room, positions);
     }
 

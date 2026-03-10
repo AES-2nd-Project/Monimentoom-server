@@ -37,7 +37,7 @@ public class RoomController {
 
     @GetMapping("/{nickname}/main-room")
     public ResponseEntity<RoomPositionResponse> visitByNickname(@AuthenticationPrincipal Long userId, @PathVariable String nickname) {
-        return ResponseEntity.ok(roomService.getMainRoomByNickname(11L, nickname));
+        return ResponseEntity.ok(roomService.getMainRoomByNickname(userId, nickname));
     }
 
     @PatchMapping("/{roomId}")
