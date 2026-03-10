@@ -43,8 +43,17 @@ public class UserController {
     }
 
     @PatchMapping("/main/{roomId}")
-    public ResponseEntity<RoomResponse> updateMainRoom(@PathVariable Long roomId) {
-        return ResponseEntity.ok(userService.updateMainRoom(roomId));
+    public ResponseEntity<RoomResponse> updateMainRoom(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long roomId) {
+        return ResponseEntity.ok(userService.updateMainRoom(userId, roomId));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(
+            @AuthenticationPrincipal Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
 
 }

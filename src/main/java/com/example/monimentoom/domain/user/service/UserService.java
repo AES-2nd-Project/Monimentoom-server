@@ -66,16 +66,17 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
+        user.validateOwnership(userId);
         userRepository.deleteById(userId);
     }
 
     @Transactional
-    public RoomResponse updateMainRoom(Long roomId) {
-        // TODO: 현재 유저와 roomId 유저 일치 검증 필요
+    public RoomResponse updateMainRoom(Long userId, Long roomId) {
         Room newMainRoom = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+        newMainRoom.validateOwnership(userId);
         User user = newMainRoom.getUser();
-
         user.setMainRoom(newMainRoom);
         return RoomResponse.from(newMainRoom);
     }
