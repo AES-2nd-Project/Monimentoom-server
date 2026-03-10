@@ -32,19 +32,20 @@ public class RoomService {
     }
 
     public RoomResponse getRandomRoom() {
-        Long maxId = roomRepository.getMaxId();
-        if (maxId == null) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
+        Long maxId = userRepository.getMaxId();
+        if (maxId == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        Long minId = roomRepository.getMinId();
+        Long minId = userRepository.getMinId();
         long targetId = ThreadLocalRandom.current().nextLong(minId, maxId + 1);
 
         // targetId보다 큰 값이 없으면( = 가장 큰 ID를 뽑았는데 이미 삭제됐다면)
         // 다시 처음(minId) 부터 찾도록 orElseGet
-        Room room = roomRepository.findFirstByIdGreaterThanEqual(targetId)
+        // TODO: 내 방은 제외해야 함
+        Room room = userRepository.findFirstByIdGreaterThanEqual(targetId)
                 .orElseGet(() ->
-                        roomRepository.findFirstRoom()
-                                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND))
-                );
+                        userRepository.findFirstUser()
+                                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
+                ).getMainRoom();
         return RoomResponse.from(room);
     }
 
