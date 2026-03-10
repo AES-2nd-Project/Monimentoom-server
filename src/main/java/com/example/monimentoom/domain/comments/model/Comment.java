@@ -1,4 +1,4 @@
-package com.example.monimentoom.domain.comments.domain;
+package com.example.monimentoom.domain.comments.model;
 
 import com.example.monimentoom.domain.user.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,10 +27,13 @@ public class Comment {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false,
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(nullable = false,
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+    )
     private LocalDateTime updatedAt;
 
     @PrePersist
