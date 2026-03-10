@@ -8,6 +8,8 @@ import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.position.repository.PositionRepository;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
+import com.example.monimentoom.exception.CustomException;
+import com.example.monimentoom.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,14 +30,14 @@ public class PositionService {
 //        User user = userRepository.findById(userId)
 //                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
         Room room = roomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
 
 //        if (!room.getUser().getId().equals(userId)) {
 //            throw new IllegalArgumentException("이 방을 수정할 권한이 없습니다.");
 //        }
 
         Goods goods = goodsRepository.findById(request.getGoodsId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 굿즈입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.GOODS_NOT_FOUND));
         Position position = Position.builder()
                 .room(room)
                 .goods(goods)
@@ -55,9 +57,9 @@ public class PositionService {
 //                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         Position position = positionRepository.findById(positionId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 위치 정보입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POSITION_NOT_FOUND));
         Room room = roomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
 
         position.update(room, request.getX(), request.getY(), request.getWallSide(), request.getWidthUnit(), request.getHeightUnit());
 
@@ -71,7 +73,7 @@ public class PositionService {
     @Transactional
     public void deletePosition(Long positionId) {
         Position position = positionRepository.findById(positionId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 위치 정보입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POSITION_NOT_FOUND));
 
         positionRepository.delete(position);
     }
