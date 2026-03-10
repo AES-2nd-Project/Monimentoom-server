@@ -41,10 +41,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{nickname}/main-room")
-    public ResponseEntity<RoomResponse> visitByNickname(@PathVariable String nickname) {
-        return ResponseEntity.ok(userService.visitByNickname(11L, nickname));
-    }
 
     @PatchMapping("/main-room/{roomId}")
     public ResponseEntity<RoomResponse> updateMainRoom(
