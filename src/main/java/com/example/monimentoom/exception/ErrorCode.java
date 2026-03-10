@@ -24,7 +24,7 @@ public enum ErrorCode {
 
     POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "위치정보를 찾을 수 없습니다."),
 
-    ;
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "C001", "댓글을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
