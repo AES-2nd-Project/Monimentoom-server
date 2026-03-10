@@ -28,9 +28,9 @@ public class CommentController {
         return ResponseEntity.ok(commentService.getRoomComments(roomId));
     }
 
-    @PatchMapping
-    public ResponseEntity<CommentResponse> updateComment(@Valid @RequestBody CommentUpdateRequest request) {
-        return ResponseEntity.ok(commentService.updateComment(request));
+    @PatchMapping("/{id}")
+    public ResponseEntity<CommentResponse> updateComment(@PathVariable Long id, @Valid @RequestBody CommentUpdateRequest request) {
+        return ResponseEntity.ok(commentService.updateComment(id, request));
     }
 
     @DeleteMapping("/{id}")

@@ -1,7 +1,6 @@
 package com.example.monimentoom.domain.comments.dto;
 
 import com.example.monimentoom.domain.comments.model.Comment;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
