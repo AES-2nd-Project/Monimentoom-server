@@ -1,11 +1,12 @@
 package com.example.monimentoom.global.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.example.monimentoom.exception.CustomException;
+import com.example.monimentoom.exception.ErrorCode;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtil {
 
     @Value("${jwt.secret}")
@@ -67,10 +69,18 @@ public class JwtUtil {
             // 파싱된 데이터에서 유저 ID를 꺼내서 반환합니다.
             return Long.valueOf(claims.getSubject());
 
-        } catch (Exception e) {
-            // 만료된 토큰, 위조된 토큰 등 예외처리
-            // TODO: 추후 ExpiredJwtException, SignatureException 등 예외 세분화 및 로그 추가
-            return null; // 검증 실패 시 null 반환
+        } catch (SignatureException | MalformedJwtException e) {
+            log.error("잘못된 JWT 서명 또는 구조입니다.", e);
+            throw new CustomException(ErrorCode.INVALID_TOKEN); // 예외 던지기!
+        } catch (ExpiredJwtException e) {
+            log.error("만료된 JWT 토큰입니다.", e);
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            log.error("지원되지 않는 JWT 토큰입니다.", e);
+            throw new CustomException(ErrorCode.UNSUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            log.error("JWT 토큰이 잘못되었습니다.", e);
+            throw new CustomException(ErrorCode.EMPTY_TOKEN);
         }
     }
 }
