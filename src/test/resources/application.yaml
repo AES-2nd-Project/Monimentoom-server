@@ -21,3 +21,7 @@ spring:
   flyway:
     enabled: false
 
+jwt:
+  # 테스트용 토큰 관련 변수
+  secret: dGhpcy1pcy1hLWR1bW15LXNlY3JldC1rZXktZm9yLXNwcmluZy1ib290LWp3dC10ZXN0
+  expiration_time: 3600000
