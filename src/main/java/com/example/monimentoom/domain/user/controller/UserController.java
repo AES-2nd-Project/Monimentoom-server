@@ -41,7 +41,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/main/{roomId}")
+    @PatchMapping("/main-room/{roomId}")
     public ResponseEntity<RoomResponse> updateMainRoom(
             @AuthenticationPrincipal Long userId,
             @PathVariable Long roomId) {
