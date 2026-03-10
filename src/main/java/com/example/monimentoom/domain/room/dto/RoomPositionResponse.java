@@ -2,13 +2,17 @@ package com.example.monimentoom.domain.room.dto;
 
 import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.room.model.Room;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RoomPositionResponse {
     private Long id;
     private Long userId;

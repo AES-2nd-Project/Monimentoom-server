@@ -1,11 +1,10 @@
 package com.example.monimentoom.domain.room.service;
 
+import com.example.monimentoom.domain.comments.dto.CommentResponse;
+import com.example.monimentoom.domain.comments.repository.CommentRepository;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.position.repository.PositionRepository;
-import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
-import com.example.monimentoom.domain.room.dto.RoomCreateRequest;
-import com.example.monimentoom.domain.room.dto.RoomPositionResponse;
-import com.example.monimentoom.domain.room.dto.RoomUpdateRequest;
+import com.example.monimentoom.domain.room.dto.*;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.model.User;
@@ -25,6 +24,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final PositionRepository positionRepository;
+    private final CommentRepository commentRepository;
 
     // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 닉네임으로 방 목록 조회 가능하도록 사용자 검증 없음.
     public List<RoomBasicResponse> getRoomListByNickname(String nickname) {
@@ -110,8 +110,17 @@ public class RoomService {
                 .map(PositionResponse::from)
                 .toList();
 
-        // TODO: RoomPositionResponse or RoomBasicResponse에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
         return RoomPositionResponse.from(room, positions);
     }
 
+    @Transactional(readOnly = true)
+    public RoomDetailResponse getRoomDetail(Long userId, Long roomId) {
+        // TODO: Response에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+        List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
+                .map(CommentResponse::from)
+                .toList();
+        return RoomDetailResponse.from(room, comments);
+    }
 }

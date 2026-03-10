@@ -1,11 +1,15 @@
 package com.example.monimentoom.domain.room.dto;
 
 import com.example.monimentoom.domain.room.model.Room;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RoomBasicResponse {
     private Long id;
     private Long userId;
