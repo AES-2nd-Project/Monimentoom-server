@@ -1,7 +1,6 @@
 package com.example.monimentoom.domain.room.dto;
 
 import com.example.monimentoom.domain.comments.dto.CommentResponse;
-import com.example.monimentoom.domain.comments.model.Comment;
 import com.example.monimentoom.domain.room.model.Room;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -21,7 +20,7 @@ public class RoomDetailResponse {
     private String name;
     // TODO: 프로필 이미지 url 추가해야함
     private String nickname;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime userCreatedAt;
     private List<CommentResponse> comments;
 
@@ -30,7 +29,7 @@ public class RoomDetailResponse {
                 .id(room.getId())
                 .name(room.getName())
                 .nickname(room.getUser().getNickname())
-                .userCreatedAt(room.getCreatedAt())
+                .userCreatedAt(room.getUser().getCreatedAt())
                 .comments(comments)
                 .build();
     }
