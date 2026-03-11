@@ -61,9 +61,7 @@ jobs:
           script_stop: true
           script: |
             cd /home/ubuntu
-            # 1. 최신 이미지 풀 (로그인 필요 시 미리 서버에서 docker login 수행)
-            docker-compose pull spring
-            # 2. 컨테이너 재시작 (변경사항이 있는 서비스만 재시작됨)
-            docker-compose up -d spring
-            # 3. 사용하지 않는 오래된 이미지 삭제
+            docker compose pull
+            docker compose down
+            docker compose up -d
             docker image prune -f
