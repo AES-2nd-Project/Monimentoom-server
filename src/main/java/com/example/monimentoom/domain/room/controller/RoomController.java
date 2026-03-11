@@ -1,9 +1,6 @@
 package com.example.monimentoom.domain.room.controller;
 
-import com.example.monimentoom.domain.room.dto.RoomCreateRequest;
-import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
-import com.example.monimentoom.domain.room.dto.RoomPositionResponse;
-import com.example.monimentoom.domain.room.dto.RoomUpdateRequest;
+import com.example.monimentoom.domain.room.dto.*;
 import com.example.monimentoom.domain.room.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +35,11 @@ public class RoomController {
     @GetMapping("/{nickname}/main-room")
     public ResponseEntity<RoomPositionResponse> visitByNickname(@AuthenticationPrincipal Long userId, @PathVariable String nickname) {
         return ResponseEntity.ok(roomService.getMainRoomByNickname(userId, nickname));
+    }
+
+    @GetMapping("/{roomId}/detail")
+    public ResponseEntity<RoomDetailResponse> getRoomDetail(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
+        return ResponseEntity.ok((roomService.getRoomDetail(userId, roomId)));
     }
 
     @PatchMapping("/{roomId}")
