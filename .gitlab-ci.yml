@@ -1,36 +1,33 @@
-# .gitlab-ci.yml (프로젝트 루트)
-
 stages:
   - build
   - deploy
 
 variables:
-  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
 
 # ─────────────────────────────────────────
 # STAGE 1: Build & Push to GitLab Registry
-# 기존: JDK 설정 → yml 파일 주입 → Gradle 빌드 → DockerHub push
+# 실행: GitLab Shared Runner (EC2 자원 사용 안 함)
+# Gradle 빌드는 멀티스테이지 Dockerfile 내부에서 처리
 # ─────────────────────────────────────────
 build:
   stage: build
-  tags:
-    - ec2
+  image: docker:24
+  services:
+    - docker:24-dind
+  tags: []                          # Shared Runner 사용 (ec2 태그 제거)
   only:
     - main
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   script:
-    # 기존 "Create Application Config" 단계
+    # yml 파일 주입 (Dockerfile의 COPY src ./src 에 포함되도록 먼저 배치)
     - mkdir -p src/main/resources src/test/resources
-    - cp $APP_YAML ./src/main/resources/application.yaml
-    - cp $APP_SECRET_YAML ./src/main/resources/application-secret.yaml
+    - cp $APP_YAML            ./src/main/resources/application.yaml
+    - cp $APP_SECRET_YAML     ./src/main/resources/application-secret.yaml
     - cp $TEST_APPLICATION_YML ./src/test/resources/application.yml
 
-    # 기존 "Build with Gradle" 단계
-    - chmod +x ./gradlew
-    - ./gradlew clean build -x test
-
-    # 기존 "Build and push Docker image" 단계 → GitLab Registry로 변경
+    # 멀티스테이지 빌드 — gradle 빌드 + docker 이미지 생성 한 번에
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE:latest
@@ -39,8 +36,7 @@ build:
 
 # ─────────────────────────────────────────
 # STAGE 2: Blue-Green 무중단 배포
-# 기존: SSH로 EC2 접속 → compose pull → down → up (다운타임 발생)
-# 변경: EC2 내부에서 직접 deploy.sh 실행 → 무중단
+# 실행: EC2 Self-hosted Runner (배포만 담당)
 # ─────────────────────────────────────────
 deploy:
   stage: deploy
