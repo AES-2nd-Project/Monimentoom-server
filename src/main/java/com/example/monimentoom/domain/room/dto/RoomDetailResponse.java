@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomDetailResponse {
-    private Long id;
+    private Long roomId;
     private String name;
     private String userProfileImageUrl;
     private String nickname;
@@ -27,7 +27,7 @@ public class RoomDetailResponse {
 
     public static RoomDetailResponse from(Room room, String userProfileImageUrl, Boolean isMine, List<CommentResponse> comments) {
         return RoomDetailResponse.builder()
-                .id(room.getId())
+                .roomId(room.getId())
                 .name(room.getName())
                 .userProfileImageUrl(userProfileImageUrl)
                 .nickname(room.getUser().getNickname())

@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomBasicResponse {
-    private Long id;
+    private Long roomId;
     private Long userId;
     private String name;
 
     public static RoomBasicResponse from(Room room) {
         if (room == null) return null;
         return RoomBasicResponse.builder()
-                .id(room.getId())
+                .roomId(room.getId())
                 .userId(room.getUser().getId())
                 .name(room.getName())
                 .build();

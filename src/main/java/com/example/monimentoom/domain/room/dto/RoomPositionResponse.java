@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomPositionResponse {
-    private Long id;
+    private Long roomId;
     private Long userId;
     private String name;
     private List<PositionResponse> positions;
@@ -22,7 +22,7 @@ public class RoomPositionResponse {
     public static RoomPositionResponse from(Room room, List<PositionResponse> positions) {
         if (room == null) return null;
         return RoomPositionResponse.builder()
-                .id(room.getId())
+                .roomId(room.getId())
                 .userId(room.getUser().getId())
                 .name(room.getName())
                 .positions(positions)
