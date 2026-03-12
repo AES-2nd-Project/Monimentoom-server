@@ -66,3 +66,4 @@ src/main/java/com/example/monimentoom/config/SecurityConfigLocal.java
 # Nginx SSL Certificates 제외
 *.key
 *.crt
+*.pem
