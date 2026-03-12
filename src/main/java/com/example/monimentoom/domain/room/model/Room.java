@@ -29,6 +29,8 @@ public class Room {
 
     @Column(nullable = false, unique = true)
     private String name;
+    @Column
+    private String frameImageUrl;
 
     @Column(nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

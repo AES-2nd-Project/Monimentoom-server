@@ -27,6 +27,7 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    private String profileImageUrl;
     @Column(nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
