@@ -1,16 +1,19 @@
 # ── Stage 1: Build ──────────────────────────────
-FROM gradle:8.5-jdk17 AS builder
+FROM eclipse-temurin:17-jdk-alpine AS builder
 
 WORKDIR /app
 
-# 1단계: 의존성만 먼저 캐시 (build.gradle 안 바뀌면 이 레이어 재사용)
-COPY build.gradle settings.gradle ./
+# gradlew 사용을 위해 전체 프로젝트 구조 필요
+COPY gradlew ./
 COPY gradle ./gradle
-RUN gradle dependencies --no-daemon || true
+COPY build.gradle settings.gradle ./
 
-# 2단계: 소스 복사 후 빌드 (순서 중요)
+# 의존성 캐시
+RUN ./gradlew dependencies --no-daemon || true
+
+# 소스 복사 후 빌드
 COPY src ./src
-RUN JAVA_OPTS="-Xmx1g" gradle clean build -x test --no-daemon
+RUN ./gradlew clean build -x test --no-daemon
 
 # ── Stage 2: Run ────────────────────────────────
 FROM eclipse-temurin:17-jre-alpine
