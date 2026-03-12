@@ -47,6 +47,8 @@ deploy:
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   script:
+    - cp ./deploy.sh /home/ubuntu/app/deploy.sh
+    - chmod +x /home/ubuntu/app/deploy.sh
     - /home/ubuntu/app/deploy.sh
   after_script:
     - docker logout $CI_REGISTRY
