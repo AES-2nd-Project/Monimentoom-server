@@ -95,9 +95,7 @@ public class RoomService {
         if (roomCount <= 1) {
             throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_ROOM);
         }
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        if (user.getMainRoom().getId().equals(roomId)) {
+        if (room.getUser().getMainRoom().getId().equals(roomId)) {
             throw new CustomException(ErrorCode.CANNOT_DELETE_MAIN_ROOM);
         }
         roomRepository.deleteById(roomId);
