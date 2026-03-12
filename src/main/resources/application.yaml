@@ -1,5 +1,4 @@
 spring:
-
   # application-secret.yaml 파일을 포함하여 환경변수로부터 설정값을 불러오기
   profiles:
     include: secret
@@ -13,7 +12,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
 
   flyway:
     enabled: false  # 어느정도 DB 설계 후 true로 변경하여 DB 동기화하기
@@ -36,3 +34,4 @@ cloud:
 
 server:
   port: 8080
+  forward-headers-strategy: native # Nginx 뒤에서 실행할 때 클라이언트 IP 주소를 올바르게 전달하기 위해 설정
