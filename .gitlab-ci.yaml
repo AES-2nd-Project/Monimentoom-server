@@ -1,0 +1,117 @@
+# .gitlab-ci.yaml
+
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+# ─────────────────────────────────────────
+# STAGE 1: Build & Push to GitLab Registry
+# 기존: JDK 설정 → yml 파일 주입 → Gradle 빌드 → DockerHub push
+# ─────────────────────────────────────────
+build:
+  stage: build
+  tags:
+    - ec2
+  only:
+    - main
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" $CI_REGISTRY
+  script:
+    # 기존 "Create Application Config" 단계
+    - mkdir -p src/main/resources src/test/resources
+    - cp $APP_YAML ./src/main/resources/application.yaml
+    - cp $APP_SECRET_YAML ./src/main/resources/application-secret.yaml
+    - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml
+
+    # 기존 "Build with Gradle" 단계
+    - chmod +x ./gradlew
+    - ./gradlew clean build -x test
+
+    # 기존 "Build and push Docker image" 단계 → GitLab Registry로 변경
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  after_script:
+    - docker logout $CI_REGISTRY
+
+# ─────────────────────────────────────────
+# STAGE 2: Blue-Green 무중단 배포
+# 기존: SSH로 EC2 접속 → compose pull → down → up (다운타임 발생)
+# 변경: EC2 내부에서 직접 deploy.sh 실행 → 무중단
+# ─────────────────────────────────────────
+deploy:
+  stage: deploy
+  tags:
+    - ec2
+  only:
+    - main
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" $CI_REGISTRY
+  script:# .gitlab-ci.yaml
+
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+# ─────────────────────────────────────────
+# STAGE 1: Build & Push to GitLab Registry
+# 기존: JDK 설정 → yml 파일 주입 → Gradle 빌드 → DockerHub push
+# ─────────────────────────────────────────
+build:
+  stage: build
+  tags:
+    - ec2
+  only:
+    - main
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" $CI_REGISTRY
+  script:
+    # 기존 "Create Application Config" 단계
+    - mkdir -p src/main/resources src/test/resources
+    - cp $APP_YAML ./src/main/resources/application.yaml
+    - cp $APP_SECRET_YAML ./src/main/resources/application-secret.yaml
+    - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml
+
+    # 기존 "Build with Gradle" 단계
+    - chmod +x ./gradlew
+    - ./gradlew clean build -x test
+
+    # 기존 "Build and push Docker image" 단계 → GitLab Registry로 변경
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  after_script:
+    - docker logout $CI_REGISTRY
+
+# ─────────────────────────────────────────
+# STAGE 2: Blue-Green 무중단 배포
+# 기존: SSH로 EC2 접속 → compose pull → down → up (다운타임 발생)
+# 변경: EC2 내부에서 직접 deploy.sh 실행 → 무중단
+# ─────────────────────────────────────────
+deploy:
+  stage: deploy
+  tags:
+    - ec2
+  only:
+    - main
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" $CI_REGISTRY
+  script:
+    - /home/ubuntu/app/deploy.sh
+  after_script:
+    - docker logout $CI_REGISTRY
+  environment:
+    name: production
+    url: https://monimentoom.duckdns.org
+    - /home/ubuntu/app/deploy.sh
+  after_script:
+    - docker logout $CI_REGISTRY
+  environment:
+    name: production
+    url: https://monimentoom.duckdns.org
