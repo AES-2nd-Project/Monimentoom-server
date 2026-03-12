@@ -9,6 +9,7 @@ import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
+import com.example.monimentoom.global.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.List;
 public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final UserRepository userRepository;
+    private final S3Uploader s3Uploader;
 
     @Transactional
     public GoodsResponse createGoods(
@@ -65,6 +67,7 @@ public class GoodsService {
         Goods goods = goodsRepository.findById(goodsId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GOODS_NOT_FOUND));
         goods.validateOwnership(userId);
+        s3Uploader.deleteFile(goods.getImageUrl());
         goodsRepository.delete(goods);
     }
 }
