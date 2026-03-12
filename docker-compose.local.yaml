@@ -21,7 +21,6 @@ services:
       - ./nginx.local.conf:/etc/nginx/nginx.conf:ro
       - ./localhost.crt:/etc/nginx/localhost.crt:ro
       - ./localhost.key:/etc/nginx/localhost.key:ro
-    depends_on:
-      - local-mysql
+
 volumes:
   mysql-data-local: # 볼륨 EC2랑 안 겹치게 분리
