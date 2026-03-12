@@ -22,8 +22,8 @@ build:
   script:
     # 기존 "Create Application Config" 단계
     - mkdir -p src/main/resources src/test/resources
-    - cp $APPLICATION_YML ./src/main/resources/application.yml
-    - cp $APPLICATION_SECRET_YML ./src/main/resources/application-secret.yml
+    - cp $APP_YAML ./src/main/resources/application.yaml
+    - cp $APP_SECRET_YAML ./src/main/resources/application-secret.yaml
     - cp $TEST_APPLICATION_YML ./src/test/resources/application.yml
 
     # 기존 "Build with Gradle" 단계
