@@ -16,19 +16,22 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomDetailResponse {
-    private Long id;
+    private Long roomId;
     private String name;
-    // TODO: 프로필 이미지 url 추가해야함
+    private String userProfileImageUrl;
     private String nickname;
+    private Boolean isMine;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime userCreatedAt;
     private List<CommentResponse> comments;
 
-    public static RoomDetailResponse from(Room room, List<CommentResponse> comments) {
+    public static RoomDetailResponse from(Room room, String userProfileImageUrl, Boolean isMine, List<CommentResponse> comments) {
         return RoomDetailResponse.builder()
-                .id(room.getId())
+                .roomId(room.getId())
                 .name(room.getName())
+                .userProfileImageUrl(userProfileImageUrl)
                 .nickname(room.getUser().getNickname())
+                .isMine(isMine)
                 .userCreatedAt(room.getUser().getCreatedAt())
                 .comments(comments)
                 .build();

@@ -24,6 +24,7 @@ public enum ErrorCode {
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "방을 찾을 수 없습니다."),
     ROOM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "R002", "권한이 없습니다."),
     CANNOT_DELETE_LAST_ROOM(HttpStatus.BAD_REQUEST, "R003", "마지막 방은 삭제할 수 없습니다."),
+    CANNOT_DELETE_MAIN_ROOM(HttpStatus.BAD_REQUEST, "R004", "메인 방은 삭제할 수 없습니다."),
 
     GOODS_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "굿즈를 찾을 수 없습니다."),
     GOODS_ACCESS_DENIED(HttpStatus.FORBIDDEN, "G002", "권한이 없습니다."),

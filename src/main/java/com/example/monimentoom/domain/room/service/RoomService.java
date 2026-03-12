@@ -45,7 +45,6 @@ public class RoomService {
 
         // targetId보다 큰 값이 없으면( = 가장 큰 ID를 뽑았는데 이미 삭제됐다면)
         // 다시 처음(minId) 부터 찾도록 orElseGet
-        // TODO: 내 방은 제외해야 함
         Room room = userRepository.findFirstByIdGreaterThanEqual(targetId)
                 .orElseGet(() ->
                         userRepository.findFirstUser()
@@ -96,6 +95,9 @@ public class RoomService {
         if (roomCount <= 1) {
             throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_ROOM);
         }
+        if (room.getUser().getMainRoom().getId().equals(roomId)) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_MAIN_ROOM);
+        }
         roomRepository.deleteById(roomId);
     }
 
@@ -115,12 +117,12 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public RoomDetailResponse getRoomDetail(Long userId, Long roomId) {
-        // TODO: Response에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+        if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
                 .map(CommentResponse::from)
                 .toList();
-        return RoomDetailResponse.from(room, comments);
+        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), userId.equals(room.getUser().getId()), comments);
     }
 }
