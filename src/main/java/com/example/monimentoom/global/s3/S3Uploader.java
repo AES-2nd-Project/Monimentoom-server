@@ -46,6 +46,8 @@ public class S3Uploader {
     // S3Config 파일을 별도로 만들지 않고 @PostContruct로 S3Client를 초기화하도록 함
     @PostConstruct
     public void init() {
+        // 키가 없어도 경고만 하고 앱은 시작되게 함.
+        // generatePresignedUrl를 실제로 호출할 때만 예외를 던짐.
         if (accessKey.isBlank() || secretKey.isBlank()) {
             log.warn("AWS 자격증명이 없습니다. S3 기능이 비활성화됩니다.");
             return;
