@@ -28,7 +28,7 @@ public class Goods {
 
     @Column(nullable = false)
     private String name;
-    @Column(name = "image_url", nullable = false)
+    @Column(nullable = false)
     private String imageUrl;
 
     private String description;
