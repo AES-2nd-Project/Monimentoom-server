@@ -45,7 +45,6 @@ public class RoomService {
 
         // targetId보다 큰 값이 없으면( = 가장 큰 ID를 뽑았는데 이미 삭제됐다면)
         // 다시 처음(minId) 부터 찾도록 orElseGet
-        // TODO: 내 방은 제외해야 함
         Room room = userRepository.findFirstByIdGreaterThanEqual(targetId)
                 .orElseGet(() ->
                         userRepository.findFirstUser()
@@ -122,9 +121,11 @@ public class RoomService {
     public RoomDetailResponse getRoomDetail(Long userId, Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
                 .map(CommentResponse::from)
                 .toList();
-        return RoomDetailResponse.from(room, userId.equals(room.getUser().getId()), comments);
+        return RoomDetailResponse.from(room, user.getProfileImageUrl(), userId.equals(room.getUser().getId()), comments);
     }
 }
