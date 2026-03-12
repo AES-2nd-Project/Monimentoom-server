@@ -120,12 +120,11 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public RoomDetailResponse getRoomDetail(Long userId, Long roomId) {
-        // TODO: Response에 현재 사용자의 방인지 나타내는 컬럼(isMine) 추가해야함
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
                 .map(CommentResponse::from)
                 .toList();
-        return RoomDetailResponse.from(room, comments);
+        return RoomDetailResponse.from(room, userId.equals(room.getUser().getId()), comments);
     }
 }

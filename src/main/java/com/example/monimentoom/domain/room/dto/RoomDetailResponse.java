@@ -20,15 +20,17 @@ public class RoomDetailResponse {
     private String name;
     // TODO: 프로필 이미지 url 추가해야함
     private String nickname;
+    private Boolean isMine;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime userCreatedAt;
     private List<CommentResponse> comments;
 
-    public static RoomDetailResponse from(Room room, List<CommentResponse> comments) {
+    public static RoomDetailResponse from(Room room, Boolean isMine, List<CommentResponse> comments) {
         return RoomDetailResponse.builder()
                 .id(room.getId())
                 .name(room.getName())
                 .nickname(room.getUser().getNickname())
+                .isMine(isMine)
                 .userCreatedAt(room.getUser().getCreatedAt())
                 .comments(comments)
                 .build();
