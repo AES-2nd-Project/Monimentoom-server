@@ -67,7 +67,7 @@ public class GoodsService {
         Goods goods = goodsRepository.findById(goodsId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GOODS_NOT_FOUND));
         goods.validateOwnership(userId);
-        s3Uploader.deleteFile(goods.getImageUrl());  // S3 삭제
-        goodsRepository.delete(goods);               // DB 삭제
+        s3Uploader.deleteFile(goods.getImageUrl());
+        goodsRepository.delete(goods);
     }
 }
