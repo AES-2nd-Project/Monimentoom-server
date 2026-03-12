@@ -19,6 +19,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - ./localhost.crt:/etc/nginx/localhost.crt:ro
+      - ./localhost.key:/etc/nginx/localhost.key:ro
     depends_on:
       - local-mysql
 volumes:

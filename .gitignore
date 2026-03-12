@@ -61,3 +61,8 @@ src/main/resources/schema.sql
 
 ### local 테스트용 SecurityConfig 파일 제외
 src/main/java/com/example/monimentoom/config/SecurityConfigLocal.java
+
+
+# Nginx SSL Certificates 제외
+*.key
+*.crt
