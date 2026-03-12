@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
+import java.net.URI;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -127,7 +128,32 @@ public class S3Uploader {
      */
     public void deleteFile(String imageUrl) {
         if (s3Client == null) return;
-        String key = imageUrl.substring(imageUrl.indexOf(".amazonaws.com/") + ".amazonaws.com/".length());
+
+        String key;
+        // url에서 host, 길이 검증
+        try {
+            URI uri = URI.create(imageUrl);
+            String host = uri.getHost(); // e.g. bucket-name.s3.ap-northeast-2.amazonaws.com
+            String path = uri.getPath(); // e.g. /goods/uuid_filename.jpg
+
+            // 호스트 검증: 버킷명 + amazonaws.com 도메인인지 확인
+            if (host == null || !host.endsWith(".amazonaws.com")) {
+                log.warn("S3 삭제 건너뜀 - 기대하지 않는 호스트: {}", host);
+                return;
+            }
+
+            // path 앞의 '/' 제거해 key 추출
+            key = path.startsWith("/") ? path.substring(1) : path;
+
+            if (key.isBlank()) {
+                log.warn("S3 삭제 건너뜀 - key가 비어 있습니다. imageUrl={}", imageUrl);
+                return;
+            }
+        } catch (IllegalArgumentException e) {
+            log.warn("S3 삭제 건너뜀 - 유효하지 않은 URL 형식: {}", imageUrl, e);
+            return;
+        }
+
         s3Client.deleteObject(builder -> builder.bucket(bucket).key(key).build());
         log.info("S3 파일 삭제 완료: {}", key);
     }
