@@ -2,11 +2,13 @@ package com.example.monimentoom.domain.goods.dto;
 
 import com.example.monimentoom.domain.goods.model.Goods;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +23,9 @@ public class GoodsResponse {
     private String description;
     private String imageUrl;
     private Integer price;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+
 
     /** 중복 배치 대응 */
     private List<PositionResponse> positions;
@@ -40,6 +45,7 @@ public class GoodsResponse {
                 .imageUrl(goods.getImageUrl())
                 .price(goods.getPrice())
                 .positions(positions)
+                .createdAt(goods.getCreatedAt())
                 .build();
     }
 }
