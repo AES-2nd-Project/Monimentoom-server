@@ -33,6 +33,7 @@ public class S3Uploader {
     @Value("${cloud.aws.credentials.secret-key:}")
     private String secretKey;
 
+    // Region.of() 에서 예외 방지 위해 기본값 설정
     @Value("${cloud.aws.region.static:ap-northeast-2}")
     private String region;
 
@@ -42,7 +43,7 @@ public class S3Uploader {
     // Presigned URL 서명용 - 테스트 환경에서는 null
     private StaticCredentialsProvider credentialsProvider;
 
-    // S3Config 파일을 별도로 만들지 않고 PostContruct로 S3Client를 초기화하도록 함
+    // S3Config 파일을 별도로 만들지 않고 @PostContruct로 S3Client를 초기화하도록 함
     @PostConstruct
     public void init() {
         if (accessKey.isBlank() || secretKey.isBlank()) {
@@ -58,10 +59,6 @@ public class S3Uploader {
                 .build();
     }
 
-    /**
-     * 파일 확장자로 Content-Type 자동 판단
-     * 서명에 포함되므로 PUT 요청 시 이 값과 반드시 일치해야 함
-     */
     // 파일 확장자로 Content-type 자동 판단
     // 서명에 포함되므로 PUT 요청 시 이 값과 반드시 일치해야 함(ex. .png, .jpg)
     private String resolveContentType(String fileName) {
@@ -82,6 +79,9 @@ public class S3Uploader {
      * @return
      */
     public PresignedUrlResult generatePresignedUrl(String dirName, String originalFileName) {
+        if (credentialsProvider == null) {
+            throw new CustomException(ErrorCode.IMAGE_UPLOAD_UNAVAILABLE);
+        }
         String contentType = resolveContentType(originalFileName);
         String fileName = dirName + "/" + UUID.randomUUID() + "_" + originalFileName;
 
@@ -120,7 +120,6 @@ public class S3Uploader {
         return presignedUrl.split("\\?")[0];
     }
 
-    // S3 파일 삭제 (AWS 키가 없으면 s3Client가 null → 삭제 안 하고 그냥 return)
     /**
      * S3 파일 삭제
      * @param imageUrl: DB에 저장된 순수 S3 URL: 버킷 이후 경로(key)만 추출해서 삭제 요청함
