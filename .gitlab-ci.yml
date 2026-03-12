@@ -1,4 +1,4 @@
-# .gitlab-ci.yaml
+# .gitlab-ci.yml
 
 stages:
   - build
