@@ -24,12 +24,13 @@ public enum ErrorCode {
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "방을 찾을 수 없습니다."),
     ROOM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "R002", "권한이 없습니다."),
     CANNOT_DELETE_LAST_ROOM(HttpStatus.BAD_REQUEST, "R003", "마지막 방은 삭제할 수 없습니다."),
+    CANNOT_DELETE_MAIN_ROOM(HttpStatus.BAD_REQUEST, "R004", "메인 방은 삭제할 수 없습니다."),
 
     GOODS_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "굿즈를 찾을 수 없습니다."),
     GOODS_ACCESS_DENIED(HttpStatus.FORBIDDEN, "G002", "권한이 없습니다."),
 
     INVALID_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "S001", "지원하지 않는 이미지 형식입니다. (jpg, jpeg, png, webp, gif만 가능)"),
-    // AWS 자격증명이 설정되지 않아 S3를 사용할 수 없음
+    // AWS 자격증명이 설정되지 않아 S3를 사용할 수 없음,
     IMAGE_UPLOAD_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "S002", "이미지 업로드를 사용할 수 없습니다."),
 
     POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "위치정보를 찾을 수 없습니다."),
