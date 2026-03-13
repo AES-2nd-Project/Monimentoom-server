@@ -54,6 +54,6 @@ public class LikeService {
         if (!roomRepository.existsById(roomId)) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
         if (!likeRepository.existsByRoomIdAndUserId(roomId, userId))
             throw new CustomException(ErrorCode.ALREADY_UNLIKED);
-        likeRepository.removeByUserIdAndRoomId(userId, roomId);
+        likeRepository.deleteByUserIdAndRoomId(userId, roomId);
     }
 }
