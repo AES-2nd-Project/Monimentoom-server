@@ -13,7 +13,11 @@ echo "======================================"
 echo " Blue-Green 무중단 배포 시작"
 echo "======================================"
 
-CURRENT=$(grep "server app-" "$NGINX_CONF" 2>/dev/null | grep -oE "app-(blue|green)" || echo "")
+# head -n1 추가 → 여러 줄 매치 방지
+CURRENT=$(grep "server app-" "$NGINX_CONF" 2>/dev/null \
+    | grep -oE "app-(blue|green)" \
+    | head -n1 \
+    || echo "")
 
 if [ "$CURRENT" = "app-blue" ]; then
     NEXT="app-green"
@@ -42,7 +46,7 @@ HEALTH_URL="http://localhost:$NEXT_PORT/actuator/health"
 STATUS="000"
 for i in {1..20}; do
     STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" || true)
-    if [ "$STATUS" = "200" ] || [ "$STATUS" = "403" ]; then
+    if [ "$STATUS" = "200" ]; then
         echo "✅ 헬스체크 통과 (${i}회 시도)"
         break
     fi
@@ -57,7 +61,13 @@ if [ "$STATUS" != "200" ] && [ "$STATUS" != "403" ]; then
 fi
 
 echo "[4/5] Nginx를 $NEXT 로 전환..."
+# sed 치환 후 실제로 변경됐는지 검증
 sed -i "s/server $INACTIVE:8080/server $NEXT:8080/g" "$NGINX_CONF"
+if ! grep -q "server $NEXT:8080" "$NGINX_CONF"; then
+    echo "❌ nginx.conf 치환 실패 — 롤백"
+    run_compose stop "$NEXT"
+    exit 1
+fi
 docker compose -f "$COMPOSE_FILE" restart nginx
 echo "✅ Nginx restart 완료"
 

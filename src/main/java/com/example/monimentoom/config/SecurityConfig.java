@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/users/login", "/users/signup", "/error",
-                                        "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                        "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)

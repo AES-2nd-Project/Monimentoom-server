@@ -1,10 +1,37 @@
 stages:
+  - test
   - build
   - deploy
 
 variables:
   DOCKER_TLS_CERTDIR: "/certs"
 
+# ─────────────────────────────────────────
+# STAGE 1: Test (MR + main 둘 다 실행)
+# ─────────────────────────────────────────
+test:
+  stage: test
+  image: eclipse-temurin:17-jdk-alpine
+  only:
+    - main
+    - merge_requests
+  before_script:
+    - apk add --no-cache bash
+  script:
+    - mkdir -p src/main/resources src/test/resources
+    - cp $APP_YAML             ./src/main/resources/application.yaml
+    - cp $APP_SECRET_YAML      ./src/main/resources/application-secret.yaml
+    - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml
+    - chmod +x ./gradlew
+    - bash ./gradlew test --no-daemon
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .gradle/
+
+# ─────────────────────────────────────────
+# STAGE 2: Build (main만 실행)
+# ─────────────────────────────────────────
 build:
   stage: build
   image: docker:24
@@ -18,13 +45,16 @@ build:
     - mkdir -p src/main/resources src/test/resources
     - cp $APP_YAML             ./src/main/resources/application.yaml
     - cp $APP_SECRET_YAML      ./src/main/resources/application-secret.yaml
-    - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml  # ← 수정
+    - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE:latest
   after_script:
     - docker logout $CI_REGISTRY
 
+# ─────────────────────────────────────────
+# STAGE 3: Deploy (main만 실행)
+# ─────────────────────────────────────────
 deploy:
   stage: deploy
   image: alpine:latest
