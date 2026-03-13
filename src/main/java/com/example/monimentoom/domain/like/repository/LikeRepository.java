@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LikeRepository extends JpaRepository<Like, Long> {
     Long countByRoomId(Long roomId);
 
-    boolean existsByRoomIdAndUserId(Long roomId, Long userId);
+    Boolean existsByRoomIdAndUserId(Long roomId, Long userId);
 
-    void deleteByUserIdAndRoomId(Long userId, Long roomId);
+    Long deleteByUserIdAndRoomId(Long userId, Long roomId);
 }

@@ -10,6 +10,7 @@ import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,15 +46,21 @@ public class LikeService {
                 .user(user)
                 .room(room)
                 .build();
-        likeRepository.save(like);
+        try {
+            likeRepository.save(like);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.ALREADY_LIKED);
+        }
+
     }
 
     @Transactional
     public void deleteLike(Long userId, Long roomId) {
         if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         if (!roomRepository.existsById(roomId)) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
-        if (!likeRepository.existsByRoomIdAndUserId(roomId, userId))
+        Long deleteCount = likeRepository.deleteByUserIdAndRoomId(userId, roomId);
+        if (deleteCount == 0) {
             throw new CustomException(ErrorCode.ALREADY_UNLIKED);
-        likeRepository.deleteByUserIdAndRoomId(userId, roomId);
+        }
     }
 }
