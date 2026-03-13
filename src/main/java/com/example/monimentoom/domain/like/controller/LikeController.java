@@ -19,7 +19,6 @@ public class LikeController {
         return ResponseEntity.ok(likeService.getLikes(userId, roomId));
     }
 
-    // 내가 좋아요한 방 모아보기는 과하겠죠?
     @PostMapping("/{roomId}")
     public ResponseEntity<Void> addLike(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
         likeService.addLike(userId, roomId);
