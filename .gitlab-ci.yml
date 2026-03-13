@@ -5,57 +5,38 @@ stages:
 variables:
   DOCKER_TLS_CERTDIR: "/certs"
 
-# ─────────────────────────────────────────
-# STAGE 1: Build & Push to GitLab Registry
-# 실행: GitLab Shared Runner (EC2 자원 사용 안 함)
-# Gradle 빌드는 멀티스테이지 Dockerfile 내부에서 처리
-# ─────────────────────────────────────────
-
-
-# build:
-#   stage: build
-#   image: docker:24
-#   services:
-#     - docker:24-dind
-#   tags: []                          # Shared Runner 사용 (ec2 태그 제거)
-#   only:
-#     - main
-#   before_script:
-#     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-#   script:
-#     # yml 파일 주입 (Dockerfile의 COPY src ./src 에 포함되도록 먼저 배치)
-#     - mkdir -p src/main/resources src/test/resources
-#     - cp $APP_YAML            ./src/main/resources/application.yaml
-#     - cp $APP_SECRET_YAML     ./src/main/resources/application-secret.yaml
-#     - cp $TEST_APPLICATION_YML ./src/test/resources/application.yml
-
-#     # 멀티스테이지 빌드 — gradle 빌드 + docker 이미지 생성 한 번에
-#     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
-#     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-#     - docker push $CI_REGISTRY_IMAGE:latest
-#   after_script:
-#     - docker logout $CI_REGISTRY
-
-
-
-# ─────────────────────────────────────────
-# STAGE 2: Blue-Green 무중단 배포
-# 실행: EC2 Self-hosted Runner (배포만 담당)
-# ─────────────────────────────────────────
-deploy:
-  stage: deploy
-  tags:
-    - ec2
+build:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
   only:
     - main
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   script:
-    - cat ./deploy.sh
-    - cp ./deploy.sh /home/ubuntu/app/deploy.sh
-    - bash /home/ubuntu/app/deploy.sh
+    - mkdir -p src/main/resources src/test/resources
+    - cp $APP_YAML             ./src/main/resources/application.yaml
+    - cp $APP_SECRET_YAML      ./src/main/resources/application-secret.yaml
+    - cp $TEST_APPLICATION_YML ./src/test/resources/application.yml
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
   after_script:
     - docker logout $CI_REGISTRY
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  only:
+    - main
+  before_script:
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - chmod 600 $SSH_PRIVATE_KEY
+    - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+  script:
+    - ssh -i $SSH_PRIVATE_KEY $SSH_USER@$SERVER_IP "bash /home/ubuntu/app/deploy.sh"
   environment:
     name: production
     url: https://monimentoom.duckdns.org
