@@ -105,7 +105,8 @@ public class S3Uploader {
 
             PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
             String presignedUrl = presignedRequest.url().toString();
-            log.info("[S3] Presigned URL 발급 - key={}, contentType={}, url={}", fileName, contentType, presignedUrl);
+            String safeImageUrlForLog = extractImageUrl(presignedUrl); // 쿼리스트링 제거한 URL만 로그에 남김
+            log.info("[S3] Presigned URL 발급 - key={}, contentType={}, url={}", fileName, contentType, safeImageUrlForLog);
             return new PresignedUrlResult(presignedUrl, extractImageUrl(presignedUrl), contentType);
         }
     }
