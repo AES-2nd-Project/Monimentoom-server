@@ -1,10 +1,12 @@
 package com.example.monimentoom.domain.comments.controller;
 
 import com.example.monimentoom.domain.comments.dto.CommentCreateRequest;
+import com.example.monimentoom.domain.comments.dto.CommentPageResponse;
 import com.example.monimentoom.domain.comments.dto.CommentResponse;
 import com.example.monimentoom.domain.comments.dto.CommentUpdateRequest;
 import com.example.monimentoom.domain.comments.service.CommentService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,15 @@ public class CommentController {
     @GetMapping("/{roomId}")
     public ResponseEntity<List<CommentResponse>> getRoomComments(@PathVariable Long roomId) {
         return ResponseEntity.ok(commentService.getRoomComments(roomId));
+    }
+
+    @GetMapping("/{roomId}/scroll")
+    public ResponseEntity<CommentPageResponse> getRoomCommentsScroll(
+            @PathVariable Long roomId,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(defaultValue = "10") @Min(1) int size
+    ) {
+        return ResponseEntity.ok(commentService.getRoomCommentsCursor(roomId, cursorId, size));
     }
 
     @PatchMapping("/{id}")

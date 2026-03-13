@@ -78,7 +78,6 @@ public class S3Uploader {
      * 클라이언트가 S3에 직접 업로드할 수 있는 Presigned URL 발급 (유효시간 5분)
      * @param dirName: S3 저장 폴더명 (예: "goods", "profile")
      * @param originalFileName: 원본 파일명 -> UUID prefix 붙여서 중복 방지
-     * @return
      */
     public PresignedUrlResult generatePresignedUrl(String dirName, String originalFileName) {
         if (credentialsProvider == null) {
@@ -106,6 +105,8 @@ public class S3Uploader {
 
             PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
             String presignedUrl = presignedRequest.url().toString();
+            String safeImageUrlForLog = extractImageUrl(presignedUrl); // 쿼리스트링 제거한 URL만 로그에 남김
+            log.info("[S3] Presigned URL 발급 - key={}, contentType={}, url={}", fileName, contentType, safeImageUrlForLog);
             return new PresignedUrlResult(presignedUrl, extractImageUrl(presignedUrl), contentType);
         }
     }
