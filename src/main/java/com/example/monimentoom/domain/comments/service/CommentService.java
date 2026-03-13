@@ -13,7 +13,6 @@ import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
+    private static final int MAX_PAGE_SIZE = 100;
     private final RoomRepository roomRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
@@ -59,17 +59,19 @@ public class CommentService {
             throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
         }
 
-        Pageable pageable = PageRequest.of(0, size + 1); // 1개 더 조회해서 hasNext 판단
-        // 이 객체로 hasNext를 어케판단한단거?
+        int pageSize = Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
+        Pageable pageable = PageRequest.of(0, pageSize + 1); // 1개 더 조회해서 hasNext 판단
         List<Comment> comments = commentRepository.findByRoomIdWithCursor(roomId, cursorId, pageable);
 
-        boolean hasNext = comments.size() > size;
+        boolean hasNext = comments.size() > pageSize;
         if (hasNext) {
-            comments = comments.subList(0, size); // 초과분 제거
+            comments = comments.subList(0, pageSize); // 초과분 제거
         }
 
         // 다음에 불러올 댓글 id 시작점(ex. c.id < cursorId)
-        Long nextCursorId = hasNext ? comments.get(comments.size() - 1).getId() : null;
+        Long nextCursorId = hasNext && !comments.isEmpty()
+                ? comments.get(comments.size() - 1).getId()
+                : null;
         List<CommentResponse> responseLists = comments.stream()
                 .map(CommentResponse::from)
                 .toList();

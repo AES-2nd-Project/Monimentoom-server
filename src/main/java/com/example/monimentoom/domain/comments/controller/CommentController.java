@@ -6,6 +6,7 @@ import com.example.monimentoom.domain.comments.dto.CommentResponse;
 import com.example.monimentoom.domain.comments.dto.CommentUpdateRequest;
 import com.example.monimentoom.domain.comments.service.CommentService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class CommentController {
     public ResponseEntity<CommentPageResponse> getRoomCommentsScroll(
             @PathVariable Long roomId,
             @RequestParam(required = false) Long cursorId,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") @Min(1) int size
     ) {
         return ResponseEntity.ok(commentService.getRoomCommentsCursor(roomId, cursorId, size));
     }
