@@ -1,0 +1,74 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+
+# ─────────────────────────────────────────
+# STAGE 1: Test (MR + main 둘 다 실행)
+# ─────────────────────────────────────────
+test:
+  stage: test
+  image: eclipse-temurin:17-jdk-alpine
+  only:
+    - main
+    - merge_requests
+  before_script:
+    - apk add --no-cache bash
+  script:
+    - mkdir -p src/main/resources src/test/resources
+    - cp $APP_YAML             ./src/main/resources/application.yaml
+    - cp $APP_SECRET_YAML      ./src/main/resources/application-secret.yaml
+    - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml
+    - chmod +x ./gradlew
+    - bash ./gradlew test --no-daemon
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .gradle/
+
+# ─────────────────────────────────────────
+# STAGE 2: Build (main만 실행)
+# ─────────────────────────────────────────
+build:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  only:
+    - main
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - mkdir -p src/main/resources src/test/resources
+    - cp $APP_YAML             ./src/main/resources/application.yaml
+    - cp $APP_SECRET_YAML      ./src/main/resources/application-secret.yaml
+    - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  after_script:
+    - docker logout $CI_REGISTRY
+
+# ─────────────────────────────────────────
+# STAGE 3: Deploy (main만 실행)
+# ─────────────────────────────────────────
+deploy:
+  stage: deploy
+  image: alpine:latest
+  only:
+    - main
+  before_script:
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - chmod 600 $SSH_PRIVATE_KEY
+    - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+  script:
+    - scp -i $SSH_PRIVATE_KEY ./deploy.sh $SSH_USER@$SERVER_IP:/home/ubuntu/app/deploy.sh
+    - scp -i $SSH_PRIVATE_KEY ./docker-compose.prod.yaml $SSH_USER@$SERVER_IP:/home/ubuntu/app/docker-compose.prod.yaml
+    - ssh -i $SSH_PRIVATE_KEY $SSH_USER@$SERVER_IP "chmod +x /home/ubuntu/app/deploy.sh && bash /home/ubuntu/app/deploy.sh"
+  environment:
+    name: production
+    url: https://monimentoom.duckdns.org
