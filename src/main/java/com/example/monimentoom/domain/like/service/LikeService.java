@@ -58,7 +58,7 @@ public class LikeService {
     public void deleteLike(Long userId, Long roomId) {
         if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         if (!roomRepository.existsById(roomId)) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
-        Long deleteCount = likeRepository.deleteByUserIdAndRoomId(userId, roomId);
+        long deleteCount = likeRepository.deleteByUserIdAndRoomId(userId, roomId);
         if (deleteCount == 0) {
             throw new CustomException(ErrorCode.ALREADY_UNLIKED);
         }
