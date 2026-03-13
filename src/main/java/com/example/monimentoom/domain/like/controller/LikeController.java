@@ -16,7 +16,7 @@ public class LikeController {
 
     @GetMapping("/{roomId}")
     public ResponseEntity<LikeResponse> getLikes(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
-        return ResponseEntity.ok(likeService.getLikes(11L, roomId));
+        return ResponseEntity.ok(likeService.getLikes(userId, roomId));
     }
 
     // 내가 좋아요한 방 모아보기는 과하겠죠?
