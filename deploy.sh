@@ -1,12 +1,12 @@
-ubuntu@ip-172-31-15-62:~/app$ cat /home/ubuntu/app/deploy.sh
 #!/bin/bash
 set -e
 
 APP_DIR="/home/ubuntu/app"
 NGINX_CONF="$APP_DIR/nginx.conf"
+COMPOSE_FILE="$APP_DIR/docker-compose.prod.yaml"
 
 run_compose() {
-    cd "$APP_DIR" && docker compose "$@"
+    cd "$APP_DIR" && docker compose -f "$COMPOSE_FILE" "$@"
 }
 
 echo "======================================"
@@ -50,7 +50,7 @@ for i in {1..20}; do
     sleep 3
 done
 
-if [ "$STATUS" = "200" ] && [ "$STATUS" = "403" ]; then
+if [ "$STATUS" != "200" ] && [ "$STATUS" != "403" ]; then
     echo "❌ 헬스체크 실패 — 롤백"
     run_compose stop "$NEXT"
     exit 1
@@ -58,8 +58,8 @@ fi
 
 echo "[4/5] Nginx를 $NEXT 로 전환..."
 sed -i "s/server $INACTIVE:8080/server $NEXT:8080/g" "$NGINX_CONF"
-docker compose -f "$APP_DIR/docker-compose.yml" restart nginx
-echo "✅ Nginx reload 완료"
+docker compose -f "$COMPOSE_FILE" restart nginx
+echo "✅ Nginx restart 완료"
 
 echo "[5/5] $INACTIVE 컨테이너 종료..."
 run_compose stop "$INACTIVE"
