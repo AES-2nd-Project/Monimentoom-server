@@ -5,7 +5,6 @@ WORKDIR /app
 
 # gradlew 사용을 위해 전체 프로젝트 구조 필요
 COPY gradlew ./
-RUN chmod +x gradlew
 COPY gradle ./gradle
 COPY build.gradle settings.gradle ./
 

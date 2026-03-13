@@ -36,7 +36,10 @@ deploy:
     - chmod 600 $SSH_PRIVATE_KEY
     - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
   script:
-    - ssh -i $SSH_PRIVATE_KEY $SSH_USER@$SERVER_IP "bash /home/ubuntu/app/deploy.sh"
+    # 프로젝트의 deploy.sh를 EC2로 복사
+    - scp -i $SSH_PRIVATE_KEY ./deploy.sh $SSH_USER@$SERVER_IP:/home/ubuntu/app/deploy.sh
+    # 실행 권한 부여 후 배포 실행
+    - ssh -i $SSH_PRIVATE_KEY $SSH_USER@$SERVER_IP "chmod +x /home/ubuntu/app/deploy.sh && bash /home/ubuntu/app/deploy.sh"
   environment:
     name: production
     url: https://monimentoom.duckdns.org
