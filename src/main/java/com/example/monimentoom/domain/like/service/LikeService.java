@@ -3,6 +3,7 @@ package com.example.monimentoom.domain.like.service;
 import com.example.monimentoom.domain.like.dto.LikeResponse;
 import com.example.monimentoom.domain.like.model.Like;
 import com.example.monimentoom.domain.like.repository.LikeRepository;
+import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.model.User;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,15 @@ public class LikeService {
                 .likeCount(likeCount)
                 .isLiked(isLiked)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoomBasicResponse> getLikedRooms(Long userId) {
+        if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        return likeRepository.findByUserId(userId)
+                .stream()
+                .map(like -> RoomBasicResponse.from(like.getRoom()))
+                .toList();
     }
 
     @Transactional
