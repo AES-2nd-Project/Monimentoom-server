@@ -1,7 +1,6 @@
 package com.example.monimentoom.domain.like.repository;
 
 import com.example.monimentoom.domain.like.model.Like;
-import com.example.monimentoom.domain.room.model.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
