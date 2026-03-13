@@ -3,7 +3,9 @@ package com.example.monimentoom.domain.like.service;
 import com.example.monimentoom.domain.like.dto.LikeResponse;
 import com.example.monimentoom.domain.like.model.Like;
 import com.example.monimentoom.domain.like.repository.LikeRepository;
+import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
+import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
@@ -32,13 +34,16 @@ public class LikeService {
 
     @Transactional
     public void addLike(Long userId, Long roomId) {
-        if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        if (!roomRepository.existsById(roomId)) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
-        if (likeRepository.existsByRoomIdAndUserId(roomId, userId))
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+        if (likeRepository.existsByRoomIdAndUserId(roomId, userId)) {
             throw new CustomException(ErrorCode.ALREADY_LIKED);
+        }
         Like like = Like.builder()
-                .userId(userId)
-                .roomId(roomId)
+                .user(user)
+                .room(room)
                 .build();
         likeRepository.save(like);
     }
@@ -51,5 +56,4 @@ public class LikeService {
             throw new CustomException(ErrorCode.ALREADY_UNLIKED);
         likeRepository.removeByUserIdAndRoomId(userId, roomId);
     }
-    
 }
