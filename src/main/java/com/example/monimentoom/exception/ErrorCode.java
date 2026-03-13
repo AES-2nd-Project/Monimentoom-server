@@ -36,7 +36,11 @@ public enum ErrorCode {
     POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "위치정보를 찾을 수 없습니다."),
 
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "C001", "댓글을 찾을 수 없습니다."),
-    COMMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "C002", "권한이 없습니다.");
+    COMMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "C002", "권한이 없습니다."),
+
+    ALREADY_LIKED(HttpStatus.CONFLICT, "L001", "이미 좋아요한 방입니다."),
+    ALREADY_UNLIKED(HttpStatus.CONFLICT, "L002", "좋아요하지 않은 방입니다."),
+    ;
 
     private final HttpStatus status;
     private final String code;
