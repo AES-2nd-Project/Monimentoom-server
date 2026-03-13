@@ -106,6 +106,7 @@ public class S3Uploader {
 
             PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
             String presignedUrl = presignedRequest.url().toString();
+            log.info("[S3] Presigned URL 발급 - key={}, contentType={}, url={}", fileName, contentType, presignedUrl);
             return new PresignedUrlResult(presignedUrl, extractImageUrl(presignedUrl), contentType);
         }
     }

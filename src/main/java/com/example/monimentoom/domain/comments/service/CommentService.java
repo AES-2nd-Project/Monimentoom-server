@@ -1,6 +1,7 @@
 package com.example.monimentoom.domain.comments.service;
 
 import com.example.monimentoom.domain.comments.dto.CommentCreateRequest;
+import com.example.monimentoom.domain.comments.dto.CommentPageResponse;
 import com.example.monimentoom.domain.comments.dto.CommentResponse;
 import com.example.monimentoom.domain.comments.dto.CommentUpdateRequest;
 import com.example.monimentoom.domain.comments.model.Comment;
@@ -12,6 +13,9 @@ import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +51,34 @@ public class CommentService {
         return commentRepository.findByRoomIdWithUser(roomId).stream()
                 .map(CommentResponse::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public CommentPageResponse getRoomCommentsCursor(Long roomId, Long cursorId, int size) {
+        if (!roomRepository.existsById(roomId)) {
+            throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
+        }
+
+        Pageable pageable = PageRequest.of(0, size + 1); // 1개 더 조회해서 hasNext 판단
+        // 이 객체로 hasNext를 어케판단한단거?
+        List<Comment> comments = commentRepository.findByRoomIdWithCursor(roomId, cursorId, pageable);
+
+        boolean hasNext = comments.size() > size;
+        if (hasNext) {
+            comments = comments.subList(0, size); // 초과분 제거
+        }
+
+        // 다음에 불러올 댓글 id 시작점(ex. c.id < cursorId)
+        Long nextCursorId = hasNext ? comments.get(comments.size() - 1).getId() : null;
+        List<CommentResponse> responseLists = comments.stream()
+                .map(CommentResponse::from)
+                .toList();
+
+        return CommentPageResponse.builder()
+                .comments(responseLists)
+                .nextCursorId(nextCursorId)
+                .hasNext(hasNext)
+                .build();
     }
 
     // 댓글 수정
