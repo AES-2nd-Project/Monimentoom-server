@@ -1,6 +1,8 @@
 package com.example.monimentoom.global.oauth.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record KakaoSocialLoginRequest(
-        String code // 카카오가 발급한 인가 코드
+        @NotBlank String code // 카카오가 발급한 인가 코드
 ) {
 }
