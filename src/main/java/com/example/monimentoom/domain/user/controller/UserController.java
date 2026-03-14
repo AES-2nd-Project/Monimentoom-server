@@ -1,11 +1,8 @@
 package com.example.monimentoom.domain.user.controller;
 
 import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
-import com.example.monimentoom.domain.user.dto.UserResponse;
-import com.example.monimentoom.domain.user.dto.UserSignupRequest;
 import com.example.monimentoom.domain.user.service.UserService;
 import com.example.monimentoom.global.util.JwtUtil;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,12 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final JwtUtil jwtUtil;
-
-    @PostMapping("/signup")
-    public ResponseEntity<UserResponse> signup(@Valid @RequestBody UserSignupRequest request) {
-        return ResponseEntity.ok(userService.createUser(request));
-    }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
