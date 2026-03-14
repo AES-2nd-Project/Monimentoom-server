@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    INVALID_LOGIN_INPUT_VALUE(HttpStatus.BAD_REQUEST, "AUTH_001", "이메일 또는 비밀번호가 올바르지 않습니다."),
-
     // JWT 관련 에러
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_002", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_003", "만료된 토큰입니다."),
