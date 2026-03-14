@@ -52,7 +52,7 @@ public class OAuthController {
 
     // 로컬 테스트용 - 브라우저에서 카카오 redirect_uri를 백엔드로 설정했을 때 사용
     @GetMapping("/kakao")
-    public ResponseEntity<Map<String, Object>> kakaoLoginCallBack(@RequestParam String code) {
+    public ResponseEntity<Map<String, Object>> kakaoLoginCallBack(@Valid @RequestParam String code) {
         KakaoLoginResponse response = kakaoOAuthService.kakaoLogin(code);
         if (!response.isNewUser()) {
             return ResponseEntity.ok()
