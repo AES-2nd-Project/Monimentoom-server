@@ -31,8 +31,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/signup", "/error",
                                 "/swagger-ui/**", "/v3/api-docs/**",
-                                "/oauth/kakao", "/oauth/kakao/signup").permitAll()
-                                .anyRequest().authenticated()
+                                "/oauth/kakao", "/oauth/kakao/signup",
+                                "/actuator/health", "/actuator/health/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
