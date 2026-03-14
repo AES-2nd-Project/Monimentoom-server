@@ -19,7 +19,7 @@ public class UserService {
 
     // TODO : jwt 토큰 만료 처리
     public void logoutUser(Long userId) {
-        userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
