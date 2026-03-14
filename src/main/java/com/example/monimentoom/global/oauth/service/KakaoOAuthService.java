@@ -57,17 +57,22 @@ public class KakaoOAuthService {
         Long kakaoId = userInfo.id();
         log.info("kakaoLogin - kakaoId={}", kakaoId);
 
-        // 3. 기존 유저면 JWT 발급, 신규 유저면 kakaoId 반환
+        // 3. 기존 유저면 JWT 발급, 신규 유저면 signupToken(임시 토큰) 반환
         return userRepository.findByKakaoId(kakaoId)
                 .map(user -> KakaoLoginResponse.ofExistingUser(jwtUtil.createToken(user.getId())))
-                .orElse(KakaoLoginResponse.ofNewUser(kakaoId));
+                .orElse(KakaoLoginResponse.ofNewUser(jwtUtil.createSignupToken(kakaoId)));
     }
 
-    /**
-     * 2단계: 닉네임과 이메일 입력 후 최종 회원가입 + JWT 발급
-     */
     @Transactional
     public String kakaoSignup(KakaoSignupRequest request) {
+        // signupToken 검증 → kakaoId 추출 (위조/만료 시 예외)
+        Long kakaoId = jwtUtil.getKakaoIdFromSignupToken(request.signupToken());
+        log.info("kakaoSignup - verified kakaoId={}", kakaoId);
+
+        // kakaoId 중복 체크 (이미 가입된 카카오 계정)
+        if (userRepository.existsByKakaoId(kakaoId)) {
+            throw new CustomException(ErrorCode.DUPLICATE_KAKAO_USER);
+        }
         // 닉네임 중복 체크
         if (userRepository.existsByNickname(request.nickname())) {
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
@@ -79,13 +84,13 @@ public class KakaoOAuthService {
 
         // 신규 유저 저장
         User newUser = User.builder()
-                .kakaoId(request.kakaoId())
+                .kakaoId(kakaoId)
                 .nickname(request.nickname())
                 .email(request.email())
                 .build();
         userRepository.save(newUser);
 
-        // 기본 방 생성 (일반 회원가입과 동일)
+        // 기본 방 생성
         Room defaultRoom = Room.builder()
                 .name(newUser.getNickname() + "님의 첫 번째 방")
                 .user(newUser)

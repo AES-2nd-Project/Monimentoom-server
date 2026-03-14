@@ -59,6 +59,6 @@ public class OAuthController {
                     .header("Authorization", "Bearer " + response.token())
                     .body(Map.of("isNewUser", false, "token", response.token()));
         }
-        return ResponseEntity.ok(Map.of("isNewUser", true, "kakaoId", response.kakaoId()));
+        return ResponseEntity.ok(Map.of("isNewUser", true, "signupToken", response.signupToken()));
     }
 }
