@@ -29,11 +29,11 @@ public class KakaoOAuthService {
     private final RoomRepository roomRepository;
     private final JwtUtil jwtUtil;
 
-    @Value("${kakao.client-id}")
+    @Value("${kakao.client-id:}")
     private String clientId;
-    @Value("${kakao.redirect-uri}")
+    @Value("${kakao.redirect-uri:}")
     private String redirectUri;
-    @Value("${kakao.client-secret}")
+    @Value("${kakao.client-secret:}")
     private String clientSecret;
 
     /**
