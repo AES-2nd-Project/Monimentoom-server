@@ -42,19 +42,45 @@ public class JwtUtil {
                 .compact();
     }
 
-    /** 토큰 검증 함수 */
-    public boolean validateToken(String token){
-        try{
-            Jwts.parserBuilder()
+    /** 카카오 신규 유저 2단계 회원가입용 임시 토큰 발급 (5분 만료) */
+    public String createSignupToken(Long kakaoId) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + 5 * 60 * 1000L); // 5분
+
+        return Jwts.builder()
+                .setSubject(String.valueOf(kakaoId))
+                .claim("type", "signup")
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    /** 임시 토큰에서 kakaoId 추출 + type=signup 검증 */
+    public Long getKakaoIdFromSignupToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e){
-            // TODO : 추후 로그 추가, 예외 세분화
-            return false;
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            if (!"signup".equals(claims.get("type", String.class))) {
+                throw new CustomException(ErrorCode.INVALID_TOKEN);
+            }
+            return Long.valueOf(claims.getSubject());
+
+        } catch (ExpiredJwtException e) {
+            log.error("임시 토큰이 만료됐습니다.", e);
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("임시 토큰 파싱 실패", e);
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
     }
+
 
     /** 토큰 검증과 userId 추출 통합. 실패 시 CustomException */
     public Long getUserIdFromToken(String token) {

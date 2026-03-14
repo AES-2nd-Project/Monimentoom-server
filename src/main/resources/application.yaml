@@ -40,6 +40,12 @@ management:
     health:
       show-details: never
 
+# 카카오 로그인
+kakao:
+  client-id: ${KAKAO_CLIENT_ID}
+  redirect-uri: ${KAKAO_REDIRECT_URI_LOCAL}
+  client-secret: ${KAKAO_CLIENT_SECRET}
+
 server:
   port: 8080
   forward-headers-strategy: native # Nginx 뒤에서 실행할 때 클라이언트 IP 주소를 올바르게 전달하기 위해 설정
