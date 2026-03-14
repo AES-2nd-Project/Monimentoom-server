@@ -87,6 +87,7 @@ public class UserService {
     @Transactional
     public UserProfileResponse updateProfile(Long userId, UserProfileRequest request) {
         User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         // 이름을 수정하는 경우에, 기존 닉네임과 다른 닉네임인지 확인.
         if (request.getNickname() != null && !request.getNickname().equals(user.getNickname())) {
             if(userRepository.existsByNickname(request.getNickname())){
@@ -100,6 +101,12 @@ public class UserService {
         }
 
         user.updateUserProfile(request);
+        return UserProfileResponse.from(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserProfileResponse getUserProfile(Long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
         return UserProfileResponse.from(user);
     }
 }

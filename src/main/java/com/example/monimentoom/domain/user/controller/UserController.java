@@ -57,8 +57,15 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<UserProfileResponse> getUserProfile(
+            @PathVariable Long id
+    ){
+        return ResponseEntity.ok(userService.getUserProfile(id));
+    }
+
     /** 프로필 수정 */
-    @PatchMapping("/profile")
+    @PatchMapping("/profile/me")
     public ResponseEntity<UserProfileResponse> updateProfile(
             @AuthenticationPrincipal Long userId,
             @RequestBody UserProfileRequest request
