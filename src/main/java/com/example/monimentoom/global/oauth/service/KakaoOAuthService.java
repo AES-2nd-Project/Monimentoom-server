@@ -82,7 +82,6 @@ public class KakaoOAuthService {
                 .kakaoId(request.kakaoId())
                 .nickname(request.nickname())
                 .email(request.email())
-                .password("KAKAO_" + request.kakaoId()) // 카카오 로그인 유저는 비밀번호 필요없어서 더미로 넣음
                 .build();
         userRepository.save(newUser);
 
