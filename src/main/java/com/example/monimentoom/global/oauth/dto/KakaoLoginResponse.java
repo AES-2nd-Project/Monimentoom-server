@@ -1,11 +1,8 @@
 package com.example.monimentoom.global.oauth.dto;
 
-// 카카오 로그인 1단계 응답
-// - 기존 유저: isNewUser=false, token 발급
-// - 신규 유저: isNewUser=true, kakaoId 반환 (닉네임 입력 후 /oauth/kakao/signup 호출 필요)
 
 /**
- * 프론트에서 인가코드 받는 요청 DTO
+ * 프론트에서 인가코드 받는 응답 DTO(카카오 로그인 1단계)
  * - 기존 유저: isNewUser=false, token 발급
  * - 신규 유저: isNewUser=true, kakaoId 반환 (닉네임 입력 후 /oauth/kakao/signup 호출 필요)
  */
