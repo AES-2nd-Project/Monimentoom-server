@@ -34,12 +34,13 @@ test:
 # ─────────────────────────────────────────
 build:
   stage: build
-  image: docker:24
+  image: gradle:8.7-jdk17
   services:
     - docker:24-dind
   only:
     - main
   before_script:
+    - apt-get update && apt-get instal -y docker.io # Docker CLI 추가
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   script:
     - mkdir -p src/main/resources src/test/resources
