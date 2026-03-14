@@ -8,11 +8,13 @@ import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
+import com.example.monimentoom.global.s3.event.S3ImageDeleteEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoomRepository roomRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public UserResponse createUser(UserSignupRequest request) {
@@ -84,13 +87,18 @@ public class UserService {
     @Transactional
     public UserProfileResponse updateProfile(Long userId, UserProfileRequest request) {
         User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
-
         // 이름을 수정하는 경우에, 기존 닉네임과 다른 닉네임인지 확인.
         if (request.getNickname() != null && !request.getNickname().equals(user.getNickname())) {
             if(userRepository.existsByNickname(request.getNickname())){
                 throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
             }
         }
+        String oldImageUrl = user.getProfileImageUrl();
+        String newImageUrl = request.getProfileImageUrl();
+        if (oldImageUrl != null && newImageUrl != null && !oldImageUrl.equals(newImageUrl)) {
+            eventPublisher.publishEvent(new S3ImageDeleteEvent(oldImageUrl));
+        }
+
         user.updateUserProfile(request);
         return UserProfileResponse.from(user);
     }
