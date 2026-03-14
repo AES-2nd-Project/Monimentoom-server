@@ -18,6 +18,7 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U003", "이미 존재하는 이메일입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "U004", "로그인이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "U005", "접근 권한이 없습니다."),
+    DUPLICATE_KAKAO_USER(HttpStatus.CONFLICT,"U006" , "이미 카카오 계정으로 가입된 유저입니다."),
 
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "방을 찾을 수 없습니다."),
     ROOM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "R002", "권한이 없습니다."),
@@ -28,7 +29,7 @@ public enum ErrorCode {
     GOODS_ACCESS_DENIED(HttpStatus.FORBIDDEN, "G002", "권한이 없습니다."),
 
     INVALID_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "S001", "지원하지 않는 이미지 형식입니다. (jpg, jpeg, png, webp, gif만 가능)"),
-    // AWS 자격증명이 설정되지 않아 S3를 사용할 수 없음
+    // AWS 자격증명이 설정되지 않아 S3를 사용할 수 없음,
     IMAGE_UPLOAD_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "S002", "이미지 업로드를 사용할 수 없습니다."),
 
     POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "위치정보를 찾을 수 없습니다."),
@@ -37,8 +38,7 @@ public enum ErrorCode {
     COMMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "C002", "권한이 없습니다."),
 
     ALREADY_LIKED(HttpStatus.CONFLICT, "L001", "이미 좋아요한 방입니다."),
-    ALREADY_UNLIKED(HttpStatus.CONFLICT, "L002", "좋아요하지 않은 방입니다."),
-    ;
+    ALREADY_UNLIKED(HttpStatus.CONFLICT, "L002", "좋아요하지 않은 방입니다.");
 
     private final HttpStatus status;
     private final String code;
