@@ -28,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Long getMinId();
 
     Optional<User> findByNickname(String nickname);
+
+    Optional<User> findByKakaoId(Long kakaoId);
 }
