@@ -40,7 +40,7 @@ build:
   only:
     - main
   before_script:
-    - apt-get update && apt-get instal -y docker.io # Docker CLI 추가
+    - apt-get update && apt-get install -y docker.io # Docker CLI 추가
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   script:
     - mkdir -p src/main/resources src/test/resources
