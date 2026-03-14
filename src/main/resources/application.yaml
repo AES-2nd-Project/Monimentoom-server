@@ -43,7 +43,7 @@ management:
 # 카카오 로그인
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
-  redirect-uri: ${KAKAO_REDIRECT_URI_LOCAL}
+  redirect-uri: ${KAKAO_REDIRECT_URI_FRONT_LOCAL}
   client-secret: ${KAKAO_CLIENT_SECRET}
 
 server:
