@@ -21,7 +21,7 @@ public class OAuthController {
      * 1단계: 카카오 인가 코드 -> 로그인 or 신규 유저 판별
      * 응답:
      * - 기존 유저: {isNewUser: false, token: "Bearer ..."} + Authorization 헤더
-     * - 신규 유저: {isNewUser: false, kakaoId: "12345..."} -> /oauth/kakao/signup 호출 필요
+     * - 신규 유저: {isNewUser: true, kakaoId: "12345..."} -> /oauth/kakao/signup 호출 필요
      * **/
     @PostMapping("/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLogin(@Valid @RequestBody KakaoSocialLoginRequest request) {
