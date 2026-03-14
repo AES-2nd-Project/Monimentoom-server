@@ -47,15 +47,15 @@ build:
     - cp $APP_SECRET_YAML      ./src/main/resources/application-secret.yaml
     - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml
 
-    # Spring 설정파일 넣기
+    # Spring 설정파일 넣기(Gradle build)
     - chmod +x ./gradlew
-    - ./gradlew clean build -x text --no-daemon
+    - ./gradlew clean build -x test --no-daemon
 
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE:latest
-  after_script:
-    - docker logout $CI_REGISTRY
+after_script:
+  - docker logout $CI_REGISTRY
 
 # ─────────────────────────────────────────
 # STAGE 3: Deploy (main만 실행)
