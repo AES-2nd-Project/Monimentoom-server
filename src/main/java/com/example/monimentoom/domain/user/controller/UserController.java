@@ -1,7 +1,6 @@
 package com.example.monimentoom.domain.user.controller;
 
 import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
-import com.example.monimentoom.domain.user.dto.UserLoginRequest;
 import com.example.monimentoom.domain.user.dto.UserResponse;
 import com.example.monimentoom.domain.user.dto.UserSignupRequest;
 import com.example.monimentoom.domain.user.service.UserService;
@@ -24,23 +23,12 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(request));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@Valid @RequestBody UserLoginRequest request) {
-        UserResponse userResponse = userService.loginUser(request);
-        String token = jwtUtil.createToken(userResponse.getId());
-        // TODO : refresh token 생성 및 저장
-        return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + token)
-                .body(userResponse);
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @AuthenticationPrincipal Long userId) {
         userService.logoutUser(userId);
         return ResponseEntity.noContent().build();
     }
-
 
     @PatchMapping("/main-room/{roomId}")
     public ResponseEntity<RoomBasicResponse> updateMainRoom(
