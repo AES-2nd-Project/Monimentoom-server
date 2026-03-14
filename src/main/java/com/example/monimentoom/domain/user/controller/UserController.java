@@ -1,9 +1,7 @@
 package com.example.monimentoom.domain.user.controller;
 
 import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
-import com.example.monimentoom.domain.user.dto.UserLoginRequest;
-import com.example.monimentoom.domain.user.dto.UserResponse;
-import com.example.monimentoom.domain.user.dto.UserSignupRequest;
+import com.example.monimentoom.domain.user.dto.*;
 import com.example.monimentoom.domain.user.service.UserService;
 import com.example.monimentoom.global.util.JwtUtil;
 import jakarta.validation.Valid;
@@ -41,7 +39,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-
+    /** 사용자 자신의 메인룸 수정하기 */
     @PatchMapping("/main-room/{roomId}")
     public ResponseEntity<RoomBasicResponse> updateMainRoom(
             @AuthenticationPrincipal Long userId,
@@ -49,6 +47,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateMainRoom(userId, roomId));
     }
 
+    /** 회원 탈퇴 */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(
             @AuthenticationPrincipal Long userId,
@@ -56,6 +55,15 @@ public class UserController {
     ) {
         userService.deleteUser(userId, id);
         return ResponseEntity.noContent().build();
+    }
+
+    /** 프로필 수정 */
+    @PatchMapping("/profile")
+    public ResponseEntity<UserProfileResponse> updateProfile(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody UserProfileRequest request
+            ){
+            return ResponseEntity.ok(userService.updateProfile(userId, request));
     }
 
 }

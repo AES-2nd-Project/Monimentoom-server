@@ -1,6 +1,7 @@
 package com.example.monimentoom.domain.user.model;
 
 import com.example.monimentoom.domain.room.model.Room;
+import com.example.monimentoom.domain.user.dto.UserProfileRequest;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,7 +28,10 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+
     private String profileImageUrl;
+    private String description;
+
     @Column(nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -55,5 +59,11 @@ public class User {
         if (!this.id.equals(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
+    }
+
+    public void updateUserProfile(UserProfileRequest request){
+        if(request.getNickname() != null) this.nickname = request.getNickname();
+        if(request.getDescription() != null) this.description = request.getDescription();
+        if(request.getProfileImageUrl() != null) this.profileImageUrl = request.getProfileImageUrl();
     }
 }

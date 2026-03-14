@@ -3,14 +3,13 @@ package com.example.monimentoom.domain.user.service;
 import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
-import com.example.monimentoom.domain.user.dto.UserLoginRequest;
-import com.example.monimentoom.domain.user.dto.UserResponse;
-import com.example.monimentoom.domain.user.dto.UserSignupRequest;
+import com.example.monimentoom.domain.user.dto.*;
 import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,4 +81,17 @@ public class UserService {
         return RoomBasicResponse.from(newMainRoom);
     }
 
+    @Transactional
+    public UserProfileResponse updateProfile(Long userId, UserProfileRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 이름을 수정하는 경우에, 기존 닉네임과 다른 닉네임인지 확인.
+        if (request.getNickname() != null && !request.getNickname().equals(user.getNickname())) {
+            if(userRepository.existsByNickname(request.getNickname())){
+                throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
+            }
+        }
+        user.updateUserProfile(request);
+        return UserProfileResponse.from(user);
+    }
 }
