@@ -2,6 +2,7 @@ package com.example.monimentoom.domain.room.service;
 
 import com.example.monimentoom.domain.comments.dto.CommentResponse;
 import com.example.monimentoom.domain.comments.repository.CommentRepository;
+import com.example.monimentoom.domain.like.repository.LikeRepository;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.position.repository.PositionRepository;
 import com.example.monimentoom.domain.room.dto.*;
@@ -25,8 +26,9 @@ public class RoomService {
     private final UserRepository userRepository;
     private final PositionRepository positionRepository;
     private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
-    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 닉네임으로 방 목록 조회 가능하도록 사용자 검증 없음.
+    @Transactional(readOnly = true)
     public List<RoomBasicResponse> getRoomListByNickname(String nickname) {
         if (!userRepository.existsByNickname(nickname)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return roomRepository.findByUserNickname(nickname).stream()
@@ -35,7 +37,7 @@ public class RoomService {
                 .toList();
     }
 
-    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 방 조회 가능하도록 사용자 검증 없음.
+    @Transactional(readOnly = true)
     public RoomPositionResponse getRandomRoom() {
         Long maxId = userRepository.getMaxId();
         if (maxId == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -74,14 +76,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
-        if (request.getName() != null && !request.getName().isBlank()) {
-            room.setName(request.getName());
-        }
-        // updateImages=true일 때만 이미지 업데이트 (null = 이미지 제거)
-        if (Boolean.TRUE.equals(request.getUpdateImages())) {
-            room.setFrameImageUrl(request.getFrameImageUrl());
-            room.setEaselImageUrl(request.getEaselImageUrl());
-        }
+        room.update(request.getName(), request.getUpdateImages(), request.getFrameImageUrl(), request.getEaselImageUrl());
         return RoomBasicResponse.from(room);
     }
 
@@ -137,10 +132,12 @@ public class RoomService {
     public RoomDetailResponse getRoomDetail(Long userId, Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
-        if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        boolean isLoggedIn = userId != null;
+        boolean isMine = isLoggedIn && userId.equals(room.getUser().getId());
+        boolean isLiked = isLoggedIn && likeRepository.existsByRoomIdAndUserId(roomId, userId);
         List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
                 .map(CommentResponse::from)
                 .toList();
-        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), userId.equals(room.getUser().getId()), comments);
+        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, isLiked, comments);
     }
 }

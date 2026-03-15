@@ -43,7 +43,7 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         newMainRoom.validateOwnership(userId);
         User user = newMainRoom.getUser();
-        user.setMainRoom(newMainRoom);
+        user.updateMainRoom(newMainRoom);
         return RoomBasicResponse.from(newMainRoom);
     }
 

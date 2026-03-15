@@ -60,4 +60,8 @@ public class Comment {
     void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void update(String content) {
+        this.content = content;
+    }
 }

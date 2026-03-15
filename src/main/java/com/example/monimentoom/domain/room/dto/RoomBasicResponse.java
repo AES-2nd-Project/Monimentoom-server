@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class RoomBasicResponse {
     private Long roomId;
     private String nickname;
-    private String userProfileImage;
+    private String userProfileImageUrl;
     private String name;
 
     public static RoomBasicResponse from(Room room) {
@@ -21,7 +21,7 @@ public class RoomBasicResponse {
         return RoomBasicResponse.builder()
                 .roomId(room.getId())
                 .nickname(room.getUser().getNickname())
-                .userProfileImage(room.getUser().getProfileImageUrl())
+                .userProfileImageUrl(room.getUser().getProfileImageUrl())
                 .name(room.getName())
                 .build();
     }

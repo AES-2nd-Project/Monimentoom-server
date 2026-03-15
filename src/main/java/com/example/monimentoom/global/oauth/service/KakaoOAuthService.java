@@ -97,7 +97,7 @@ public class KakaoOAuthService {
                 .user(newUser)
                 .build();
         roomRepository.save(defaultRoom);
-        newUser.setMainRoom(defaultRoom);
+        newUser.updateMainRoom(defaultRoom);
 
         log.info("kakaoSignup 완료 - userId={}, nickname={}", newUser.getId(), newUser.getNickname());
         return new SignupResponse(jwtUtil.createToken(newUser.getId()), newUser.getId(), newUser.getNickname(), newUser.getEmail());
