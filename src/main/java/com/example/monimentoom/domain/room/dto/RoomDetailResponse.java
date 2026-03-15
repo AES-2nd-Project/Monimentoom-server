@@ -20,7 +20,6 @@ public class RoomDetailResponse {
     private String name;
     private String userProfileImageUrl;
     private String nickname;
-    private Boolean isLoggedIn;
     private Boolean isMine;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime userCreatedAt;
