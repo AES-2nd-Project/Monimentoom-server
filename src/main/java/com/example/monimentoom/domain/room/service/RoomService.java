@@ -103,12 +103,23 @@ public class RoomService {
 
     // 닉네임 방문
     @Transactional(readOnly = true)
-    public RoomPositionResponse getMainRoomByNickname(Long userId, String nickname) {
-        if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+    public RoomPositionResponse getMainRoomByNickname(String nickname) {
         Room room = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
                 .getMainRoom();
         List<PositionResponse> positions = positionRepository.findByRoomId(room.getId()).stream()
+                .map(PositionResponse::from)
+                .toList();
+
+        return RoomPositionResponse.from(room, positions);
+    }
+
+    // 아이디로 방문(메인방 아니어도 갈 수 있게)
+    @Transactional
+    public RoomPositionResponse getRoom(Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+        List<PositionResponse> positions = positionRepository.findByRoomId(roomId).stream()
                 .map(PositionResponse::from)
                 .toList();
 
