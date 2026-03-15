@@ -5,14 +5,16 @@ import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -55,5 +57,9 @@ public class User {
         if (!this.id.equals(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
+    }
+
+    public void updateMainRoom(Room mainRoom) {
+        this.mainRoom = mainRoom;
     }
 }
