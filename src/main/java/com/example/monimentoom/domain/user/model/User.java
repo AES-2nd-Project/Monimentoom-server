@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -57,6 +56,10 @@ public class User {
         if (!this.id.equals(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
+    }
+
+    public void changeMainRoom(Room room) {
+        this.mainRoom = room;
     }
 
     /** 프로필 이미지 제거 시 '' 빈문자열 보내도록 처리 */
