@@ -31,4 +31,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("cursorId") Long cursorId,
             Pageable pageable
     );
+
+    long countByRoomId(Long roomId);
 }

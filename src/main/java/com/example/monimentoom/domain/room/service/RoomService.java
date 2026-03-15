@@ -52,6 +52,7 @@ public class RoomService {
                         userRepository.findFirstUser()
                                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
                 ).getMainRoom();
+        if (room == null) throw new CustomException(ErrorCode.NO_MAIN_ROOM);
         List<PositionResponse> positions = positionRepository.findByRoomId(room.getId()).stream()
                 .map(PositionResponse::from)
                 .toList();
@@ -93,12 +94,12 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
+        if (room.getUser().getMainRoom().getId().equals(roomId)) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_MAIN_ROOM);
+        }
         Long roomCount = roomRepository.countByUserId(userId);
         if (roomCount <= 1) {
             throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_ROOM);
-        }
-        if (room.getUser().getMainRoom().getId().equals(roomId)) {
-            throw new CustomException(ErrorCode.CANNOT_DELETE_MAIN_ROOM);
         }
         roomRepository.deleteById(roomId);
     }
@@ -135,9 +136,11 @@ public class RoomService {
         boolean isLoggedIn = userId != null;
         boolean isMine = isLoggedIn && userId.equals(room.getUser().getId());
         boolean isLiked = isLoggedIn && likeRepository.existsByRoomIdAndUserId(roomId, userId);
+        long likeCount = likeRepository.countByRoomId(roomId);
+        long commentCount = commentRepository.countByRoomId(roomId);
         List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
                 .map(CommentResponse::from)
                 .toList();
-        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, isLiked, comments);
+        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, isLiked, likeCount, commentCount, comments);
     }
 }

@@ -43,16 +43,6 @@ public class CommentService {
         return CommentResponse.from(commentRepository.save(comment));
     }
 
-    // 방에 대한 댓글 가져오기
-    @Transactional(readOnly = true)
-    public List<CommentResponse> getRoomComments(Long roomId) {
-        if (!roomRepository.existsById(roomId)) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
-
-        return commentRepository.findByRoomIdWithUser(roomId).stream()
-                .map(CommentResponse::from)
-                .toList();
-    }
-
     @Transactional(readOnly = true)
     public CommentPageResponse getRoomCommentsCursor(Long roomId, Long cursorId, int size) {
         if (!roomRepository.existsById(roomId)) {
