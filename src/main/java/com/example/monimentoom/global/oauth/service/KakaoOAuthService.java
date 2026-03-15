@@ -42,7 +42,6 @@ public class KakaoOAuthService {
      * - 기존 유저: JWT 바로 발급
      * - 신규 유저: kakaoId만 반환 (닉네임 입력 필요)
      */
-    @Transactional(readOnly = true)
     public KakaoLoginResponse kakaoLogin(String code) {
         log.info("kakaoLogin - redirectUri={}", redirectUri);
 
