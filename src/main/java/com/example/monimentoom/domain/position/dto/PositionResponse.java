@@ -20,6 +20,7 @@ public class PositionResponse {
     private Integer y;
     private Integer widthUnit;
     private Integer heightUnit;
+    private String imageUrl;
 
     public static PositionResponse from(Position position) {
         if (position == null) return null;
@@ -33,6 +34,7 @@ public class PositionResponse {
                 .y(position.getY())
                 .widthUnit(position.getWidthUnit())
                 .heightUnit(position.getHeightUnit())
+                .imageUrl(position.getGoods().getImageUrl())
                 .build();
     }
 }

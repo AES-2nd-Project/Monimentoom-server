@@ -115,7 +115,7 @@ public class RoomService {
     }
 
     // 아이디로 방문(메인방 아니어도 갈 수 있게)
-    @Transactional
+    @Transactional(readOnly = true)
     public RoomPositionResponse getRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));

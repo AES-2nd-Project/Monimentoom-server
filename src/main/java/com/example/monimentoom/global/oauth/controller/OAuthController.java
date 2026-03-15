@@ -35,13 +35,14 @@ public class OAuthController {
 
     /**
      * 2단계: 닉네임 입력 후 최종 회원가입
-     * - 응답: nickname + email 반환, Authorization 헤더에 JWT
+     * - 응답: JWT token, nickname, email 반환
      */
     @PostMapping("/kakao/signup")
     public ResponseEntity<SignupResponse> kakaoSignup(@Valid @RequestBody KakaoSignupRequest request) {
         SignupResponse response = kakaoOAuthService.kakaoSignup(request);
-        return ResponseEntity.ok()
-                .body(response);
+        if (response.token() != null) {
+            ResponseEntity.ok(response);
+        }
     }
 
     // 로컬 테스트용
