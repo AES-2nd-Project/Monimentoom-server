@@ -28,6 +28,8 @@ public class User {
     private String profileImageUrl;
     @Column(unique = true)
     private Long kakaoId;
+    private String description;
+
     @Column(nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -55,5 +57,12 @@ public class User {
         if (!this.id.equals(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
+    }
+
+    /** 프로필 이미지 제거 시 '' 빈문자열 보내도록 처리 */
+    public void updateUserProfile(String nickname, String description, String profileImageUrl){
+        if(nickname != null) this.nickname = nickname;
+        if(description != null) this.description = description;
+        if(profileImageUrl != null) this.profileImageUrl = profileImageUrl.isBlank() ? null : profileImageUrl;
     }
 }
