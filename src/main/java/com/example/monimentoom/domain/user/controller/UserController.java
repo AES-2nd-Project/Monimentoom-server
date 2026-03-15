@@ -3,7 +3,7 @@ package com.example.monimentoom.domain.user.controller;
 import com.example.monimentoom.domain.room.dto.RoomBasicResponse;
 import com.example.monimentoom.domain.user.dto.*;
 import com.example.monimentoom.domain.user.service.UserService;
-import com.example.monimentoom.global.util.JwtUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -51,7 +51,7 @@ public class UserController {
     @PatchMapping("/profile/me")
     public ResponseEntity<UserProfileResponse> updateProfile(
             @AuthenticationPrincipal Long userId,
-            @RequestBody UserProfileRequest request
+            @Valid @RequestBody UserProfileRequest request
             ){
             return ResponseEntity.ok(userService.updateProfile(userId, request));
     }

@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
+    // 데이터베이스 범용 에러 메세지. TODO : 사용된 곳 추후 세분화하여 분리할 것.
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "D001", "데이터베이스 처리 중 오류가 발생했습니다."),
+
     // JWT 관련 에러
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_002", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_003", "만료된 토큰입니다."),
