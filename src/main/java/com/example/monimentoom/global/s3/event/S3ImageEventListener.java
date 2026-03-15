@@ -12,7 +12,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class S3ImageEventListener {
     private final S3Uploader s3Uploader;
 
-    @Async
+    @Async("s3ImageTaskExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void deleteOldImage(S3ImageDeleteEvent event) {
         s3Uploader.deleteFile(event.imageUrl());
