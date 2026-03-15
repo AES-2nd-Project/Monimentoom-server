@@ -21,12 +21,13 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U003", "이미 존재하는 이메일입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "U004", "로그인이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "U005", "접근 권한이 없습니다."),
-    DUPLICATE_KAKAO_USER(HttpStatus.CONFLICT,"U006" , "이미 카카오 계정으로 가입된 유저입니다."),
+    DUPLICATE_KAKAO_USER(HttpStatus.CONFLICT, "U006", "이미 카카오 계정으로 가입된 유저입니다."),
 
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "방을 찾을 수 없습니다."),
     ROOM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "R002", "권한이 없습니다."),
     CANNOT_DELETE_LAST_ROOM(HttpStatus.BAD_REQUEST, "R003", "마지막 방은 삭제할 수 없습니다."),
     CANNOT_DELETE_MAIN_ROOM(HttpStatus.BAD_REQUEST, "R004", "메인 방은 삭제할 수 없습니다."),
+    NO_MAIN_ROOM(HttpStatus.NOT_FOUND, "R005", "메인 방이 없습니다."),
 
     GOODS_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "굿즈를 찾을 수 없습니다."),
     GOODS_ACCESS_DENIED(HttpStatus.FORBIDDEN, "G002", "권한이 없습니다."),

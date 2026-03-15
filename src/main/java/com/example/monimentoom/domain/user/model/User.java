@@ -32,12 +32,19 @@ public class User {
     private Long kakaoId;
     private String description;
 
+    @Builder.Default
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "main_room_id")
+    private Room mainRoom = null;
+
     @Column(nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
     @Column(nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
+
 
     @PrePersist
     protected void onCreate() {
@@ -49,11 +56,6 @@ public class User {
     void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "main_room_id")
-    private Room mainRoom = null;
 
     public void validateOwnership(Long userId) {
         if (!this.id.equals(userId)) {

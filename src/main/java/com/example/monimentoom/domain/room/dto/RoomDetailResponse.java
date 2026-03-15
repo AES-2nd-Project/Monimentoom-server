@@ -23,11 +23,13 @@ public class RoomDetailResponse {
     private Boolean isLoggedIn;
     private Boolean isMine;
     private Boolean isLiked;
+    private Long likeCount;
+    private Long commentCount;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime userCreatedAt;
     private List<CommentResponse> comments;
 
-    public static RoomDetailResponse from(Room room, String userProfileImageUrl, boolean isLoggedIn, boolean isMine, boolean isLiked, List<CommentResponse> comments) {
+    public static RoomDetailResponse from(Room room, String userProfileImageUrl, boolean isLoggedIn, boolean isMine, boolean isLiked, long likeCount, long commentCount, List<CommentResponse> comments) {
         return RoomDetailResponse.builder()
                 .roomId(room.getId())
                 .name(room.getName())
@@ -36,6 +38,8 @@ public class RoomDetailResponse {
                 .isLoggedIn(isLoggedIn)
                 .isMine(isMine)
                 .isLiked(isLiked)
+                .likeCount(likeCount)
+                .commentCount(commentCount)
                 .userCreatedAt(room.getUser().getCreatedAt())
                 .comments(comments)
                 .build();

@@ -30,8 +30,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long userId, Long id) {
-        User user = userRepository.findById(id)
+    public void deleteUser(Long userId, Long targetId) {
+        User user = userRepository.findById(targetId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         user.validateOwnership(userId);
         userRepository.delete(user);

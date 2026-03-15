@@ -28,11 +28,6 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(userId, request));
     }
 
-    @GetMapping("/{roomId}")
-    public ResponseEntity<List<CommentResponse>> getRoomComments(@PathVariable Long roomId) {
-        return ResponseEntity.ok(commentService.getRoomComments(roomId));
-    }
-
     @GetMapping("/{roomId}/scroll")
     public ResponseEntity<CommentPageResponse> getRoomCommentsScroll(
             @PathVariable Long roomId,
