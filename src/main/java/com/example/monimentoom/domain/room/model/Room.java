@@ -31,6 +31,8 @@ public class Room {
     private String name;
     @Column
     private String frameImageUrl;
+    @Column
+    private String easelImageUrl;
 
     @Column(nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
