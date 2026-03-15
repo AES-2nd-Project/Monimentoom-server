@@ -1,7 +1,6 @@
 package com.example.monimentoom.domain.user.model;
 
 import com.example.monimentoom.domain.room.model.Room;
-import com.example.monimentoom.domain.user.dto.UserProfileRequest;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -60,9 +59,9 @@ public class User {
         }
     }
 
-    public void updateUserProfile(UserProfileRequest request){
-        if(request.getNickname() != null) this.nickname = request.getNickname();
-        if(request.getDescription() != null) this.description = request.getDescription();
-        if(request.getProfileImageUrl() != null) this.profileImageUrl = request.getProfileImageUrl();
+    public void updateUserProfile(String nickname, String description, String profileImageUrl){
+        if(nickname != null) this.nickname = nickname;
+        if(description != null) this.description = description;
+        if(profileImageUrl != null) this.profileImageUrl = profileImageUrl;
     }
 }

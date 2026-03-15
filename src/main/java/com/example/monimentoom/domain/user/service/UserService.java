@@ -62,7 +62,12 @@ public class UserService {
             eventPublisher.publishEvent(new S3ImageDeleteEvent(oldImageUrl));
         }
 
-        user.updateUserProfile(request);
+        user.updateUserProfile(
+                request.getNickname(),
+                request.getDescription(),
+                request.getProfileImageUrl()
+        );
+
         return UserProfileResponse.from(user);
     }
 
