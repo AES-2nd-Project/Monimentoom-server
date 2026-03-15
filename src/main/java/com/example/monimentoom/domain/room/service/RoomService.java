@@ -74,7 +74,14 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
-        room.setName(request.getName());
+        if (request.getName() != null && !request.getName().isBlank()) {
+            room.setName(request.getName());
+        }
+        // updateImages=true일 때만 이미지 업데이트 (null = 이미지 제거)
+        if (Boolean.TRUE.equals(request.getUpdateImages())) {
+            room.setFrameImageUrl(request.getFrameImageUrl());
+            room.setEaselImageUrl(request.getEaselImageUrl());
+        }
         return RoomBasicResponse.from(room);
     }
 
