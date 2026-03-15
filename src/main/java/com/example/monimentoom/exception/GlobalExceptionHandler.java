@@ -31,9 +31,23 @@ public class GlobalExceptionHandler {
         // DB가 던진 진짜 에러 메시지
         String errorMessage = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
 
-        // 에러 메세지 내용 보고 닉네임 문제로 세분화
+        // 에러 메세지 내용 보고 문제를 세분화
         if (errorMessage.contains("nickname")) {
             ErrorCode errorCode = ErrorCode.DUPLICATE_NICKNAME;
+            return ResponseEntity
+                    .status(errorCode.getStatus())
+                    .body(new ErrorResponse(errorCode.getStatus(), errorCode.getCode(), errorCode.getMessage()));
+        }
+
+        if (errorMessage.contains("email")) {
+            ErrorCode errorCode = ErrorCode.DUPLICATE_EMAIL;
+            return ResponseEntity
+                    .status(errorCode.getStatus())
+                    .body(new ErrorResponse(errorCode.getStatus(), errorCode.getCode(), errorCode.getMessage()));
+        }
+
+        if (errorMessage.contains("kakao_id")) {
+            ErrorCode errorCode = ErrorCode.DUPLICATE_KAKAO_USER;
             return ResponseEntity
                     .status(errorCode.getStatus())
                     .body(new ErrorResponse(errorCode.getStatus(), errorCode.getCode(), errorCode.getMessage()));
@@ -52,7 +66,7 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining(", "));
         return ResponseEntity
-                .status(HttpStatus.BAD_GATEWAY)
+                .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "V001", message));
     }
 }
