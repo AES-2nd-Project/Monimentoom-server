@@ -59,9 +59,10 @@ public class User {
         }
     }
 
+    /** 프로필 이미지 제거 시 '' 빈문자열 보내도록 처리 */
     public void updateUserProfile(String nickname, String description, String profileImageUrl){
         if(nickname != null) this.nickname = nickname;
         if(description != null) this.description = description;
-        if(profileImageUrl != null) this.profileImageUrl = profileImageUrl;
+        if(profileImageUrl != null) this.profileImageUrl = profileImageUrl.isBlank() ? null : profileImageUrl;
     }
 }

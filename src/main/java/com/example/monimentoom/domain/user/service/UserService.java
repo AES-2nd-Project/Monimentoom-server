@@ -58,6 +58,14 @@ public class UserService {
         }
         String oldImageUrl = user.getProfileImageUrl();
         String newImageUrl = request.getProfileImageUrl();
+
+        if (newImageUrl != null && !newImageUrl.isBlank()) {
+            String allowedPrefix = "https://monimentoom-bucket.s3.ap-northeast-2.amazonaws.com/profile/";
+            if (!newImageUrl.startsWith(allowedPrefix)) {
+                throw new CustomException(ErrorCode.INVALID_IMAGE_URL);
+            }
+        }
+
         if (oldImageUrl != null && newImageUrl != null && !oldImageUrl.equals(newImageUrl)) {
             eventPublisher.publishEvent(new S3ImageDeleteEvent(oldImageUrl));
         }

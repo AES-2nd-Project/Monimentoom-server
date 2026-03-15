@@ -31,6 +31,7 @@ public enum ErrorCode {
     INVALID_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "S001", "지원하지 않는 이미지 형식입니다. (jpg, jpeg, png, webp, gif만 가능)"),
     // AWS 자격증명이 설정되지 않아 S3를 사용할 수 없음,
     IMAGE_UPLOAD_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "S002", "이미지 업로드를 사용할 수 없습니다."),
+    INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "S003", "유효하지 않은 프로필 이미지 주소입니다."),
 
     POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "위치정보를 찾을 수 없습니다."),
 
