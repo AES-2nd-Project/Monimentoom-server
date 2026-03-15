@@ -5,6 +5,7 @@ import com.example.monimentoom.global.auth.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,10 +34,14 @@ public class SecurityConfig {
                                 "/swagger-ui/**", "/v3/api-docs/**",
                                 "/oauth/kakao", "/oauth/kakao/signup",
                                 "/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/rooms", "/rooms/random",
+                                "/rooms/*/main", "/rooms/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }
