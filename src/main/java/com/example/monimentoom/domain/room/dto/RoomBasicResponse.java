@@ -14,8 +14,6 @@ public class RoomBasicResponse {
     private Long roomId;
     private String nickname;
     private String userProfileImageUrl;
-    private String frameImageUrl;
-    private String easelImageUrl;
     private String name;
 
     public static RoomBasicResponse from(Room room) {
@@ -24,8 +22,6 @@ public class RoomBasicResponse {
                 .roomId(room.getId())
                 .nickname(room.getUser().getNickname())
                 .userProfileImageUrl(room.getUser().getProfileImageUrl())
-                .frameImageUrl(room.getFrameImageUrl())
-                .easelImageUrl(room.getEaselImageUrl())
                 .name(room.getName())
                 .build();
     }
