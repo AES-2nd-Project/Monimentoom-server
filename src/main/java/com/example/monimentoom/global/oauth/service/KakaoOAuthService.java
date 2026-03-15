@@ -3,6 +3,7 @@ package com.example.monimentoom.global.oauth.service;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.model.User;
+import com.example.monimentoom.global.oauth.dto.SignupResponse;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
@@ -59,12 +60,12 @@ public class KakaoOAuthService {
 
         // 3. 기존 유저면 JWT 발급, 신규 유저면 signupToken(임시 토큰) 반환
         return userRepository.findByKakaoId(kakaoId)
-                .map(user -> KakaoLoginResponse.ofExistingUser(jwtUtil.createToken(user.getId())))
+                .map(user -> KakaoLoginResponse.ofExistingUser(jwtUtil.createToken(user.getId()), user.getNickname(), user.getEmail()))
                 .orElse(KakaoLoginResponse.ofNewUser(jwtUtil.createSignupToken(kakaoId)));
     }
 
     @Transactional
-    public String kakaoSignup(KakaoSignupRequest request) {
+    public SignupResponse kakaoSignup(KakaoSignupRequest request) {
         // signupToken 검증 → kakaoId 추출 (위조/만료 시 예외)
         Long kakaoId = jwtUtil.getKakaoIdFromSignupToken(request.signupToken());
         log.info("kakaoSignup - verified kakaoId={}", kakaoId);
@@ -99,6 +100,6 @@ public class KakaoOAuthService {
         newUser.setMainRoom(defaultRoom);
 
         log.info("kakaoSignup 완료 - userId={}, nickname={}", newUser.getId(), newUser.getNickname());
-        return jwtUtil.createToken(newUser.getId());
+        return new SignupResponse(jwtUtil.createToken(newUser.getId()), newUser.getNickname(), newUser.getEmail());
     }
 }
