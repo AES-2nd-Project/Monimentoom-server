@@ -23,26 +23,32 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.createRoom(userId, request));
     }
 
-    // 닉네임으로 방 리스트 가져오기
-    @GetMapping
-    public ResponseEntity<List<RoomBasicResponse>> getRoomsByNickname(@RequestParam String nickname) {
-        return ResponseEntity.ok(roomService.getRoomListByNickname(nickname));
-    }
-
-    // 랜덤 방 가져오기
+    // 랜덤 방 가져오기(인증 없어도 조회 가능)
     @GetMapping("/random")
     public ResponseEntity<RoomPositionResponse> getRandomRoom() {
         return ResponseEntity.ok(roomService.getRandomRoom());
     }
 
-    // 닉네임의 메인 방 가져오기
+    // 닉네임으로 방 리스트 가져오기(인증 없어도 조회 가능)
+    @GetMapping
+    public ResponseEntity<List<RoomBasicResponse>> getRoomsByNickname(@RequestParam String nickname) {
+        return ResponseEntity.ok(roomService.getRoomListByNickname(nickname));
+    }
+
+    // 닉네임의 메인 방 가져오기(인증 없어도 조회 가능)
     @GetMapping("/{nickname}/main")
-    public ResponseEntity<RoomPositionResponse> visitByNickname(@AuthenticationPrincipal Long userId, @PathVariable String nickname) {
-        return ResponseEntity.ok(roomService.getMainRoomByNickname(userId, nickname));
+    public ResponseEntity<RoomPositionResponse> getMainRoomByNickname(@PathVariable String nickname) {
+        return ResponseEntity.ok(roomService.getMainRoomByNickname(nickname));
+    }
+
+    // 메인 방 외에도 아이디로 조회(인증 없어도 조회 가능)
+    @GetMapping("/{roomId}")
+    public ResponseEntity<RoomPositionResponse> getRoom(@PathVariable Long roomId) {
+        return ResponseEntity.ok(roomService.getRoom(roomId));
     }
 
     // 방 상세 조회(주인정보 + 댓글)
-    @GetMapping("/{roomId}")
+    @GetMapping("/{roomId}/detail")
     public ResponseEntity<RoomDetailResponse> getRoomDetail(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
         return ResponseEntity.ok((roomService.getRoomDetail(userId, roomId)));
     }

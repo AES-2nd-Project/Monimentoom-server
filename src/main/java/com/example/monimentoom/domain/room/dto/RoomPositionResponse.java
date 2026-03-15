@@ -16,7 +16,10 @@ import java.util.List;
 public class RoomPositionResponse {
     private Long roomId;
     private Long userId;
+    private String nickname;
     private String name;
+    private String frameImageUrl;
+    private String easelImageUrl;
     private List<PositionResponse> positions;
 
     public static RoomPositionResponse from(Room room, List<PositionResponse> positions) {
@@ -24,7 +27,10 @@ public class RoomPositionResponse {
         return RoomPositionResponse.builder()
                 .roomId(room.getId())
                 .userId(room.getUser().getId())
+                .nickname(room.getUser().getNickname())
                 .name(room.getName())
+                .frameImageUrl(room.getFrameImageUrl())
+                .easelImageUrl(room.getEaselImageUrl())
                 .positions(positions)
                 .build();
     }
