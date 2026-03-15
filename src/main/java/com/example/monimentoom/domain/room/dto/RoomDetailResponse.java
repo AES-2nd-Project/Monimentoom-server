@@ -20,9 +20,9 @@ public class RoomDetailResponse {
     private String name;
     private String userProfileImageUrl;
     private String nickname;
-    private boolean isLoggedIn;
-    private boolean isMine;
-    private boolean isLiked;
+    private Boolean isLoggedIn;
+    private Boolean isMine;
+    private Boolean isLiked;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime userCreatedAt;
     private List<CommentResponse> comments;
