@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserProfileResponse {
     private Long id;
     private String nickname;
-    private String imageUrl;
+    private String profileImageUrl;
     private String description;
 
     public static UserProfileResponse from(User user) {
@@ -22,7 +22,7 @@ public class UserProfileResponse {
                 .id(user.getId())
                 .nickname(user.getNickname())
                 .description(user.getDescription())
-                .imageUrl(user.getProfileImageUrl())
+                .profileImageUrl(user.getProfileImageUrl())
                 .build();
     }
 }
