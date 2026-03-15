@@ -24,13 +24,8 @@ public class OAuthController {
     @PostMapping("/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLogin(@Valid @RequestBody KakaoSocialLoginRequest request) {
         KakaoLoginResponse response = kakaoOAuthService.kakaoLogin(request.code());
-        if (response.token() != null) {
-            return ResponseEntity.ok()
-                    // TODO: 헤더 뺄지말지 결정
-                    .header("Authorization", "Bearer " + response.token())
-                    .body(response);
-        }
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .body(response);
     }
 
     /**
@@ -41,14 +36,7 @@ public class OAuthController {
     public ResponseEntity<SignupResponse> kakaoSignup(@Valid @RequestBody KakaoSignupRequest request) {
         SignupResponse response = kakaoOAuthService.kakaoSignup(request);
 
-        // 토큰이 있을 경우 (회원가입 성공 및 로그인 처리)
-        if (response.token() != null) {
-            return ResponseEntity.ok()
-                    .header("Authorization", "Bearer " + response.token())
-                    .body(response);
-        }
-
-        // 토큰이 없더라도 객체 자체를 반환 (또는 상황에 맞는 예외 처리)
+        // 토큰이 없더라도 객체 자체를 반환
         return ResponseEntity.ok(response);
     }
 
@@ -56,11 +44,7 @@ public class OAuthController {
     @GetMapping("/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLoginCallBack(@Valid @RequestParam String code) {
         KakaoLoginResponse response = kakaoOAuthService.kakaoLogin(code);
-        if (response.token() != null) {
-            return ResponseEntity.ok()
-                    .header("Authorization", "Bearer " + response.token())
-                    .body(response);
-        }
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .body(response);
     }
 }

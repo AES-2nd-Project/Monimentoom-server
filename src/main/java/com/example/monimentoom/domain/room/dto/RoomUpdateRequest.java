@@ -1,10 +1,13 @@
 package com.example.monimentoom.domain.room.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
 public class RoomUpdateRequest {
-    @NotBlank(message = "방 이름은 필수입니다.")
+    @Size(min = 1)
     private String name;
+    private Boolean updateImages; // true일 때만 이미지 업데이트 (null/false → 이미지 유지)
+    private String frameImageUrl;
+    private String easelImageUrl;
 }

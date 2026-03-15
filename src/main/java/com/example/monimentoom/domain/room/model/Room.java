@@ -5,10 +5,7 @@ import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +13,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "rooms")
+@Builder
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,9 +57,11 @@ public class Room {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @Builder
-    public Room(User user, String name) {
-        this.user = user;
-        this.name = name;
+    public void update(String name, Boolean updateImages, String frameImageUrl, String easelImageUrl) {
+        if (name != null && !name.isBlank()) this.name = name;
+        if (Boolean.TRUE.equals(updateImages)) {
+            this.frameImageUrl = frameImageUrl;
+            this.easelImageUrl = easelImageUrl;
+        }
     }
 }

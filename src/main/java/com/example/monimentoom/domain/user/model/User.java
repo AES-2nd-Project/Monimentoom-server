@@ -5,7 +5,10 @@ import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -58,8 +61,8 @@ public class User {
         }
     }
 
-    public void changeMainRoom(Room room) {
-        this.mainRoom = room;
+    public void updateMainRoom(Room mainRoom) {
+        this.mainRoom = mainRoom;
     }
 
     /** 프로필 이미지 제거 시 '' 빈문자열 보내도록 처리 */

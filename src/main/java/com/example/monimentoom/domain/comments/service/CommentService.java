@@ -89,7 +89,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         comment.validateOwnership(userId);
-        comment.setContent(request.getContent());
+        comment.update(request.getContent());
         return CommentResponse.from(comment);
     }
 

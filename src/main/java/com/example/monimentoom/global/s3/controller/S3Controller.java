@@ -40,4 +40,12 @@ public class S3Controller {
         S3Uploader.PresignedUrlResult result = s3Uploader.generatePresignedUrl("frame", fileName);
         return ResponseEntity.ok(new PresignedUrlResponse(result.presignedUrl(), result.imageUrl(), result.contentType()));
     }
+
+    @GetMapping("/easel")
+    public ResponseEntity<PresignedUrlResponse> getEaselPresignedUrl(
+            @RequestParam String fileName
+    ) {
+        S3Uploader.PresignedUrlResult result = s3Uploader.generatePresignedUrl("easel", fileName);
+        return ResponseEntity.ok(new PresignedUrlResponse(result.presignedUrl(), result.imageUrl(), result.contentType()));
+    }
 }
