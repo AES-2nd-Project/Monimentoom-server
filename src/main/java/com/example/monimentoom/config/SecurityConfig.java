@@ -34,9 +34,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**", "/v3/api-docs/**",
                                 "/oauth/kakao", "/oauth/kakao/signup",
                                 "/actuator/health", "/actuator/health/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/rooms", "/rooms/random",
-                                "/rooms/*/main", "/rooms/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/rooms/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)

@@ -47,7 +47,7 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getRoom(roomId));
     }
 
-    // 방 상세 조회(주인정보 + 댓글)
+    // 방 상세 조회(주인정보 + 댓글)(인증 없어도 조회 가능)
     @GetMapping("/{roomId}/detail")
     public ResponseEntity<RoomDetailResponse> getRoomDetail(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
         return ResponseEntity.ok((roomService.getRoomDetail(userId, roomId)));

@@ -130,10 +130,11 @@ public class RoomService {
     public RoomDetailResponse getRoomDetail(Long userId, Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
-        if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        boolean isLoggedIn = userId != null;
+        boolean isMine = isLoggedIn && userId.equals(room.getUser().getId());
         List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
                 .map(CommentResponse::from)
                 .toList();
-        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), userId.equals(room.getUser().getId()), comments);
+        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, comments);
     }
 }

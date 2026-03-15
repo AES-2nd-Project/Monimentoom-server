@@ -20,18 +20,19 @@ public class RoomDetailResponse {
     private String name;
     private String userProfileImageUrl;
     private String nickname;
-    private Boolean isLoggedIn;
-    private Boolean isMine;
+    private boolean isLoggedIn;
+    private boolean isMine;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime userCreatedAt;
     private List<CommentResponse> comments;
 
-    public static RoomDetailResponse from(Room room, String userProfileImageUrl, Boolean isMine, List<CommentResponse> comments) {
+    public static RoomDetailResponse from(Room room, String userProfileImageUrl, boolean isLoggedIn, boolean isMine, List<CommentResponse> comments) {
         return RoomDetailResponse.builder()
                 .roomId(room.getId())
                 .name(room.getName())
                 .userProfileImageUrl(userProfileImageUrl)
                 .nickname(room.getUser().getNickname())
+                .isLoggedIn(isLoggedIn)
                 .isMine(isMine)
                 .userCreatedAt(room.getUser().getCreatedAt())
                 .comments(comments)
