@@ -76,7 +76,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
-        room.update(request.getName(), request.getFrameImageUrl(), request.getEaselImageUrl());
+        room.update(request.getName(), request.getUpdateImages(), request.getFrameImageUrl(), request.getEaselImageUrl());
         return RoomBasicResponse.from(room);
     }
 

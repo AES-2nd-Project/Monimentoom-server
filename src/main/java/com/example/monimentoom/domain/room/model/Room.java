@@ -57,10 +57,11 @@ public class Room {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // 부분 수정 가능하도록 함
-    public void update(String name, String frameImageUrl, String easelImageUrl) {
-        if (name != null) this.name = name;
-        if (frameImageUrl != null) this.frameImageUrl = frameImageUrl;
-        if (easelImageUrl != null) this.easelImageUrl = easelImageUrl;
+    public void update(String name, Boolean updateImages, String frameImageUrl, String easelImageUrl) {
+        if (name != null && !name.isBlank()) this.name = name;
+        if (Boolean.TRUE.equals(updateImages)) {
+            this.frameImageUrl = frameImageUrl;
+            this.easelImageUrl = easelImageUrl;
+        }
     }
 }
