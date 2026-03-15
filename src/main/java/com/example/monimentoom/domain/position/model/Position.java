@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +17,6 @@ import java.time.LocalDateTime;
         @Index(name = "idx_positions_goods_id", columnList = "goods_id")
 })
 @Getter
-@Setter
 @NoArgsConstructor
 public class Position {
     @Id
