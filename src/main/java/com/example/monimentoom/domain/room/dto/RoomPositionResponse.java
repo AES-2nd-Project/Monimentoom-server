@@ -16,6 +16,7 @@ import java.util.List;
 public class RoomPositionResponse {
     private Long roomId;
     private Long userId;
+    private String nickname;
     private String name;
     private List<PositionResponse> positions;
 
@@ -24,6 +25,7 @@ public class RoomPositionResponse {
         return RoomPositionResponse.builder()
                 .roomId(room.getId())
                 .userId(room.getUser().getId())
+                .nickname(room.getUser().getNickname())
                 .name(room.getName())
                 .positions(positions)
                 .build();
