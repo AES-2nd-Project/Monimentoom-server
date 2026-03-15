@@ -26,10 +26,9 @@ public class User {
     private String nickname;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
-    private String password;
-
     private String profileImageUrl;
+    @Column(unique = true)
+    private Long kakaoId;
     private String description;
 
     @Column(nullable = false, updatable = false,

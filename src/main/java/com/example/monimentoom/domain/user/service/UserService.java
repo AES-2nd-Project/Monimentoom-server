@@ -15,50 +15,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final RoomRepository roomRepository;
     private final ApplicationEventPublisher eventPublisher;
-
-    @Transactional
-    public UserResponse createUser(UserSignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
-        }
-        if (userRepository.existsByNickname(request.getNickname())) {
-            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
-        }
-        User user = User.builder()
-                .email(request.getEmail())
-                .nickname(request.getNickname())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .build();
-        userRepository.save(user);
-
-        Room defaultRoom = Room.builder()
-                .name(user.getNickname() + "님의 첫 번째 방")
-                .user(user)
-                .build();
-        roomRepository.save(defaultRoom);
-
-        user.setMainRoom(defaultRoom);
-
-        return UserResponse.from(user);
-    }
-
-    // jwt 토큰 생성, 반환은 컨트롤러에서 처리
-    public UserResponse loginUser(UserLoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_LOGIN_INPUT_VALUE));
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_LOGIN_INPUT_VALUE);
-        }
-        return UserResponse.from(user);
-    }
 
     // TODO : jwt 토큰 만료 처리
     public void logoutUser(Long userId) {

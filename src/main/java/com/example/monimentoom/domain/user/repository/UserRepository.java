@@ -14,6 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByNickname(String nickname);
 
+    boolean existsByKakaoId(Long kakaoId);
+
     @Query(value = "SELECT * FROM users WHERE id >= :randomId ORDER BY id ASC LIMIT 1",
             nativeQuery = true)
     Optional<User> findFirstByIdGreaterThanEqual(@Param("randomId") Long randomId);
@@ -28,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Long getMinId();
 
     Optional<User> findByNickname(String nickname);
+
+    Optional<User> findByKakaoId(Long kakaoId);
 }

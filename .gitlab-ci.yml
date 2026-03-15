@@ -34,23 +34,32 @@ test:
 # ─────────────────────────────────────────
 build:
   stage: build
-  image: docker:24
+  image: gradle:8.7-jdk17
   services:
     - docker:24-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
   only:
     - main
   before_script:
+    - apt-get update && apt-get install -y docker.io # Docker CLI 추가
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   script:
     - mkdir -p src/main/resources src/test/resources
     - cp $APP_YAML             ./src/main/resources/application.yaml
     - cp $APP_SECRET_YAML      ./src/main/resources/application-secret.yaml
     - cp $TEST_APPLICATION_YML ./src/test/resources/application.yaml
+
+    # Spring 설정파일 넣기(Gradle build)
+    - chmod +x ./gradlew
+    - ./gradlew clean build -x test --no-daemon
+
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE:latest
-  after_script:
-    - docker logout $CI_REGISTRY
+after_script:
+  - docker logout $CI_REGISTRY
 
 # ─────────────────────────────────────────
 # STAGE 3: Deploy (main만 실행)

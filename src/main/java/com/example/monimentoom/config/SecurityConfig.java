@@ -9,8 +9,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -21,10 +19,6 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -35,9 +29,11 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/users/login", "/users/signup", "/error",
-                                        "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
-                                .anyRequest().authenticated()
+                        .requestMatchers("/users/signup", "/error",
+                                "/swagger-ui/**", "/v3/api-docs/**",
+                                "/oauth/kakao", "/oauth/kakao/signup",
+                                "/actuator/health", "/actuator/health/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

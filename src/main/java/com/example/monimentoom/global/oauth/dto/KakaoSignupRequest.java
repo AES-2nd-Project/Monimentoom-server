@@ -1,0 +1,9 @@
+package com.example.monimentoom.global.oauth.dto;
+
+import jakarta.validation.constraints.NotBlank;
+
+public record KakaoSignupRequest(
+        @NotBlank String signupToken, // 1단계에서 받은 서버 서명 임시 토큰
+        @NotBlank String nickname,
+        @NotBlank String email
+) {}
