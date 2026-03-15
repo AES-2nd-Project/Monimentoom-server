@@ -2,6 +2,7 @@ package com.example.monimentoom.domain.room.service;
 
 import com.example.monimentoom.domain.comments.dto.CommentResponse;
 import com.example.monimentoom.domain.comments.repository.CommentRepository;
+import com.example.monimentoom.domain.like.repository.LikeRepository;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.position.repository.PositionRepository;
 import com.example.monimentoom.domain.room.dto.*;
@@ -25,6 +26,7 @@ public class RoomService {
     private final UserRepository userRepository;
     private final PositionRepository positionRepository;
     private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     @Transactional(readOnly = true)
     public List<RoomBasicResponse> getRoomListByNickname(String nickname) {
@@ -132,9 +134,10 @@ public class RoomService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         boolean isLoggedIn = userId != null;
         boolean isMine = isLoggedIn && userId.equals(room.getUser().getId());
+        boolean isLiked = isLoggedIn && likeRepository.existsByRoomIdAndUserId(roomId, userId);
         List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
                 .map(CommentResponse::from)
                 .toList();
-        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, comments);
+        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, isLiked, comments);
     }
 }

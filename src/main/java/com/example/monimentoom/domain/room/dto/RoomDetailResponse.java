@@ -22,11 +22,12 @@ public class RoomDetailResponse {
     private String nickname;
     private boolean isLoggedIn;
     private boolean isMine;
+    private boolean isLiked;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime userCreatedAt;
     private List<CommentResponse> comments;
 
-    public static RoomDetailResponse from(Room room, String userProfileImageUrl, boolean isLoggedIn, boolean isMine, List<CommentResponse> comments) {
+    public static RoomDetailResponse from(Room room, String userProfileImageUrl, boolean isLoggedIn, boolean isMine, boolean isLiked, List<CommentResponse> comments) {
         return RoomDetailResponse.builder()
                 .roomId(room.getId())
                 .name(room.getName())
@@ -34,6 +35,7 @@ public class RoomDetailResponse {
                 .nickname(room.getUser().getNickname())
                 .isLoggedIn(isLoggedIn)
                 .isMine(isMine)
+                .isLiked(isLiked)
                 .userCreatedAt(room.getUser().getCreatedAt())
                 .comments(comments)
                 .build();
