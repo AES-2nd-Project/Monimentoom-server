@@ -26,7 +26,7 @@ public class RoomService {
     private final PositionRepository positionRepository;
     private final CommentRepository commentRepository;
 
-    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 닉네임으로 방 목록 조회 가능하도록 사용자 검증 없음.
+    @Transactional(readOnly = true)
     public List<RoomBasicResponse> getRoomListByNickname(String nickname) {
         if (!userRepository.existsByNickname(nickname)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return roomRepository.findByUserNickname(nickname).stream()
@@ -35,7 +35,7 @@ public class RoomService {
                 .toList();
     }
 
-    // 로그인하지 않은 사용자, 소유주가 아닌 사용자도 방 조회 가능하도록 사용자 검증 없음.
+    @Transactional(readOnly = true)
     public RoomPositionResponse getRandomRoom() {
         Long maxId = userRepository.getMaxId();
         if (maxId == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -74,7 +74,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
-        room.setName(request.getName());
+        room.update(request.getName(), request.getFrameImageUrl(), request.getEaselImageUrl());
         return RoomBasicResponse.from(room);
     }
 
