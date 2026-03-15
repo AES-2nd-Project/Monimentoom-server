@@ -40,9 +40,16 @@ public class OAuthController {
     @PostMapping("/kakao/signup")
     public ResponseEntity<SignupResponse> kakaoSignup(@Valid @RequestBody KakaoSignupRequest request) {
         SignupResponse response = kakaoOAuthService.kakaoSignup(request);
+
+        // 토큰이 있을 경우 (회원가입 성공 및 로그인 처리)
         if (response.token() != null) {
-            ResponseEntity.ok(response);
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + response.token())
+                    .body(response);
         }
+
+        // 토큰이 없더라도 객체 자체를 반환 (또는 상황에 맞는 예외 처리)
+        return ResponseEntity.ok(response);
     }
 
     // 로컬 테스트용
