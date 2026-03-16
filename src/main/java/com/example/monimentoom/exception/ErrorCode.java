@@ -18,6 +18,7 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "U002", "이미 존재하는 닉네임입니다."),
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "V001", "입력값이 올바르지 않습니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "U004", "로그인이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "U005", "접근 권한이 없습니다."),
     DUPLICATE_KAKAO_USER(HttpStatus.CONFLICT, "U006", "이미 카카오 계정으로 가입된 유저입니다."),
