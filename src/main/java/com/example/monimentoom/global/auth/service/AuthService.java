@@ -38,7 +38,7 @@ public class AuthService {
         String newAt = jwtUtil.createToken(userId);
         String newRt = jwtUtil.createRefreshToken(userId);
         refreshTokenRepository.save(userId, newRt, deviceId,
-                jwtUtil.getRefreshTokenExpiration());
+                jwtUtil.getRefreshTokenExpirySeconds());
         return new TokenRefreshResponse(newAt, newRt);
     }
 

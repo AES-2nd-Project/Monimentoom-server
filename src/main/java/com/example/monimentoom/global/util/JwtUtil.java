@@ -127,4 +127,9 @@ public class JwtUtil {
     }
 
     public long getRefreshTokenExpiration() { return refreshExpirationTime; }
+
+    // DB 저장용 — ms → 초 변환
+    public long getRefreshTokenExpirySeconds() {
+        return refreshExpirationTime / 1000;  // 604800000 / 1000 = 604800초
+    }
 }

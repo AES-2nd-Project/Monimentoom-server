@@ -66,7 +66,7 @@ public class KakaoOAuthService {
                     String rt = jwtUtil.createRefreshToken(user.getId());
                     refreshTokenRepository.save(
                             user.getId(), rt, "default",
-                            jwtUtil.getRefreshTokenExpiration());
+                            jwtUtil.getRefreshTokenExpirySeconds());
                     return KakaoLoginResponse.ofExistingUser(
                             at, rt, user.getId(), user.getNickname());})
                 .orElse(KakaoLoginResponse.ofNewUser(jwtUtil.createSignupToken(kakaoId)));
@@ -106,7 +106,7 @@ public class KakaoOAuthService {
         String rt = jwtUtil.createRefreshToken(newUser.getId());
         refreshTokenRepository.save(
                 newUser.getId(), rt, "default",
-                jwtUtil.getRefreshTokenExpiration());
+                jwtUtil.getRefreshTokenExpirySeconds());
 
         log.info("kakaoSignup 완료 - userId={}, nickname={}", newUser.getId(), newUser.getNickname());
         return new SignupResponse(at, rt,
