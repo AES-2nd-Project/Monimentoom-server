@@ -2,7 +2,7 @@ package com.example.monimentoom.global.oauth.dto;
 
 /**
  * 카카오 로그인 1단계 응답
- * - 기존 유저: token + nickname + email 발급
+ * - 기존 유저: token + nickname 발급
  * - 신규 유저: signupToken 반환 (서버 서명 임시 토큰 5분 만료, /oauth/kakao/signup 호출 필요)
  */
 public record KakaoLoginResponse(
