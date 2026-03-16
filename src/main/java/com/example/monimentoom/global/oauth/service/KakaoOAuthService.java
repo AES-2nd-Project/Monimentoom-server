@@ -68,7 +68,7 @@ public class KakaoOAuthService {
                             user.getId(), rt, "default",
                             jwtUtil.getRefreshTokenExpiration());
                     return KakaoLoginResponse.ofExistingUser(
-                            at, rt, user.getId(), user.getNickname(), user.getEmail());})
+                            at, rt, user.getId(), user.getNickname());})
                 .orElse(KakaoLoginResponse.ofNewUser(jwtUtil.createSignupToken(kakaoId)));
     }
 
@@ -86,16 +86,11 @@ public class KakaoOAuthService {
         if (userRepository.existsByNickname(request.nickname())) {
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
         }
-        // 이메일 중복 체크
-        if (userRepository.existsByEmail(request.email())) {
-            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
-        }
 
         // 신규 유저 저장
         User newUser = User.builder()
                 .kakaoId(kakaoId)
                 .nickname(request.nickname())
-                .email(request.email())
                 .build();
         userRepository.save(newUser);
 
@@ -115,6 +110,6 @@ public class KakaoOAuthService {
 
         log.info("kakaoSignup 완료 - userId={}, nickname={}", newUser.getId(), newUser.getNickname());
         return new SignupResponse(at, rt,
-                newUser.getId(), newUser.getNickname(), newUser.getEmail());
+                newUser.getId(), newUser.getNickname());
     }
 }

@@ -13,6 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             SELECT c from Comment c
             JOIN FETCH c.user
             WHERE c.room.id = :roomId
+            ORDER BY c.createdAt DESC
             """)
     List<Comment> findByRoomIdWithUser(@Param("roomId") Long roomId);
 

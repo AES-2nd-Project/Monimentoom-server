@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserProfileRequest {
     @Size(min = 1, max = 20)
-    @Pattern(regexp = ".*\\S.*")
+    // TODO: 악의적 입력 방지 필요
     private String nickname;
     private String profileImageUrl;
     @Size(min = 1, max = 255)
-    @Pattern(regexp = ".*\\S.*")
+    // TODO: 악의적 입력 방지 필요
     private String description;
 }

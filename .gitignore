@@ -66,3 +66,6 @@ src/main/resources/schema.sql
 *.key
 *.crt
 *.pem
+
+### 로컬 Oauth 컨트롤러
+src/main/java/com/example/monimentoom/global/oauth/controller/OAuthLocalController.java
