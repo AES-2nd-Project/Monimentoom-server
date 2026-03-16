@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.PageRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -120,11 +122,11 @@ public class RoomService {
 
         // startId 이상인 포지션을 size만큼 조회
         // 끝에 가까운 id가 뽑혀 결과가 부족하면 처음(minId)부터 나머지를 채움
-        List<Position> result = new ArrayList<>(positionRepository.findPositionsFromId(startId, size));
+        List<Position> result = new ArrayList<>(positionRepository.findPositionsFromId(startId, PageRequest.of(0, size)));
         if (result.size() < size) {
             int remaining = size - result.size();
             List<Long> foundIds = result.stream().map(Position::getId).toList();
-            positionRepository.findPositionsFromId(minId, size).stream()
+            positionRepository.findPositionsFromId(minId, PageRequest.of(0, size)).stream()
                     .filter(p -> !foundIds.contains(p.getId()))
                     .limit(remaining)
                     .forEach(result::add);
