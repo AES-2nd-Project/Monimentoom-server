@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error",
                                 "/swagger-ui/**", "/v3/api-docs/**",
-                                "/oauth/kakao", "/oauth/kakao/signup",
+                                "/oauth/kakao", "/oauth/kakao/signup", "/auth/refresh",
                                 "/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/rooms", "/rooms/random", "/rooms/*", "/rooms/*/main", "/rooms/*/detail").permitAll()
                         .anyRequest().authenticated()
