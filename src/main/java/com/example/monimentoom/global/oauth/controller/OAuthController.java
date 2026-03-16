@@ -18,33 +18,22 @@ public class OAuthController {
 
     /**
      * 1단계: 카카오 인가 코드 -> 로그인 or 신규 유저 판별
-     * - 기존 유저: token + nickname + email 반환
+     * - 기존 유저: token + nickname 반환
      * - 신규 유저: signupToken 반환 -> /oauth/kakao/signup 호출 필요
      **/
     @PostMapping("/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLogin(@Valid @RequestBody KakaoSocialLoginRequest request) {
         KakaoLoginResponse response = kakaoOAuthService.kakaoLogin(request.code());
-        return ResponseEntity.ok()
-                .body(response);
+        return ResponseEntity.ok().body(response);
     }
 
     /**
      * 2단계: 닉네임 입력 후 최종 회원가입
-     * - 응답: JWT token, nickname, email 반환
+     * - 응답: JWT token, nickname 반환
      */
     @PostMapping("/kakao/signup")
     public ResponseEntity<SignupResponse> kakaoSignup(@Valid @RequestBody KakaoSignupRequest request) {
         SignupResponse response = kakaoOAuthService.kakaoSignup(request);
-
-        // 토큰이 없더라도 객체 자체를 반환
         return ResponseEntity.ok(response);
-    }
-
-    // 로컬 테스트용
-    @GetMapping("/kakao")
-    public ResponseEntity<KakaoLoginResponse> kakaoLoginCallBack(@Valid @RequestParam String code) {
-        KakaoLoginResponse response = kakaoOAuthService.kakaoLogin(code);
-        return ResponseEntity.ok()
-                .body(response);
     }
 }
