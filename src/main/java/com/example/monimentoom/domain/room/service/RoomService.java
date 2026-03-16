@@ -106,6 +106,9 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public List<ShowcaseItemResponse> getShowcaseItems(int size) {
+        if (size <= 0) {
+            return List.of();
+        }
         return positionRepository.findRandomPositions(size).stream()
                 .map(ShowcaseItemResponse::from)
                 .toList();
