@@ -21,6 +21,8 @@ public class PositionResponse {
     private Integer widthUnit;
     private Integer heightUnit;
     private String imageUrl;
+    private String goodsName;
+    private String goodsDescription;
 
     public static PositionResponse from(Position position) {
         if (position == null) return null;
@@ -35,6 +37,8 @@ public class PositionResponse {
                 .widthUnit(position.getWidthUnit())
                 .heightUnit(position.getHeightUnit())
                 .imageUrl(position.getGoods().getImageUrl())
+                .goodsName(position.getGoods().getName())
+                .goodsDescription(position.getGoods().getDescription())
                 .build();
     }
 }
