@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PositionService {
@@ -21,9 +23,21 @@ public class PositionService {
     private final GoodsRepository goodsRepository;
     private final RoomRepository roomRepository;
 
+    @Transactional(readOnly = true)
+    public List<PositionResponse> getPositionsByRoomId(Long roomId) {
+        return positionRepository.findByRoomId(roomId).stream()
+                .map(PositionResponse::from)
+                .toList();
+    }
+
     /**
-     * 굿즈 새로 배치
+     * 방의 배치를 전부 초기화할 때 사용
      */
+    @Transactional
+    public void deleteAllByRoomId(Long roomId) {
+        positionRepository.deleteByRoomId(roomId);
+    }
+
     @Transactional
     public PositionResponse createPosition(Long userId, PositionRequest request) {
         Room room = roomRepository.findById(request.getRoomId())

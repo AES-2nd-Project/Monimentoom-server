@@ -28,6 +28,18 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
+    public List<CommentResponse> getCommentsByRoomId(Long roomId) {
+        return commentRepository.findByRoomIdWithUser(roomId).stream()
+                .map(CommentResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public long getCommentCountByRoomId(Long roomId) {
+        return commentRepository.countByRoomId(roomId);
+    }
+
     // 댓글 생성
     @Transactional
     public CommentResponse createComment(Long userId, CommentCreateRequest request) {
