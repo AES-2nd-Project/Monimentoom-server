@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public record CommentResponse(
         Long id,
         String nickname,
+        String profileImageUrl,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime createdAt,
         String content
@@ -16,6 +17,7 @@ public record CommentResponse(
         return new CommentResponse(
                 comment.getId(),
                 comment.getUser().getNickname(),
+                comment.getUser().getProfileImageUrl(),
                 comment.getCreatedAt(),
                 comment.getContent()
         );
