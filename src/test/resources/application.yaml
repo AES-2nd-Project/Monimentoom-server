@@ -24,6 +24,7 @@ spring:
 jwt:
   secret: dGhpcy1pcy1hLWR1bW15LXNlY3JldC1rZXktZm9yLXNwcmluZy1ib290LWp3dC10ZXN0
   expiration_time: 3600000
+  refresh_token_expiration_time: 604800000
 
 kakao:
   client-id: test-client-id
