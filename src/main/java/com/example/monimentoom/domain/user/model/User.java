@@ -25,8 +25,6 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String nickname;
-    @Column(nullable = false, unique = true)
-    private String email;
     private String profileImageUrl;
     @Column(unique = true)
     private Long kakaoId;

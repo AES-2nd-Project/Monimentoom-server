@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         ErrorCode errorCode = e.getErrorCode();
@@ -34,13 +35,6 @@ public class GlobalExceptionHandler {
         // 에러 메세지 내용 보고 문제를 세분화
         if (errorMessage.contains("nickname")) {
             ErrorCode errorCode = ErrorCode.DUPLICATE_NICKNAME;
-            return ResponseEntity
-                    .status(errorCode.getStatus())
-                    .body(new ErrorResponse(errorCode.getStatus(), errorCode.getCode(), errorCode.getMessage()));
-        }
-
-        if (errorMessage.contains("email")) {
-            ErrorCode errorCode = ErrorCode.DUPLICATE_EMAIL;
             return ResponseEntity
                     .status(errorCode.getStatus())
                     .body(new ErrorResponse(errorCode.getStatus(), errorCode.getCode(), errorCode.getMessage()));
