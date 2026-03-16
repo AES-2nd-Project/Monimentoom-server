@@ -4,7 +4,6 @@ import com.example.monimentoom.domain.common.BaseTimeEntity;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
