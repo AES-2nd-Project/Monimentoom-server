@@ -2,6 +2,7 @@ package com.example.monimentoom.global.oauth.controller;
 
 import com.example.monimentoom.global.oauth.dto.*;
 import com.example.monimentoom.global.oauth.service.KakaoOAuthService;
+import com.example.monimentoom.global.util.CookieUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,15 +42,12 @@ public class OAuthController {
 
         KakaoLoginResult result = kakaoOAuthService.kakaoLogin(request.code());
 
-        // 기존 유저 — 액세스 토큰 + 리프레시 토큰(쿠키)
         if (result.response().token() != null) {
-            addRefreshTokenCookie(response, result.refreshToken());
+            CookieUtils.addRefreshTokenCookie(response, result.refreshToken());
             return ResponseEntity.ok()
                     .header("Authorization", "Bearer " + result.response().token())
                     .body(result.response());
         }
-
-        // 신규 유저 — signupToken만 반환, 쿠키 없음
         return ResponseEntity.ok(result.response());
     }
     /**
@@ -62,10 +60,27 @@ public class OAuthController {
             HttpServletResponse response) {
 
         SignupResult result = kakaoOAuthService.kakaoSignup(request);
-        addRefreshTokenCookie(response, result.refreshToken());
+        CookieUtils.addRefreshTokenCookie(response, result.refreshToken());
 
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + result.response().token())
                 .body(result.response());
+    }
+
+    // 로컬 테스트용
+    @GetMapping("/kakao")
+    public ResponseEntity<KakaoLoginResponse> kakaoLoginCallBack(
+            @RequestParam String code,
+            HttpServletResponse response) {
+
+        KakaoLoginResult result = kakaoOAuthService.kakaoLogin(code);
+
+        if (result.response().token() != null) {
+            CookieUtils.addRefreshTokenCookie(response, result.refreshToken());
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + result.response().token())
+                    .body(result.response());
+        }
+        return ResponseEntity.ok(result.response());
     }
 }
