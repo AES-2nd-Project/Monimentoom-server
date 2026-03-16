@@ -63,7 +63,7 @@ public class RoomService {
 
         Room room = Room.builder()
                 .user(user)
-                .name(request.getName())
+                .name(request.name())
                 .build();
         Room saved = roomRepository.save(room);
         return RoomBasicResponse.from(saved);
@@ -74,7 +74,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
-        room.update(request.getName(), request.getUpdateImages(), request.getFrameImageUrl(), request.getEaselImageUrl());
+        room.update(request.name(), request.updateImages(), request.frameImageUrl(), request.easelImageUrl());
         return RoomBasicResponse.from(room);
     }
 
@@ -133,6 +133,6 @@ public class RoomService {
         long commentCount = commentService.getCommentCountByRoomId(roomId);
         List<CommentResponse> comments = commentService.getCommentsByRoomId(roomId);
 
-        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, likeInfo.getIsLiked(), likeInfo.getLikeCount(), commentCount, comments);
+        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, likeInfo.isLiked(), likeInfo.likeCount(), commentCount, comments);
     }
 }

@@ -2,39 +2,30 @@ package com.example.monimentoom.domain.position.dto;
 
 import com.example.monimentoom.domain.position.model.Position;
 import com.example.monimentoom.domain.position.type.WallSide;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class PositionResponse {
-    private Long id;
-    private Long goodsId;
-    private Long roomId;
-    private WallSide wallSide;
-    private Integer x;
-    private Integer y;
-    private Integer widthUnit;
-    private Integer heightUnit;
-    private String imageUrl;
-
+public record PositionResponse(
+        Long id,
+        Long goodsId,
+        Long roomId,
+        WallSide wallSide,
+        Integer x,
+        Integer y,
+        Integer widthUnit,
+        Integer heightUnit,
+        String imageUrl
+) {
     public static PositionResponse from(Position position) {
         if (position == null) return null;
-
-        return PositionResponse.builder()
-                .id(position.getId())
-                .roomId(position.getRoom().getId())
-                .goodsId(position.getGoods().getId())
-                .wallSide(position.getWall())
-                .x(position.getX())
-                .y(position.getY())
-                .widthUnit(position.getWidthUnit())
-                .heightUnit(position.getHeightUnit())
-                .imageUrl(position.getGoods().getImageUrl())
-                .build();
+        return new PositionResponse(
+                position.getId(),
+                position.getGoods().getId(),
+                position.getRoom().getId(),
+                position.getWall(),
+                position.getX(),
+                position.getY(),
+                position.getWidthUnit(),
+                position.getHeightUnit(),
+                position.getGoods().getImageUrl()
+        );
     }
 }

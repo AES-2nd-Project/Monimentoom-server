@@ -45,12 +45,12 @@ public class CommentService {
     public CommentResponse createComment(Long userId, CommentCreateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Room room = roomRepository.findById(request.getRoomId())
+        Room room = roomRepository.findById(request.roomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         Comment comment = Comment.builder()
                 .user(user)
                 .room(room)
-                .content(request.getContent())
+                .content(request.content())
                 .build();
         return CommentResponse.from(commentRepository.save(comment));
     }
@@ -78,11 +78,7 @@ public class CommentService {
                 .map(CommentResponse::from)
                 .toList();
 
-        return CommentPageResponse.builder()
-                .comments(responseLists)
-                .nextCursorId(nextCursorId)
-                .hasNext(hasNext)
-                .build();
+        return new CommentPageResponse(responseLists, nextCursorId, hasNext);
     }
 
     // 댓글 수정
@@ -91,7 +87,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         comment.validateOwnership(userId);
-        comment.update(request.getContent());
+        comment.update(request.content());
         return CommentResponse.from(comment);
     }
 

@@ -32,10 +32,7 @@ public class LikeService {
     public LikeResponse getLikeInfo(Long roomId, Long userId) {
         long likeCount = likeRepository.countByRoomId(roomId);
         boolean isLiked = userId != null && likeRepository.existsByRoomIdAndUserId(roomId, userId);
-        return LikeResponse.builder()
-                .likeCount(likeCount)
-                .isLiked(isLiked)
-                .build();
+        return new LikeResponse(likeCount, isLiked);
     }
 
     /**
@@ -76,7 +73,7 @@ public class LikeService {
             throw new CustomException(ErrorCode.ALREADY_LIKED);
         }
         long likeCount = likeRepository.countByRoomId(roomId);
-        return LikeResponse.builder().likeCount(likeCount).isLiked(true).build();
+        return new LikeResponse(likeCount, true);
     }
 
     @Transactional
@@ -88,6 +85,6 @@ public class LikeService {
             throw new CustomException(ErrorCode.ALREADY_UNLIKED);
         }
         long likeCount = likeRepository.countByRoomId(roomId);
-        return LikeResponse.builder().likeCount(likeCount).isLiked(false).build();
+        return new LikeResponse(likeCount, false);
     }
 }

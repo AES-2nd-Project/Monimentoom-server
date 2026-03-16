@@ -31,10 +31,10 @@ public class GoodsService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Goods goods = Goods.builder()
                 .user(user)
-                .name(request.getName())
-                .imageUrl(request.getImageUrl())
-                .description(request.getDescription())
-                .price(request.getPrice())
+                .name(request.name())
+                .imageUrl(request.imageUrl())
+                .description(request.description())
+                .price(request.price())
                 .build();
         return GoodsResponse.from(goodsRepository.save(goods));
     }
@@ -57,7 +57,7 @@ public class GoodsService {
 
         goods.validateOwnership(userId);
 
-        goods.update(request.getName(), request.getImageUrl(), request.getDescription(), request.getPrice());
+        goods.update(request.name(), request.imageUrl(), request.description(), request.price());
 
         return GoodsResponse.from(goods);
     }
