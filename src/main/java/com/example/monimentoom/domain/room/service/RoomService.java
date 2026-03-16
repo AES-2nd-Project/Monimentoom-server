@@ -38,7 +38,7 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public RoomPositionResponse getRandomRoom() {
+    public RoomPositionResponse getRandomMainRoom() {
         Long maxId = userRepository.getMaxId();
         if (maxId == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
