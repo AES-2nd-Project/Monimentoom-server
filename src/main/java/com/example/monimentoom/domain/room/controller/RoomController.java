@@ -32,7 +32,8 @@ public class RoomController {
     // 배치된 굿즈 랜덤 쇼케이스(인증 없어도 조회 가능)
     @GetMapping("/showcase")
     public ResponseEntity<List<ShowcaseItemResponse>> getShowcase(@RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(roomService.getShowcaseItems(Math.min(size, 50)));
+        int clampedSize = Math.max(1, Math.min(size, 50));
+        return ResponseEntity.ok(roomService.getShowcaseItems(clampedSize));
     }
 
     // 닉네임으로 방 리스트 가져오기(인증 없어도 조회 가능)
