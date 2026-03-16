@@ -15,6 +15,8 @@ public enum ErrorCode {
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_003", "만료된 토큰입니다."),
     UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_004", "지원하지 않는 토큰 형식입니다."),
     EMPTY_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_005", "토큰이 비어있습니다."),
+    REFRESH_TOKEN_REUSED(HttpStatus.UNAUTHORIZED, "AUTH_006", "리프레쉬 토큰이 재사용되어 폐기합니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "AUTH_007", "리프레쉬 토큰을 찾을 수 없습니다."),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "U002", "이미 존재하는 닉네임입니다."),
