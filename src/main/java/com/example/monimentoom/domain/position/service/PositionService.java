@@ -6,15 +6,19 @@ import com.example.monimentoom.domain.position.model.Position;
 import com.example.monimentoom.domain.position.dto.PositionRequest;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
 import com.example.monimentoom.domain.position.repository.PositionRepository;
+import com.example.monimentoom.domain.room.dto.ShowcaseItemResponse;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,29 @@ public class PositionService {
     private final PositionRepository positionRepository;
     private final GoodsRepository goodsRepository;
     private final RoomRepository roomRepository;
+
+    @Transactional(readOnly = true)
+    public List<ShowcaseItemResponse> getShowcaseItems(int size) {
+        if (size <= 0) return List.of();
+
+        Long maxId = positionRepository.getMaxId();
+        if (maxId == null) return List.of();
+
+        Long minId = positionRepository.getMinId();
+        long startId = ThreadLocalRandom.current().nextLong(minId, maxId + 1);
+
+        List<Position> result = new ArrayList<>(positionRepository.findPositionsFromId(startId, PageRequest.of(0, size)));
+        if (result.size() < size) {
+            int remaining = size - result.size();
+            List<Long> foundIds = result.stream().map(Position::getId).toList();
+            positionRepository.findPositionsFromId(minId, PageRequest.of(0, size)).stream()
+                    .filter(p -> !foundIds.contains(p.getId()))
+                    .limit(remaining)
+                    .forEach(result::add);
+        }
+
+        return result.stream().map(ShowcaseItemResponse::from).toList();
+    }
 
     @Transactional(readOnly = true)
     public List<PositionResponse> getPositionsByRoomId(Long roomId) {
