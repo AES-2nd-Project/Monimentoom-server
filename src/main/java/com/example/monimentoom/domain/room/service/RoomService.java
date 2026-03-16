@@ -5,6 +5,8 @@ import com.example.monimentoom.domain.comments.service.CommentService;
 import com.example.monimentoom.domain.like.dto.LikeResponse;
 import com.example.monimentoom.domain.like.service.LikeService;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
+import com.example.monimentoom.domain.position.model.Position;
+import com.example.monimentoom.domain.position.repository.PositionRepository;
 import com.example.monimentoom.domain.position.service.PositionService;
 import com.example.monimentoom.domain.room.dto.*;
 import com.example.monimentoom.domain.room.model.Room;
@@ -17,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.PageRequest;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -99,6 +104,35 @@ public class RoomService {
             throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_ROOM);
         }
         roomRepository.deleteById(roomId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShowcaseItemResponse> getShowcaseItems(int size) {
+        if (size <= 0) {
+            return List.of();
+        }
+
+        Long maxId = positionRepository.getMaxId();
+        if (maxId == null) return List.of();
+
+        Long minId = positionRepository.getMinId();
+        long startId = ThreadLocalRandom.current().nextLong(minId, maxId + 1);
+
+        // startId 이상인 포지션을 size만큼 조회
+        // 끝에 가까운 id가 뽑혀 결과가 부족하면 처음(minId)부터 나머지를 채움
+        List<Position> result = new ArrayList<>(positionRepository.findPositionsFromId(startId, PageRequest.of(0, size)));
+        if (result.size() < size) {
+            int remaining = size - result.size();
+            List<Long> foundIds = result.stream().map(Position::getId).toList();
+            positionRepository.findPositionsFromId(minId, PageRequest.of(0, size)).stream()
+                    .filter(p -> !foundIds.contains(p.getId()))
+                    .limit(remaining)
+                    .forEach(result::add);
+        }
+
+        return result.stream()
+                .map(ShowcaseItemResponse::from)
+                .toList();
     }
 
     // 닉네임 방문
