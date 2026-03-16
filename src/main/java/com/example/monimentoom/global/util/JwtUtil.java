@@ -74,7 +74,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(String.valueOf(kakaoId))
-                .claim("type", "signup")
+                .claim(TOKEN_TYPE, TYPE_SIGNUP)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -87,7 +87,7 @@ public class JwtUtil {
         if (!TYPE_SIGNUP.equals(claims.get(TOKEN_TYPE, String.class))) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
-        return claims.get("kakaoId", Long.class);
+        return Long.parseLong(claims.getSubject());
     }
 
     public Long getUserIdFromToken(String token) {
