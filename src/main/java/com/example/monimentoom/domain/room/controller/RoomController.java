@@ -26,7 +26,7 @@ public class RoomController {
     // 랜덤 방 가져오기(인증 없어도 조회 가능)
     @GetMapping("/random")
     public ResponseEntity<RoomPositionResponse> getRandomRoom() {
-        return ResponseEntity.ok(roomService.getRandomRoom());
+        return ResponseEntity.ok(roomService.getRandomMainRoom());
     }
 
     // 배치된 굿즈 랜덤 쇼케이스(인증 없어도 조회 가능)

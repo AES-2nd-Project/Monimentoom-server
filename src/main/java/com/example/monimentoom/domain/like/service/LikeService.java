@@ -24,16 +24,25 @@ public class LikeService {
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
 
+    /**
+     * 좋아요 정보 조회 (비로그인 허용)
+     * userId가 null -> isLiked = false로 반환
+     */
+    @Transactional(readOnly = true)
+    public LikeResponse getLikeInfo(Long roomId, Long userId) {
+        long likeCount = likeRepository.countByRoomId(roomId);
+        boolean isLiked = userId != null && likeRepository.existsByRoomIdAndUserId(roomId, userId);
+        return new LikeResponse(likeCount, isLiked);
+    }
+
+    /**
+     * 좋아요 정보 조회 (로그인 필수 — LikeController용)
+     */
     @Transactional(readOnly = true)
     public LikeResponse getLikes(Long userId, Long roomId) {
         if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         if (!roomRepository.existsById(roomId)) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
-        Long likeCount = likeRepository.countByRoomId(roomId);
-        Boolean isLiked = likeRepository.existsByRoomIdAndUserId(roomId, userId);
-        return LikeResponse.builder()
-                .likeCount(likeCount)
-                .isLiked(isLiked)
-                .build();
+        return getLikeInfo(roomId, userId);
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +73,7 @@ public class LikeService {
             throw new CustomException(ErrorCode.ALREADY_LIKED);
         }
         long likeCount = likeRepository.countByRoomId(roomId);
-        return LikeResponse.builder().likeCount(likeCount).isLiked(true).build();
+        return new LikeResponse(likeCount, true);
     }
 
     @Transactional
@@ -76,6 +85,6 @@ public class LikeService {
             throw new CustomException(ErrorCode.ALREADY_UNLIKED);
         }
         long likeCount = likeRepository.countByRoomId(roomId);
-        return LikeResponse.builder().likeCount(likeCount).isLiked(false).build();
+        return new LikeResponse(likeCount, false);
     }
 }
