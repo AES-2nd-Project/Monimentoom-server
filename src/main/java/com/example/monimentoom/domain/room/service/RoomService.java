@@ -1,10 +1,11 @@
 package com.example.monimentoom.domain.room.service;
 
 import com.example.monimentoom.domain.comments.dto.CommentResponse;
-import com.example.monimentoom.domain.comments.repository.CommentRepository;
-import com.example.monimentoom.domain.like.repository.LikeRepository;
+import com.example.monimentoom.domain.comments.service.CommentService;
+import com.example.monimentoom.domain.like.dto.LikeResponse;
+import com.example.monimentoom.domain.like.service.LikeService;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
-import com.example.monimentoom.domain.position.repository.PositionRepository;
+import com.example.monimentoom.domain.position.service.PositionService;
 import com.example.monimentoom.domain.room.dto.*;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
@@ -24,38 +25,34 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
-    private final PositionRepository positionRepository;
-    private final CommentRepository commentRepository;
-    private final LikeRepository likeRepository;
+    private final PositionService positionService;
+    private final CommentService commentService;
+    private final LikeService likeService;
 
     @Transactional(readOnly = true)
     public List<RoomBasicResponse> getRoomListByNickname(String nickname) {
         if (!userRepository.existsByNickname(nickname)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return roomRepository.findByUserNickname(nickname).stream()
-                // 리스트는 상세한 배치정보 제외한 기본정보 제공
                 .map(RoomBasicResponse::from)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public RoomPositionResponse getRandomRoom() {
+    public RoomPositionResponse getRandomMainRoom() {
         Long maxId = userRepository.getMaxId();
         if (maxId == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         Long minId = userRepository.getMinId();
         long targetId = ThreadLocalRandom.current().nextLong(minId, maxId + 1);
 
-        // targetId보다 큰 값이 없으면( = 가장 큰 ID를 뽑았는데 이미 삭제됐다면)
-        // 다시 처음(minId) 부터 찾도록 orElseGet
         Room room = userRepository.findFirstByIdGreaterThanEqual(targetId)
                 .orElseGet(() ->
                         userRepository.findFirstUser()
                                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
                 ).getMainRoom();
         if (room == null) throw new CustomException(ErrorCode.NO_MAIN_ROOM);
-        List<PositionResponse> positions = positionRepository.findByRoomId(room.getId()).stream()
-                .map(PositionResponse::from)
-                .toList();
+
+        List<PositionResponse> positions = positionService.getPositionsByRoomId(room.getId());
         return RoomPositionResponse.from(room, positions);
     }
 
@@ -66,7 +63,7 @@ public class RoomService {
 
         Room room = Room.builder()
                 .user(user)
-                .name(request.getName())
+                .name(request.name())
                 .build();
         Room saved = roomRepository.save(room);
         return RoomBasicResponse.from(saved);
@@ -77,7 +74,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
-        room.update(request.getName(), request.getUpdateImages(), request.getFrameImageUrl(), request.getEaselImageUrl());
+        room.update(request.name(), request.updateImages(), request.frameImageUrl(), request.easelImageUrl());
         return RoomBasicResponse.from(room);
     }
 
@@ -86,7 +83,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
-        positionRepository.deleteByRoomId(roomId);
+        positionService.deleteAllByRoomId(roomId);
     }
 
     @Transactional
@@ -110,10 +107,8 @@ public class RoomService {
         Room room = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
                 .getMainRoom();
-        List<PositionResponse> positions = positionRepository.findByRoomId(room.getId()).stream()
-                .map(PositionResponse::from)
-                .toList();
 
+        List<PositionResponse> positions = positionService.getPositionsByRoomId(room.getId());
         return RoomPositionResponse.from(room, positions);
     }
 
@@ -122,10 +117,8 @@ public class RoomService {
     public RoomPositionResponse getRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
-        List<PositionResponse> positions = positionRepository.findByRoomId(roomId).stream()
-                .map(PositionResponse::from)
-                .toList();
 
+        List<PositionResponse> positions = positionService.getPositionsByRoomId(roomId);
         return RoomPositionResponse.from(room, positions);
     }
 
@@ -133,14 +126,13 @@ public class RoomService {
     public RoomDetailResponse getRoomDetail(Long userId, Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+
         boolean isLoggedIn = userId != null;
         boolean isMine = isLoggedIn && userId.equals(room.getUser().getId());
-        boolean isLiked = isLoggedIn && likeRepository.existsByRoomIdAndUserId(roomId, userId);
-        long likeCount = likeRepository.countByRoomId(roomId);
-        long commentCount = commentRepository.countByRoomId(roomId);
-        List<CommentResponse> comments = commentRepository.findByRoomIdWithUser(roomId).stream()
-                .map(CommentResponse::from)
-                .toList();
-        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, isLiked, likeCount, commentCount, comments);
+        LikeResponse likeInfo = likeService.getLikeInfo(roomId, userId);
+        long commentCount = commentService.getCommentCountByRoomId(roomId);
+        List<CommentResponse> comments = commentService.getCommentsByRoomId(roomId);
+
+        return RoomDetailResponse.from(room, room.getUser().getProfileImageUrl(), isLoggedIn, isMine, likeInfo.isLiked(), likeInfo.likeCount(), commentCount, comments);
     }
 }

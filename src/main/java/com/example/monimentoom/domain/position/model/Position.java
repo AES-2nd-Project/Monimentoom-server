@@ -1,6 +1,7 @@
 package com.example.monimentoom.domain.position.model;
 
 
+import com.example.monimentoom.domain.common.BaseTimeEntity;
 import com.example.monimentoom.domain.goods.model.Goods;
 import com.example.monimentoom.domain.position.type.WallSide;
 import com.example.monimentoom.domain.room.model.Room;
@@ -9,8 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "positions", indexes = {
         @Index(name = "idx_positions_room_id", columnList = "room_id"),
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 })
 @Getter
 @NoArgsConstructor
-public class Position {
+public class Position extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,24 +41,6 @@ public class Position {
     private int widthUnit;
     @Column(nullable = false)
     private int heightUnit;
-
-    @Column(nullable = false, updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
-    @Column(nullable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
     @Builder
     public Position(Goods goods, Room room, WallSide wall, int x, int y, int widthUnit, int heightUnit) {

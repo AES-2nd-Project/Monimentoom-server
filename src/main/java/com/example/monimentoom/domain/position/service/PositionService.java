@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PositionService {
@@ -21,27 +23,39 @@ public class PositionService {
     private final GoodsRepository goodsRepository;
     private final RoomRepository roomRepository;
 
+    @Transactional(readOnly = true)
+    public List<PositionResponse> getPositionsByRoomId(Long roomId) {
+        return positionRepository.findByRoomId(roomId).stream()
+                .map(PositionResponse::from)
+                .toList();
+    }
+
     /**
-     * 굿즈 새로 배치
+     * 방의 배치를 전부 초기화할 때 사용
      */
     @Transactional
+    public void deleteAllByRoomId(Long roomId) {
+        positionRepository.deleteByRoomId(roomId);
+    }
+
+    @Transactional
     public PositionResponse createPosition(Long userId, PositionRequest request) {
-        Room room = roomRepository.findById(request.getRoomId())
+        Room room = roomRepository.findById(request.roomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
 
         room.validateOwnership(userId);
 
-        Goods goods = goodsRepository.findById(request.getGoodsId())
+        Goods goods = goodsRepository.findById(request.goodsId())
                 .orElseThrow(() -> new CustomException(ErrorCode.GOODS_NOT_FOUND));
         goods.validateOwnership(userId);
         Position position = Position.builder()
                 .room(room)
                 .goods(goods)
-                .x(request.getX())
-                .y(request.getY())
-                .wall(request.getWallSide())
-                .widthUnit(request.getWidthUnit())
-                .heightUnit(request.getHeightUnit())
+                .x(request.x())
+                .y(request.y())
+                .wall(request.wallSide())
+                .widthUnit(request.widthUnit())
+                .heightUnit(request.heightUnit())
                 .build();
 
         return PositionResponse.from(positionRepository.save(position));
@@ -57,14 +71,14 @@ public class PositionService {
 
         // 방 이동이 없다면, DB 조회 생략하여 성능 향상
         Room targetRoom;
-        if (currentRoom.getId().equals(request.getRoomId())) {
+        if (currentRoom.getId().equals(request.roomId())) {
             targetRoom = currentRoom;
         } else {
-            targetRoom = roomRepository.findById(request.getRoomId())
+            targetRoom = roomRepository.findById(request.roomId())
                     .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
             targetRoom.validateOwnership(userId);
         }
-        position.update(targetRoom, request.getX(), request.getY(), request.getWallSide(), request.getWidthUnit(), request.getHeightUnit());
+        position.update(targetRoom, request.x(), request.y(), request.wallSide(), request.widthUnit(), request.heightUnit());
         // update이므로 Transactional로 save 대체 하였음.
         return PositionResponse.from(position);
     }

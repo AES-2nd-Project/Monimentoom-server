@@ -52,7 +52,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 닉네임 입력을 정규화: 앞뒤 공백 제거 후, 공백만 있는 경우 null로 처리.
-        String newNickname = request.getNickname();
+        String newNickname = request.nickname();
         if (newNickname != null) {
             newNickname = newNickname.trim();
             if (newNickname.isBlank()) {
@@ -67,7 +67,7 @@ public class UserService {
             }
         }
         String oldImageUrl = user.getProfileImageUrl();
-        String newImageUrl = request.getProfileImageUrl();
+        String newImageUrl = request.profileImageUrl();
 
         if (newImageUrl != null && !newImageUrl.isBlank()) {
 
@@ -93,8 +93,8 @@ public class UserService {
 
         user.updateUserProfile(
                 newNickname,
-                request.getDescription(),
-                request.getProfileImageUrl()
+                request.description(),
+                request.profileImageUrl()
         );
 
         return UserProfileResponse.from(user);
