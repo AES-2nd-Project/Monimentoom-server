@@ -21,8 +21,17 @@ public class JwtUtil {
     private String secretKey;
     @Value("${jwt.expiration_time}")
     private Long expirationTime;
+    @Value("${jwt.refresh_token_expiration_time}")
+    private Long refreshExpirationTime;
 
     private Key key;
+
+    private static final String TOKEN_TYPE   = "type";
+    private static final String TYPE_ACCESS  = "access";
+    private static final String TYPE_REFRESH = "refresh";
+    private static final String TYPE_SIGNUP  = "signup";
+    private static final String CLAIM_USER   = "userId";
+    private static final String CLAIM_KAKAO  = "kakaoId";
 
     @PostConstruct
     public void init(){
@@ -30,11 +39,27 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+    // 서비스 엑세스 토큰 발급
     public String createToken(Long userId){
         Date now = new Date();
         Date validity = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
+                .claim(TOKEN_TYPE, TYPE_ACCESS)
+                .setSubject(String.valueOf(userId))
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // 리프레시 토큰 발급
+    public String createRefreshToken(Long userId){
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshExpirationTime);
+
+        return Jwts.builder()
+                .claim(TOKEN_TYPE, TYPE_REFRESH)
                 .setSubject(String.valueOf(userId))
                 .setIssuedAt(now)
                 .setExpiration(validity)
@@ -92,6 +117,12 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
 
+            // 토큰 타입 검증 (access, refresh, signup 등)
+            if(!TYPE_ACCESS.equals(
+                    claims.get(TOKEN_TYPE, String.class)
+            )){
+                throw new CustomException(ErrorCode.INVALID_TOKEN);
+            }
             // 파싱된 데이터에서 유저 ID를 꺼내서 반환합니다.
             return Long.valueOf(claims.getSubject());
 
@@ -109,4 +140,35 @@ public class JwtUtil {
             throw new CustomException(ErrorCode.EMPTY_TOKEN);
         }
     }
+
+    /** 리프레쉬 토큰에서 사용자 아이디 추출 */
+    public Long getUserIdFromRefreshToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            if (!TYPE_REFRESH.equals(claims.get(TOKEN_TYPE, String.class))) {
+                throw new CustomException(ErrorCode.INVALID_TOKEN);
+            }
+            return Long.valueOf(claims.getSubject());
+
+        } catch (SignatureException | MalformedJwtException e) {
+            log.error("잘못된 JWT 서명 또는 구조입니다.", e);
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        } catch (ExpiredJwtException e) {
+            log.error("만료된 JWT 토큰입니다.", e);
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            log.error("지원되지 않는 JWT 토큰입니다.", e);
+            throw new CustomException(ErrorCode.UNSUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            log.error("JWT 토큰이 잘못되었습니다.", e);
+            throw new CustomException(ErrorCode.EMPTY_TOKEN);
+        }
+    }
+
+    public long getRefreshTokenExpiration() { return refreshExpirationTime; }
 }
