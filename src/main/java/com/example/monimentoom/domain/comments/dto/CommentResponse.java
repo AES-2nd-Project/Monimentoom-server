@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class CommentResponse {
     private Long id;
     private String nickname;
+    private String profileImageUrl;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     private String content;
@@ -24,6 +25,7 @@ public class CommentResponse {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .nickname(comment.getUser().getNickname())
+                .profileImageUrl(comment.getUser().getProfileImageUrl())
                 .createdAt(comment.getCreatedAt())
                 .content(comment.getContent())
                 .build();
