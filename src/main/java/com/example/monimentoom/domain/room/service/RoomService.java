@@ -104,6 +104,13 @@ public class RoomService {
         roomRepository.deleteById(roomId);
     }
 
+    @Transactional(readOnly = true)
+    public List<ShowcaseItemResponse> getShowcaseItems(int size) {
+        return positionRepository.findRandomPositions(size).stream()
+                .map(ShowcaseItemResponse::from)
+                .toList();
+    }
+
     // 닉네임 방문
     @Transactional(readOnly = true)
     public RoomPositionResponse getMainRoomByNickname(String nickname) {

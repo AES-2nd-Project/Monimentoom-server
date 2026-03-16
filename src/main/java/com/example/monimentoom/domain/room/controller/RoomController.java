@@ -29,6 +29,12 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getRandomRoom());
     }
 
+    // 배치된 굿즈 랜덤 쇼케이스(인증 없어도 조회 가능)
+    @GetMapping("/showcase")
+    public ResponseEntity<List<ShowcaseItemResponse>> getShowcase(@RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(roomService.getShowcaseItems(Math.min(size, 50)));
+    }
+
     // 닉네임으로 방 리스트 가져오기(인증 없어도 조회 가능)
     @GetMapping
     public ResponseEntity<List<RoomBasicResponse>> getRoomsByNickname(@RequestParam String nickname) {
