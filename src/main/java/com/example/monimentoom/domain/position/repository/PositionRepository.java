@@ -12,6 +12,12 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
 
     List<Position> findByRoomId(Long id);
 
-    @Query(value = "SELECT * FROM positions ORDER BY RAND() LIMIT :size", nativeQuery = true)
-    List<Position> findRandomPositions(@Param("size") int size);
+    @Query("SELECT MAX(p.id) FROM Position p")
+    Long getMaxId();
+
+    @Query("SELECT MIN(p.id) FROM Position p")
+    Long getMinId();
+
+    @Query(value = "SELECT * FROM positions WHERE id >= :startId ORDER BY id ASC LIMIT :size", nativeQuery = true)
+    List<Position> findPositionsFromId(@Param("startId") long startId, @Param("size") int size);
 }

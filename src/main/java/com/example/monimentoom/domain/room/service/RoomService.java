@@ -4,6 +4,7 @@ import com.example.monimentoom.domain.comments.dto.CommentResponse;
 import com.example.monimentoom.domain.comments.repository.CommentRepository;
 import com.example.monimentoom.domain.like.repository.LikeRepository;
 import com.example.monimentoom.domain.position.dto.PositionResponse;
+import com.example.monimentoom.domain.position.model.Position;
 import com.example.monimentoom.domain.position.repository.PositionRepository;
 import com.example.monimentoom.domain.room.dto.*;
 import com.example.monimentoom.domain.room.model.Room;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -109,7 +111,26 @@ public class RoomService {
         if (size <= 0) {
             return List.of();
         }
-        return positionRepository.findRandomPositions(size).stream()
+
+        Long maxId = positionRepository.getMaxId();
+        if (maxId == null) return List.of();
+
+        Long minId = positionRepository.getMinId();
+        long startId = ThreadLocalRandom.current().nextLong(minId, maxId + 1);
+
+        // startId 이상인 포지션을 size만큼 조회
+        // 끝에 가까운 id가 뽑혀 결과가 부족하면 처음(minId)부터 나머지를 채움
+        List<Position> result = new ArrayList<>(positionRepository.findPositionsFromId(startId, size));
+        if (result.size() < size) {
+            int remaining = size - result.size();
+            List<Long> foundIds = result.stream().map(Position::getId).toList();
+            positionRepository.findPositionsFromId(minId, size).stream()
+                    .filter(p -> !foundIds.contains(p.getId()))
+                    .limit(remaining)
+                    .forEach(result::add);
+        }
+
+        return result.stream()
                 .map(ShowcaseItemResponse::from)
                 .toList();
     }
