@@ -3,6 +3,7 @@ package com.example.monimentoom.global.oauth.service;
 import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.model.User;
+import com.example.monimentoom.global.auth.repository.RefreshTokenRepository;
 import com.example.monimentoom.global.oauth.dto.SignupResponse;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
@@ -28,6 +29,7 @@ public class KakaoOAuthService {
     private final KakaoApiClient kakaoApiClient;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
 
     @Value("${kakao.client-id:}")
@@ -42,7 +44,7 @@ public class KakaoOAuthService {
      * - 기존 유저: JWT 바로 발급
      * - 신규 유저: kakaoId만 반환 (닉네임 입력 필요)
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public KakaoLoginResponse kakaoLogin(String code) {
         log.info("kakaoLogin - redirectUri={}", redirectUri);
 
@@ -60,7 +62,13 @@ public class KakaoOAuthService {
 
         // 3. 기존 유저면 JWT 발급, 신규 유저면 signupToken(임시 토큰) 반환
         return userRepository.findByKakaoId(kakaoId)
-                .map(user -> KakaoLoginResponse.ofExistingUser(jwtUtil.createToken(user.getId()), user.getId(), user.getNickname(), user.getEmail()))
+                .map(user -> {String at = jwtUtil.createToken(user.getId());
+                    String rt = jwtUtil.createRefreshToken(user.getId());
+                    refreshTokenRepository.save(
+                            user.getId(), rt, "default",
+                            jwtUtil.getRefreshTokenExpirySeconds());
+                    return KakaoLoginResponse.ofExistingUser(
+                            at, rt, user.getId(), user.getNickname());})
                 .orElse(KakaoLoginResponse.ofNewUser(jwtUtil.createSignupToken(kakaoId)));
     }
 
@@ -78,16 +86,11 @@ public class KakaoOAuthService {
         if (userRepository.existsByNickname(request.nickname())) {
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
         }
-        // 이메일 중복 체크
-        if (userRepository.existsByEmail(request.email())) {
-            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
-        }
 
         // 신규 유저 저장
         User newUser = User.builder()
                 .kakaoId(kakaoId)
                 .nickname(request.nickname())
-                .email(request.email())
                 .build();
         userRepository.save(newUser);
 
@@ -99,7 +102,14 @@ public class KakaoOAuthService {
         roomRepository.save(defaultRoom);
         newUser.updateMainRoom(defaultRoom);
 
+        String at = jwtUtil.createToken(newUser.getId());
+        String rt = jwtUtil.createRefreshToken(newUser.getId());
+        refreshTokenRepository.save(
+                newUser.getId(), rt, "default",
+                jwtUtil.getRefreshTokenExpirySeconds());
+
         log.info("kakaoSignup 완료 - userId={}, nickname={}", newUser.getId(), newUser.getNickname());
-        return new SignupResponse(jwtUtil.createToken(newUser.getId()), newUser.getId(), newUser.getNickname(), newUser.getEmail());
+        return new SignupResponse(at, rt,
+                newUser.getId(), newUser.getNickname());
     }
 }

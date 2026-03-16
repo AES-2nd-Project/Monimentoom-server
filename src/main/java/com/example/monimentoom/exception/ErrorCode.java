@@ -15,10 +15,12 @@ public enum ErrorCode {
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_003", "만료된 토큰입니다."),
     UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_004", "지원하지 않는 토큰 형식입니다."),
     EMPTY_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_005", "토큰이 비어있습니다."),
+    REFRESH_TOKEN_REUSED(HttpStatus.UNAUTHORIZED, "AUTH_006", "보안을 위해 로그아웃 처리되었습니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "AUTH_007", "리프레시 토큰이 존재하지 않습니다."),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "U002", "이미 존재하는 닉네임입니다."),
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U003", "이미 존재하는 이메일입니다."),
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "V001", "입력값이 올바르지 않습니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "U004", "로그인이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "U005", "접근 권한이 없습니다."),
     DUPLICATE_KAKAO_USER(HttpStatus.CONFLICT, "U006", "이미 카카오 계정으로 가입된 유저입니다."),

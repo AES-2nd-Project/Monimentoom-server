@@ -46,7 +46,7 @@ public class LikeService {
     }
 
     @Transactional
-    public void addLike(Long userId, Long roomId) {
+    public LikeResponse addLike(Long userId, Long roomId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Room room = roomRepository.findById(roomId)
@@ -63,16 +63,19 @@ public class LikeService {
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.ALREADY_LIKED);
         }
-
+        long likeCount = likeRepository.countByRoomId(roomId);
+        return LikeResponse.builder().likeCount(likeCount).isLiked(true).build();
     }
 
     @Transactional
-    public void deleteLike(Long userId, Long roomId) {
+    public LikeResponse deleteLike(Long userId, Long roomId) {
         if (!userRepository.existsById(userId)) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         if (!roomRepository.existsById(roomId)) throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
         long deleteCount = likeRepository.deleteByUserIdAndRoomId(userId, roomId);
         if (deleteCount == 0) {
             throw new CustomException(ErrorCode.ALREADY_UNLIKED);
         }
+        long likeCount = likeRepository.countByRoomId(roomId);
+        return LikeResponse.builder().likeCount(likeCount).isLiked(false).build();
     }
 }

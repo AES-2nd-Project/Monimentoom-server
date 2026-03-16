@@ -15,14 +15,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserResponse {
     private Long id;
-    private String email;
     private String nickname;
     private Long mainRoomId;
 
     public static UserResponse from(User user) {
         return UserResponse.builder()
                 .id(user.getId())
-                .email(user.getEmail())
                 .nickname(user.getNickname())
                 // mainRoom이 null일 경우 safe 하게 처리
                 .mainRoomId(Optional.ofNullable(user.getMainRoom())
