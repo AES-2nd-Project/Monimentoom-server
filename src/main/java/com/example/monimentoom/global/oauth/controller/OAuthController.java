@@ -1,10 +1,9 @@
 package com.example.monimentoom.global.oauth.controller;
 
-import com.example.monimentoom.global.oauth.dto.KakaoLoginResponse;
-import com.example.monimentoom.global.oauth.dto.KakaoSignupRequest;
-import com.example.monimentoom.global.oauth.dto.KakaoSocialLoginRequest;
-import com.example.monimentoom.global.oauth.dto.SignupResponse;
+import com.example.monimentoom.global.oauth.dto.*;
 import com.example.monimentoom.global.oauth.service.KakaoOAuthService;
+import com.example.monimentoom.global.util.CookieUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,18 +21,51 @@ public class OAuthController {
      * - 신규 유저: signupToken 반환 -> /oauth/kakao/signup 호출 필요
      **/
     @PostMapping("/kakao")
-    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@Valid @RequestBody KakaoSocialLoginRequest request) {
-        KakaoLoginResponse response = kakaoOAuthService.kakaoLogin(request.code());
-        return ResponseEntity.ok().body(response);
-    }
+    public ResponseEntity<KakaoLoginResponse> kakaoLogin(
+            @Valid @RequestBody KakaoSocialLoginRequest request,
+            HttpServletResponse response) {
 
+        KakaoLoginResult result = kakaoOAuthService.kakaoLogin(request.code());
+
+        if (result.response().token() != null) {
+            CookieUtils.addRefreshTokenCookie(response, result.refreshToken());
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + result.response().token())
+                    .body(result.response());
+        }
+        return ResponseEntity.ok(result.response());
+    }
     /**
      * 2단계: 닉네임 입력 후 최종 회원가입
      * - 응답: JWT token, nickname 반환
      */
     @PostMapping("/kakao/signup")
-    public ResponseEntity<SignupResponse> kakaoSignup(@Valid @RequestBody KakaoSignupRequest request) {
-        SignupResponse response = kakaoOAuthService.kakaoSignup(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<SignupResponse> kakaoSignup(
+            @Valid @RequestBody KakaoSignupRequest request,
+            HttpServletResponse response) {
+
+        SignupResult result = kakaoOAuthService.kakaoSignup(request);
+        CookieUtils.addRefreshTokenCookie(response, result.refreshToken());
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + result.response().token())
+                .body(result.response());
+    }
+
+    // 로컬 테스트용
+    @GetMapping("/kakao")
+    public ResponseEntity<KakaoLoginResponse> kakaoLoginCallBack(
+            @RequestParam String code,
+            HttpServletResponse response) {
+
+        KakaoLoginResult result = kakaoOAuthService.kakaoLogin(code);
+
+        if (result.response().token() != null) {
+            CookieUtils.addRefreshTokenCookie(response, result.refreshToken());
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + result.response().token())
+                    .body(result.response());
+        }
+        return ResponseEntity.ok(result.response());
     }
 }
