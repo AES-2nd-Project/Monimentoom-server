@@ -4,16 +4,12 @@ import com.example.monimentoom.domain.room.model.Room;
 import com.example.monimentoom.domain.room.repository.RoomRepository;
 import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.global.auth.repository.RefreshTokenRepository;
-import com.example.monimentoom.global.oauth.dto.SignupResponse;
+import com.example.monimentoom.global.oauth.dto.*;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
 import com.example.monimentoom.global.oauth.client.KakaoApiClient;
 import com.example.monimentoom.global.oauth.client.KakaoAuthClient;
-import com.example.monimentoom.global.oauth.dto.KakaoAccessTokenResponse;
-import com.example.monimentoom.global.oauth.dto.KakaoLoginResponse;
-import com.example.monimentoom.global.oauth.dto.KakaoSignupRequest;
-import com.example.monimentoom.global.oauth.dto.KakaoUserInfoResponse;
 import com.example.monimentoom.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +41,7 @@ public class KakaoOAuthService {
      * - 신규 유저: kakaoId만 반환 (닉네임 입력 필요)
      */
     @Transactional
-    public KakaoLoginResponse kakaoLogin(String code) {
+    public KakaoLoginResult kakaoLogin(String code) {
         log.info("kakaoLogin - redirectUri={}", redirectUri);
 
         // 1. 인가코드 -> 카카오 액세스 토큰
@@ -62,18 +58,25 @@ public class KakaoOAuthService {
 
         // 3. 기존 유저면 JWT 발급, 신규 유저면 signupToken(임시 토큰) 반환
         return userRepository.findByKakaoId(kakaoId)
-                .map(user -> {String at = jwtUtil.createToken(user.getId());
+                .map(user -> {
+                    String at = jwtUtil.createToken(user.getId());
                     String rt = jwtUtil.createRefreshToken(user.getId());
                     refreshTokenRepository.save(
                             user.getId(), rt, "default",
                             jwtUtil.getRefreshTokenExpirySeconds());
-                    return KakaoLoginResponse.ofExistingUser(
-                            at, rt, user.getId(), user.getNickname());})
-                .orElse(KakaoLoginResponse.ofNewUser(jwtUtil.createSignupToken(kakaoId)));
+                    return new KakaoLoginResult(
+                            KakaoLoginResponse.ofExistingUser(at, user.getId(), user.getNickname()),
+                            rt   // 쿠키용
+                    );
+                })
+                .orElse(new KakaoLoginResult(
+                        KakaoLoginResponse.ofNewUser(jwtUtil.createSignupToken(kakaoId)),
+                        null   // 신규 유저는 RT 없음
+                ));
     }
 
     @Transactional
-    public SignupResponse kakaoSignup(KakaoSignupRequest request) {
+    public SignupResult kakaoSignup(KakaoSignupRequest request) {
         // signupToken 검증 → kakaoId 추출 (위조/만료 시 예외)
         Long kakaoId = jwtUtil.getKakaoIdFromSignupToken(request.signupToken());
         log.info("kakaoSignup - verified kakaoId={}", kakaoId);
@@ -109,7 +112,9 @@ public class KakaoOAuthService {
                 jwtUtil.getRefreshTokenExpirySeconds());
 
         log.info("kakaoSignup 완료 - userId={}, nickname={}", newUser.getId(), newUser.getNickname());
-        return new SignupResponse(at, rt,
-                newUser.getId(), newUser.getNickname());
+        return new SignupResult(
+                new SignupResponse(at, newUser.getId(), newUser.getNickname()),
+                rt   // 쿠키용
+        );
     }
 }
