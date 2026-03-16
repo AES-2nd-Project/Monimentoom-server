@@ -1,5 +1,6 @@
 package com.example.monimentoom.domain.goods.model;
 
+import com.example.monimentoom.domain.common.BaseTimeEntity;
 import com.example.monimentoom.domain.position.model.Position;
 import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.exception.CustomException;
@@ -9,7 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Goods {
+public class Goods extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,25 +36,6 @@ public class Goods {
 
     @OneToMany(mappedBy = "goods", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Position> positions = new ArrayList<>();
-
-    @Column(nullable = false, updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
-    @Column(nullable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
     @Builder
     public Goods(User user, String name, String imageUrl, String description, Integer price, List<Position> positions) {
