@@ -30,7 +30,6 @@ public class User extends BaseTimeEntity {
     private String description;
 
     @Builder.Default
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_room_id")
     private Room mainRoom = null;
