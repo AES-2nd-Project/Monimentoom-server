@@ -28,14 +28,12 @@ public class LikeController {
     }
 
     @PostMapping("/{roomId}")
-    public ResponseEntity<Void> addLike(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
-        likeService.addLike(userId, roomId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<LikeResponse> addLike(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(likeService.addLike(userId, roomId));
     }
 
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<Void> removeLike(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
-        likeService.deleteLike(userId, roomId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<LikeResponse> removeLike(@AuthenticationPrincipal Long userId, @PathVariable Long roomId) {
+        return ResponseEntity.ok(likeService.deleteLike(userId, roomId));
     }
 }
