@@ -2,11 +2,16 @@ package com.example.monimentoom.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         ErrorCode errorCode = e.getErrorCode();
@@ -26,9 +31,16 @@ public class GlobalExceptionHandler {
         // DB가 던진 진짜 에러 메시지
         String errorMessage = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
 
-        // 에러 메세지 내용 보고 닉네임 문제로 세분화
+        // 에러 메세지 내용 보고 문제를 세분화
         if (errorMessage.contains("nickname")) {
             ErrorCode errorCode = ErrorCode.DUPLICATE_NICKNAME;
+            return ResponseEntity
+                    .status(errorCode.getStatus())
+                    .body(new ErrorResponse(errorCode.getStatus(), errorCode.getCode(), errorCode.getMessage()));
+        }
+
+        if (errorMessage.contains("kakao_id")) {
+            ErrorCode errorCode = ErrorCode.DUPLICATE_KAKAO_USER;
             return ResponseEntity
                     .status(errorCode.getStatus())
                     .body(new ErrorResponse(errorCode.getStatus(), errorCode.getCode(), errorCode.getMessage()));
@@ -39,5 +51,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(defaultError.getStatus())
                 .body(new ErrorResponse(defaultError.getStatus(), defaultError.getCode(), defaultError.getMessage()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(new ErrorResponse(errorCode.getStatus(), errorCode.getCode(), message));
     }
 }

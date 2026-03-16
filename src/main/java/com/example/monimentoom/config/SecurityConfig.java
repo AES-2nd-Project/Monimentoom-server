@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/signup", "/error",
+                        .requestMatchers("/error",
                                 "/swagger-ui/**", "/v3/api-docs/**",
                                 "/oauth/kakao", "/oauth/kakao/signup",
                                 "/actuator/health", "/actuator/health/**").permitAll()
