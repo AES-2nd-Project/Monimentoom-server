@@ -23,25 +23,28 @@ public class AuthService {
         // 1. JWT 서명·만료 검증
         Long userId = jwtUtil.getUserIdFromRefreshToken(refreshToken);
 
-        // 2. DB에서 유효한 토큰 조회
-        String stored = refreshTokenRepository.find(userId, deviceId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
+        // 2. 새 토큰 미리 발급
+        String newAt = jwtUtil.createToken(userId);
+        String newRt = jwtUtil.createRefreshToken(userId);
 
-        // 3. RTR: 불일치 → 탈취 의심, 전체 폐기
-        if (!stored.equals(refreshToken)) {
-            log.warn("RT 재사용 감지, 전체 폐기: userId={}", userId);
+        // 3. 원자성 보장 하는 교체
+        boolean rotated = refreshTokenRepository.rotate(
+                userId, deviceId,
+                refreshToken,
+                newRt,
+                jwtUtil.getRefreshTokenExpirySeconds()
+        );
+
+        // 4. 교체 실패한 경우 전체 폐기
+        if (!rotated) {
+            log.warn("RT 재사용 또는 만료 감지, 전체 폐기: userId={}", userId);
             refreshTokenRepository.revokeAll(userId);
             throw new CustomException(ErrorCode.REFRESH_TOKEN_REUSED);
         }
 
-        // 4. 새 토큰 쌍 발급
-        String newAt = jwtUtil.createToken(userId);
-        String newRt = jwtUtil.createRefreshToken(userId);
-        refreshTokenRepository.save(userId, newRt, deviceId,
-                jwtUtil.getRefreshTokenExpirySeconds());
-
         return new AuthRefreshResult(newAt, newRt);
     }
+
 
     @Transactional
     public void logout(Long userId, String deviceId) {

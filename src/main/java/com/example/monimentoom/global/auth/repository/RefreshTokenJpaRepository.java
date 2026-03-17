@@ -10,6 +10,30 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface RefreshTokenJpaRepository extends JpaRepository<RefreshToken, Long> {
+
+    /** 리프레쉬 토큰의 교체 수행 원자성 보장
+     * UPDATE 성공 여부로 판단
+     * */
+    @Modifying
+    @Query("""
+    UPDATE RefreshToken r
+    SET r.token = :newToken,
+        r.expiresAt = :newExpiresAt
+    WHERE r.userId = :userId
+      AND r.deviceId = :deviceId
+      AND r.token = :oldToken
+      AND r.revoked = false
+      AND r.expiresAt > :now
+""")
+    int rotateToken(
+            @Param("userId") Long userId,
+            @Param("deviceId") String deviceId,
+            @Param("oldToken") String oldToken,
+            @Param("newToken") String newToken,
+            @Param("newExpiresAt") LocalDateTime newExpiresAt,
+            @Param("now") LocalDateTime now
+    );
+
     @Query("""
  SELECT r FROM RefreshToken r
  WHERE r.userId = :userId

@@ -40,4 +40,19 @@ public class RdbRefreshTokenRepository implements RefreshTokenRepository {
     public void revokeAll(Long userId) {
         jpa.revokeAllByUserId(userId);
     }
+
+    @Override
+    @Transactional
+    public boolean rotate(Long userId, String deviceId,
+                          String oldToken, String newToken, long ttlSeconds) {
+        int updated = jpa.rotateToken(
+                userId,
+                deviceId,
+                oldToken,
+                newToken,
+                LocalDateTime.now().plusSeconds(ttlSeconds),
+                LocalDateTime.now()
+        );
+        return updated == 1;  // 1행 교체 성공이면 true
+    }
 }
