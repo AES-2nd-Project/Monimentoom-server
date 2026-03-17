@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +45,10 @@ public class PositionService {
 
         List<Position> result = new ArrayList<>(positionRepository.findPositionsFromId(startId, PageRequest.of(0, fetchSize)));
         if (result.size() < fetchSize) {
-            List<Long> foundIds = result.stream().map(Position::getId).toList();
+            Set<Long> foundIds = new HashSet<>(result.size());
+            for (Position position : result) {
+                foundIds.add(position.getId());
+            }
             positionRepository.findPositionsFromId(minId, PageRequest.of(0, fetchSize)).stream()
                     .filter(p -> !foundIds.contains(p.getId())) // 이미 가져온건 예외처리
                     .forEach(result::add);
