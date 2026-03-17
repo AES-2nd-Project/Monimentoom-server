@@ -13,7 +13,9 @@ import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
+import com.example.monimentoom.global.s3.event.S3ImageDeleteEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class RoomService {
     private final PositionService positionService;
     private final CommentService commentService;
     private final LikeService likeService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public List<RoomBasicResponse> getRoomListByNickname(String nickname) {
@@ -74,6 +77,22 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         room.validateOwnership(userId);
+
+        if (Boolean.TRUE.equals(request.updateImages())) {
+            String oldFrame = room.getFrameImageUrl();
+            String oldEasel = room.getEaselImageUrl();
+            String newFrame = request.frameImageUrl();
+            String newEasel = request.easelImageUrl();
+
+            // 기존 이미지가 있고 새 값과 달라질 때만 삭제 (null로 지우는 경우 포함)
+            if (oldFrame != null && !oldFrame.equals(newFrame)) {
+                eventPublisher.publishEvent(new S3ImageDeleteEvent(oldFrame));
+            }
+            if (oldEasel != null && !oldEasel.equals(newEasel)) {
+                eventPublisher.publishEvent(new S3ImageDeleteEvent(oldEasel));
+            }
+        }
+
         room.update(request.name(), request.updateImages(), request.frameImageUrl(), request.easelImageUrl());
         return RoomBasicResponse.from(room);
     }
@@ -97,6 +116,12 @@ public class RoomService {
         Long roomCount = roomRepository.countByUserId(userId);
         if (roomCount <= 1) {
             throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_ROOM);
+        }
+        if (room.getFrameImageUrl() != null) {
+            eventPublisher.publishEvent(new S3ImageDeleteEvent(room.getFrameImageUrl()));
+        }
+        if (room.getEaselImageUrl() != null) {
+            eventPublisher.publishEvent(new S3ImageDeleteEvent(room.getEaselImageUrl()));
         }
         roomRepository.deleteById(roomId);
     }

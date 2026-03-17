@@ -34,6 +34,9 @@ public class UserService {
         User user = userRepository.findById(targetId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         user.validateOwnership(userId);
+        if (user.getProfileImageUrl() != null) {
+            eventPublisher.publishEvent(new S3ImageDeleteEvent(user.getProfileImageUrl()));
+        }
         userRepository.delete(user);
     }
 
@@ -87,7 +90,7 @@ public class UserService {
             }
         }
 
-        if (oldImageUrl != null && newImageUrl != null && !oldImageUrl.equals(newImageUrl)) {
+        if (oldImageUrl != null && !oldImageUrl.equals(newImageUrl)) {
             eventPublisher.publishEvent(new S3ImageDeleteEvent(oldImageUrl));
         }
 

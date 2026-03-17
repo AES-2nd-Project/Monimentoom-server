@@ -9,8 +9,9 @@ import com.example.monimentoom.domain.user.model.User;
 import com.example.monimentoom.domain.user.repository.UserRepository;
 import com.example.monimentoom.exception.CustomException;
 import com.example.monimentoom.exception.ErrorCode;
-import com.example.monimentoom.global.s3.S3Uploader;
+import com.example.monimentoom.global.s3.event.S3ImageDeleteEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ import java.util.List;
 public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final UserRepository userRepository;
-    private final S3Uploader s3Uploader;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public GoodsResponse createGoods(
@@ -57,7 +58,13 @@ public class GoodsService {
 
         goods.validateOwnership(userId);
 
-        goods.update(request.name(), request.imageUrl(), request.description(), request.price());
+        String oldImageUrl = goods.getImageUrl();
+        String newImageUrl = request.imageUrl();
+        if (oldImageUrl != null && newImageUrl != null && !oldImageUrl.equals(newImageUrl)) {
+            eventPublisher.publishEvent(new S3ImageDeleteEvent(oldImageUrl));
+        }
+
+        goods.update(request.name(), newImageUrl, request.description(), request.price());
 
         return GoodsResponse.from(goods);
     }
@@ -67,7 +74,9 @@ public class GoodsService {
         Goods goods = goodsRepository.findById(goodsId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GOODS_NOT_FOUND));
         goods.validateOwnership(userId);
-        s3Uploader.deleteFile(goods.getImageUrl());
+        if (goods.getImageUrl() != null) {
+            eventPublisher.publishEvent(new S3ImageDeleteEvent(goods.getImageUrl()));
+        }
         goodsRepository.delete(goods);
     }
 }
