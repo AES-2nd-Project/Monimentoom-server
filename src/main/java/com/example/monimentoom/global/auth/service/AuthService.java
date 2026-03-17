@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRevokeService refreshTokenRevokeService;
 
     @Transactional
     public AuthRefreshResult refresh(String refreshToken, String deviceId) {
@@ -23,22 +24,30 @@ public class AuthService {
         // 1. JWT 서명·만료 검증
         Long userId = jwtUtil.getUserIdFromRefreshToken(refreshToken);
 
-        // 2. DB에서 유효한 토큰 조회
-        String stored = refreshTokenRepository.find(userId, deviceId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
-
-        // 3. RTR: 불일치 → 탈취 의심, 전체 폐기
-        if (!stored.equals(refreshToken)) {
-            log.warn("RT 재사용 감지, 전체 폐기: userId={}", userId);
-            refreshTokenRepository.revokeAll(userId);
-            throw new CustomException(ErrorCode.REFRESH_TOKEN_REUSED);
-        }
-
-        // 4. 새 토큰 쌍 발급
+        // 2. 새 토큰 미리 발급
         String newAt = jwtUtil.createToken(userId);
         String newRt = jwtUtil.createRefreshToken(userId);
-        refreshTokenRepository.save(userId, newRt, deviceId,
-                jwtUtil.getRefreshTokenExpirySeconds());
+
+        // 3. 원자성 보장 하는 교체
+        boolean rotated = refreshTokenRepository.rotate(
+                userId, deviceId,
+                refreshToken,
+                newRt,
+                jwtUtil.getRefreshTokenExpirySeconds()
+        );
+
+        // 4. 교체 실패한 경우 해당 계정의 모든 디바이스 RT를 폐기하고, 유효한 RT가 없다고 처리
+        if (!rotated) {
+            boolean tokenExists = refreshTokenRepository.find(userId, deviceId).isPresent();
+            if (tokenExists) {
+                // 토큰은 있는데 교체 실패한 경우
+                refreshTokenRevokeService.revokeAll(userId);
+                throw new CustomException(ErrorCode.REFRESH_TOKEN_REUSED);
+            } else {
+                // 토큰 자체가 없는 경우
+                throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+            }
+        }
 
         return new AuthRefreshResult(newAt, newRt);
     }

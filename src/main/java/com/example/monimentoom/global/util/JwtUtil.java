@@ -30,8 +30,6 @@ public class JwtUtil {
     private static final String TYPE_ACCESS  = "access";
     private static final String TYPE_REFRESH = "refresh";
     private static final String TYPE_SIGNUP  = "signup";
-    private static final String CLAIM_USER   = "userId";
-    private static final String CLAIM_KAKAO  = "kakaoId";
 
     @PostConstruct
     public void init(){

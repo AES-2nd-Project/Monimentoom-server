@@ -11,4 +11,8 @@ public interface RefreshTokenRepository {
     void revoke(Long userId, String deviceId);
     /** 전체 기기 로그아웃 */
     void revokeAll(Long userId);
+    /** 원자성 보장하는 rotate */
+    boolean rotate(Long userId, String deviceId,
+                   String oldToken, String newToken, long ttlSeconds);
+
 }
