@@ -36,7 +36,7 @@ public class AuthService {
                 jwtUtil.getRefreshTokenExpirySeconds()
         );
 
-        // 4. 교체 실패한 경우 해당 디바이스의 RT만 폐기하고, 유효한 RT가 없다고 처리
+        // 4. 교체 실패한 경우 해당 계정의 모든 디바이스 RT를 폐기하고, 유효한 RT가 없다고 처리
         if (!rotated) {
             boolean tokenExists = refreshTokenRepository.find(userId, deviceId).isPresent();
             if (tokenExists) {
