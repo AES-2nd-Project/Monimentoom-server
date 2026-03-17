@@ -45,13 +45,14 @@ public class RdbRefreshTokenRepository implements RefreshTokenRepository {
     @Transactional
     public boolean rotate(Long userId, String deviceId,
                           String oldToken, String newToken, long ttlSeconds) {
+        LocalDateTime now = LocalDateTime.now();
         int updated = jpa.rotateToken(
                 userId,
                 deviceId,
                 oldToken,
                 newToken,
-                LocalDateTime.now().plusSeconds(ttlSeconds),
-                LocalDateTime.now()
+                now.plusSeconds(ttlSeconds),
+                now
         );
         return updated == 1;  // 1행 교체 성공이면 true
     }
