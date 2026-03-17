@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -37,17 +39,25 @@ public class PositionService {
         Long minId = positionRepository.getMinId();
         long startId = ThreadLocalRandom.current().nextLong(minId, maxId + 1);
 
-        List<Position> result = new ArrayList<>(positionRepository.findPositionsFromId(startId, PageRequest.of(0, size)));
-        if (result.size() < size) {
-            int remaining = size - result.size();
+        // 중복 제거를 감안해 넉넉하게 조회
+        int fetchSize = size * 3;
+
+        List<Position> result = new ArrayList<>(positionRepository.findPositionsFromId(startId, PageRequest.of(0, fetchSize)));
+        if (result.size() < fetchSize) {
             List<Long> foundIds = result.stream().map(Position::getId).toList();
-            positionRepository.findPositionsFromId(minId, PageRequest.of(0, size)).stream()
-                    .filter(p -> !foundIds.contains(p.getId()))
-                    .limit(remaining)
+            positionRepository.findPositionsFromId(minId, PageRequest.of(0, fetchSize)).stream()
+                    .filter(p -> !foundIds.contains(p.getId())) // 이미 가져온건 예외처리
                     .forEach(result::add);
         }
 
-        return result.stream().map(ShowcaseItemResponse::from).toList();
+        // goods ID 기준으로 중복 제거 후 size만큼 반환
+        Set<Long> seenGoodsIds = new LinkedHashSet<>();
+        return result.stream()
+                // 처음 추가한 것만 추가됨
+                .filter(p -> seenGoodsIds.add(p.getGoods().getId()))
+                .limit(size)
+                .map(ShowcaseItemResponse::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)
