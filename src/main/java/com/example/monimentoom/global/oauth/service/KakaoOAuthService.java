@@ -94,6 +94,8 @@ public class KakaoOAuthService {
         User newUser = User.builder()
                 .kakaoId(kakaoId)
                 .nickname(request.nickname())
+                .profileImageUrl(request.profileImageUrl())
+                .description(request.description())
                 .build();
         userRepository.save(newUser);
 
