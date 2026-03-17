@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRevokeService refreshTokenRevokeService;
 
     @Transactional
     public AuthRefreshResult refresh(String refreshToken, String deviceId) {
@@ -37,14 +38,19 @@ public class AuthService {
 
         // 4. 교체 실패한 경우 해당 디바이스의 RT만 폐기하고, 유효한 RT가 없다고 처리
         if (!rotated) {
-            log.warn("RT 교체 실패 감지, 해당 디바이스 RT 폐기: userId={}, deviceId={}", userId, deviceId);
-            refreshTokenRepository.revoke(userId, deviceId);
-            throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+            boolean tokenExists = refreshTokenRepository.find(userId, deviceId).isPresent();
+            if (tokenExists) {
+                // 토큰은 있는데 교체 실패한 경우
+                refreshTokenRevokeService.revokeAll(userId);
+                throw new CustomException(ErrorCode.REFRESH_TOKEN_REUSED);
+            } else {
+                // 토큰 자체가 없는 경우
+                throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+            }
         }
 
         return new AuthRefreshResult(newAt, newRt);
     }
-
 
     @Transactional
     public void logout(Long userId, String deviceId) {
