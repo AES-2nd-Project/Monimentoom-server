@@ -64,7 +64,7 @@ public class KakaoOAuthService {
                             user.getId(), rt, "default",
                             jwtUtil.getRefreshTokenExpirySeconds());
                     return new KakaoLoginResult(
-                            KakaoLoginResponse.ofExistingUser(at, user.getId(), user.getNickname()),
+                            KakaoLoginResponse.ofExistingUser(at, user.getId(), user.getNickname(), user.getProfileImageUrl(), user.getDescription()),
                             rt   // 쿠키용
                     );
                 })
@@ -93,6 +93,8 @@ public class KakaoOAuthService {
         User newUser = User.builder()
                 .kakaoId(kakaoId)
                 .nickname(request.nickname())
+                .profileImageUrl(request.profileImageUrl())
+                .description(request.description())
                 .build();
         userRepository.save(newUser);
 
@@ -112,7 +114,7 @@ public class KakaoOAuthService {
 
         log.info("kakaoSignup 완료 - userId={}, nickname={}", newUser.getId(), newUser.getNickname());
         return new SignupResult(
-                new SignupResponse(at, newUser.getId(), newUser.getNickname()),
+                new SignupResponse(at, newUser.getId(), newUser.getNickname(), newUser.getProfileImageUrl(), newUser.getDescription()),
                 rt   // 쿠키용
         );
     }
