@@ -18,6 +18,6 @@ public record KakaoLoginResponse(
     }
 
     public static KakaoLoginResponse ofNewUser(String signupToken) {
-        return new KakaoLoginResponse(signupToken, null, null, null, null, null);
+        return new KakaoLoginResponse(signupToken, null, null, null);
     }
 }
