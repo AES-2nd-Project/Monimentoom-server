@@ -51,21 +51,4 @@ public class OAuthController {
                 .header("Authorization", "Bearer " + result.response().token())
                 .body(result.response());
     }
-
-    // 로컬 테스트용
-    @GetMapping("/kakao")
-    public ResponseEntity<KakaoLoginResponse> kakaoLoginCallBack(
-            @RequestParam String code,
-            HttpServletResponse response) {
-
-        KakaoLoginResult result = kakaoOAuthService.kakaoLogin(code);
-
-        if (result.response().token() != null) {
-            CookieUtils.addRefreshTokenCookie(response, result.refreshToken());
-            return ResponseEntity.ok()
-                    .header("Authorization", "Bearer " + result.response().token())
-                    .body(result.response());
-        }
-        return ResponseEntity.ok(result.response());
-    }
 }
