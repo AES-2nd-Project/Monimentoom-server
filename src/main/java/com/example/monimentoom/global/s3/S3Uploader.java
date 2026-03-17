@@ -70,6 +70,7 @@ public class S3Uploader {
             case "png"         -> "image/png";
             case "webp"        -> "image/webp";
             case "gif"         -> "image/gif";
+            case "svg"         -> "image/svg+xml";
             default -> throw new CustomException(ErrorCode.INVALID_IMAGE_FORMAT);
         };
     }
