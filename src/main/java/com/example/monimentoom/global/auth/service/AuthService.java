@@ -35,11 +35,11 @@ public class AuthService {
                 jwtUtil.getRefreshTokenExpirySeconds()
         );
 
-        // 4. 교체 실패한 경우 전체 폐기
+        // 4. 교체 실패한 경우 해당 디바이스의 RT만 폐기하고, 유효한 RT가 없다고 처리
         if (!rotated) {
-            log.warn("RT 재사용 또는 만료 감지, 전체 폐기: userId={}", userId);
-            refreshTokenRepository.revokeAll(userId);
-            throw new CustomException(ErrorCode.REFRESH_TOKEN_REUSED);
+            log.warn("RT 교체 실패 감지, 해당 디바이스 RT 폐기: userId={}, deviceId={}", userId, deviceId);
+            refreshTokenRepository.revoke(userId, deviceId);
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
         }
 
         return new AuthRefreshResult(newAt, newRt);
