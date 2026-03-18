@@ -23,12 +23,6 @@ public class UserService {
     private final RoomRepository roomRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    // TODO : jwt 토큰 만료 처리
-    public void logoutUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
     @Transactional
     public void deleteUser(Long userId, Long targetId) {
         User user = userRepository.findById(targetId)

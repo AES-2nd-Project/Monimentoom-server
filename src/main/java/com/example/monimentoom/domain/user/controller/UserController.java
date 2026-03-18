@@ -15,13 +15,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(
-            @AuthenticationPrincipal Long userId) {
-        userService.logoutUser(userId);
-        return ResponseEntity.noContent().build();
-    }
-
     /** 사용자 자신의 메인룸 수정하기 */
     @PatchMapping("/main-room/{roomId}")
     public ResponseEntity<RoomBasicResponse> updateMainRoom(

@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 // Feign 클라이언트: 카카오 API 서버에서는 사용자 정보를 가져오는 인터페이스
 // kauth(인증 서버)와 kapi(API 서버)는 주소가 달라서 따로 만들어야 함
-@FeignClient(name = "kakaoApiClient", url = "https://kapi.kakao.com")
+@FeignClient(name = "kakaoApiClient",
+        url = "https://kapi.kakao.com")
 public interface KakaoApiClient {
     // GET https://kapi.kakao.com/v2/user/me로 요청
     // Authorization 헤더에 "Bearer {액세스 토큰}"을 담아서 보내면
