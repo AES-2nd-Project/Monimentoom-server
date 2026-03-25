@@ -14,9 +14,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class RefreshTokenCleanupScheduler {
     private final RefreshTokenJpaRepository jpa;
-    /**
-     * 매일 새벽 3 시에 만료되었거나 폐기된 행 일괄 삭제
-     */
+    /** 매일 새벽 3 시에 만료되었거나 폐기된 행 일괄 삭제 */
     @Scheduled(cron = "0 0 3 * * *")
     @Transactional
     public void cleanUp() {

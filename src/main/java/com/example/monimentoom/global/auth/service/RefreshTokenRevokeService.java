@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenRevokeService {
-
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
