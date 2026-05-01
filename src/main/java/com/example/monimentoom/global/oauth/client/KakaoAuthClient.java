@@ -1,14 +1,14 @@
 package com.example.monimentoom.global.oauth.client;
 
-import com.example.monimentoom.config.FeignConfig;
 import com.example.monimentoom.global.oauth.dto.KakaoAccessTokenResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "kakaoAuthClient",
+@FeignClient(
+        name = "kakaoAuthClient",
         url = "https://kauth.kakao.com",
-        configuration = FeignConfig.class
+        configuration = KaKaoFeignConfig.class
 )
 public interface KakaoAuthClient {
     // POST https://kauth.kakao.com/oauth/token으로 요청을 보냄
