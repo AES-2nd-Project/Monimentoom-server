@@ -1,5 +1,7 @@
 package com.example.monimentoom.config;
 
+import com.example.monimentoom.global.auth.JwtAccessDeniedHandler;
+import com.example.monimentoom.global.auth.JwtAuthenticationEntryPoint;
 import com.example.monimentoom.global.auth.JwtAuthenticationFilter;
 import com.example.monimentoom.global.auth.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -36,6 +40,10 @@ public class SecurityConfig {
                                 "/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/rooms", "/rooms/random", "/rooms/*", "/rooms/*/main", "/rooms/*/detail").permitAll()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

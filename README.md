@@ -230,13 +230,20 @@ src/main/java/com/example/monimentoom/
 │   ├── room/            # 방 (Room)
 │   └── user/            # 유저 (User)
 ├── global/
-│   ├── auth/            # JWT 인증 필터, AuthService, RefreshToken
+│   ├── auth/            # JWT 인증 필터, Security 예외 핸들러, AuthService, RefreshToken
 │   ├── oauth/           # 카카오 OAuth (OpenFeign 클라이언트)
 │   ├── s3/              # AWS S3 Presigned URL 발급·삭제
 │   └── config/          # 비동기·스케줄러 설정
 ├── config/              # Security, Web, Feign 설정
 └── exception/           # 전역 예외 처리, ErrorCode
 ```
+
+## 예외 처리 흐름
+
+- **ControllerAdvice**: 컨트롤러/서비스 계층에서 발생한 `CustomException`, 검증 오류 등을 `ErrorResponse`로 변환
+- **JwtExceptionFilter**: 필터 체인에서 발생한 `CustomException`을 캐치하여 `ErrorResponse`로 반환
+- **AuthenticationEntryPoint (401)**: 인증되지 않은 요청의 Security 기본 예외를 `ErrorCode.UNAUTHORIZED`로 응답
+- **AccessDeniedHandler (403)**: 인가 실패(Security 접근 거부) 예외를 `ErrorCode.FORBIDDEN`으로 응답
 
 ---
 
