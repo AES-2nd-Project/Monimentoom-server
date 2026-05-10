@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(
         name = "kakaoAuthClient",
         url = "https://kauth.kakao.com",
-        configuration = KaKaoFeignConfig.class
+        configuration = KakaoFeignConfig.class
 )
 public interface KakaoAuthClient {
     // POST https://kauth.kakao.com/oauth/token으로 요청을 보냄
