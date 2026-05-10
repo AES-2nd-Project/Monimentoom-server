@@ -16,11 +16,14 @@ public class CookieUtils {
 
     private CookieUtils() {}   // 유틸 클래스 인스턴스화 방지용
 
+    // SameSite=None: 프론트엔드와 백엔드가 서로 다른 사이트(cross-site)이므로
+    // 쿠키가 cross-site 요청에서도 전송되도록 허용. CSRF 보호는 /auth/refresh 컨트롤러에서
+    // Origin 화이트리스트 + 커스텀 헤더(X-Refresh-Request) 검증으로 수행.
     public static void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken)
                 .httpOnly(true)
-                .secure(true)                              // 로컬 테스트 시 false
-                .sameSite("Strict")
+                .secure(true)                              // SameSite=None은 Secure 필수
+                .sameSite("None")
                 .maxAge(Duration.ofDays(REFRESH_TOKEN_MAX_AGE_DAYS))
                 .path(REFRESH_TOKEN_COOKIE_PATH)
                 .build();
@@ -31,7 +34,7 @@ public class CookieUtils {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, "")
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .maxAge(0)                                 // 즉시 만료
                 .path(REFRESH_TOKEN_COOKIE_PATH)
                 .build();
