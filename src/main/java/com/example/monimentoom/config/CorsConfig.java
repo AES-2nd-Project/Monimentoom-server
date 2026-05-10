@@ -11,15 +11,15 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
+    public static final List<String> ALLOWED_ORIGINS = List.of(
+            "http://localhost:5173",
+            "https://monimentoom-frontend.vercel.app"
+    );
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(
-                List.of(
-                        "http://localhost:5173",
-                        "https://monimentoom-frontend.vercel.app"
-                )
-        );
+        config.setAllowedOrigins(ALLOWED_ORIGINS);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization"));
