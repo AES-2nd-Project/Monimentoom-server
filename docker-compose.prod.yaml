@@ -30,6 +30,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./ssl/fullchain.pem:/etc/nginx/fullchain.pem
       - ./ssl/privkey.pem:/etc/nginx/privkey.pem
+      - ./test-static:/test-static:ro
     networks:
       - app-network
     restart: unless-stopped
